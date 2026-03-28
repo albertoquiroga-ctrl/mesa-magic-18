@@ -161,7 +161,7 @@ const Cart = () => {
 
       {/* Sticky footer */}
       {!isEmpty && (
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-muted-foreground">Total</span>
             <PriceDisplay amount={total} size="lg" className="font-bold text-foreground" />
