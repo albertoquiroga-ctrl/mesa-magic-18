@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { mockMenuItems, mockCategories, mockRestaurant } from '@/data/mockData';
 import { useCartStore } from '@/stores/cartStore';
-import { ConsolidationBanner } from '@/components/shared/ConsolidationBanner';
+
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { ItemDetailSheet } from '@/components/guest/ItemDetailSheet';
 import { CartBar } from '@/components/guest/CartBar';
