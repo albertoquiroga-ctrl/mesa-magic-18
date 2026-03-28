@@ -45,10 +45,6 @@ const Menu = () => {
           </button>
         </div>
 
-        {/* Consolidation banner */}
-        <div className="px-4 pb-2">
-          <ConsolidationBanner names={['Ana', 'Carlos']} timerText="1:32" />
-        </div>
 
         {/* Category pills */}
         <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-none">
