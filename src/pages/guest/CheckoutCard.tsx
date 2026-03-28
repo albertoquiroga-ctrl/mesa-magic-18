@@ -32,13 +32,14 @@ const CheckoutCard = () => {
   const handlePay = async () => {
     setProcessing(true);
     await new Promise((r) => setTimeout(r, 2000));
-    const success = Math.random() > 0.5;
-    if (success) {
-      setStatus('success');
-      navigate('/guest/payment-success', { replace: true });
-    } else {
+    const currentAttempt = attempt + 1;
+    setAttempt(currentAttempt);
+    if (currentAttempt === 1) {
       setStatus('failed');
       navigate('/guest/payment-failed', { replace: true });
+    } else {
+      setStatus('success');
+      navigate('/guest/payment-success', { replace: true });
     }
   };
 
