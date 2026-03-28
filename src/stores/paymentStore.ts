@@ -11,12 +11,14 @@ export interface PaymentState {
   total: number;
   paymentMethod: PaymentMethod;
   status: PaymentStatus;
+  attempt: number;
   setSplitMode: (mode: SplitMode) => void;
   setTipPercent: (percent: number) => void;
   setTipAmount: (amount: number) => void;
   setTotal: (total: number) => void;
   setPaymentMethod: (method: PaymentMethod) => void;
   setStatus: (status: PaymentStatus) => void;
+  incrementAttempt: () => void;
 }
 
 export const usePaymentStore = create<PaymentState>((set) => ({
@@ -26,10 +28,12 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   total: 0,
   paymentMethod: null,
   status: 'idle',
+  attempt: 0,
   setSplitMode: (splitMode) => set({ splitMode }),
   setTipPercent: (tipPercent) => set({ tipPercent }),
   setTipAmount: (tipAmount) => set({ tipAmount }),
   setTotal: (total) => set({ total }),
   setPaymentMethod: (paymentMethod) => set({ paymentMethod }),
   setStatus: (status) => set({ status }),
+  incrementAttempt: () => set((s) => ({ attempt: s.attempt + 1 })),
 }));

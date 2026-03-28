@@ -8,13 +8,12 @@ import { Button } from '@/components/ui/button';
 
 const CheckoutCard = () => {
   const navigate = useNavigate();
-  const { total, setStatus } = usePaymentStore();
+  const { total, setStatus, attempt, incrementAttempt } = usePaymentStore();
   const [cardNumber, setCardNumber] = useState('');
   const [expiry, setExpiry] = useState('');
   const [cvv, setCvv] = useState('');
   const [name, setName] = useState('');
   const [processing, setProcessing] = useState(false);
-  const [attempt, setAttempt] = useState(0);
 
   const formatCardNumber = (val: string) => {
     const digits = val.replace(/\D/g, '').slice(0, 16);
@@ -32,9 +31,8 @@ const CheckoutCard = () => {
   const handlePay = async () => {
     setProcessing(true);
     await new Promise((r) => setTimeout(r, 2000));
-    const currentAttempt = attempt + 1;
-    setAttempt(currentAttempt);
-    if (currentAttempt === 1) {
+    incrementAttempt();
+    if (attempt === 0) {
       setStatus('failed');
       navigate('/guest/payment-failed', { replace: true });
     } else {
