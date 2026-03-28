@@ -1,0 +1,35 @@
+import { create } from 'zustand';
+
+export type SplitMode = 'equal' | 'custom' | 'full';
+export type PaymentMethod = 'card' | 'spei' | null;
+export type PaymentStatus = 'idle' | 'processing' | 'success' | 'failed';
+
+export interface PaymentState {
+  splitMode: SplitMode;
+  tipPercent: number;
+  tipAmount: number;
+  total: number;
+  paymentMethod: PaymentMethod;
+  status: PaymentStatus;
+  setSplitMode: (mode: SplitMode) => void;
+  setTipPercent: (percent: number) => void;
+  setTipAmount: (amount: number) => void;
+  setTotal: (total: number) => void;
+  setPaymentMethod: (method: PaymentMethod) => void;
+  setStatus: (status: PaymentStatus) => void;
+}
+
+export const usePaymentStore = create<PaymentState>((set) => ({
+  splitMode: 'equal',
+  tipPercent: 15,
+  tipAmount: 0,
+  total: 0,
+  paymentMethod: null,
+  status: 'idle',
+  setSplitMode: (splitMode) => set({ splitMode }),
+  setTipPercent: (tipPercent) => set({ tipPercent }),
+  setTipAmount: (tipAmount) => set({ tipAmount }),
+  setTotal: (total) => set({ total }),
+  setPaymentMethod: (paymentMethod) => set({ paymentMethod }),
+  setStatus: (status) => set({ status }),
+}));
