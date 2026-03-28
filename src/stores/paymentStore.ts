@@ -28,10 +28,12 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   total: 0,
   paymentMethod: null,
   status: 'idle',
+  attempt: 0,
   setSplitMode: (splitMode) => set({ splitMode }),
   setTipPercent: (tipPercent) => set({ tipPercent }),
   setTipAmount: (tipAmount) => set({ tipAmount }),
   setTotal: (total) => set({ total }),
   setPaymentMethod: (paymentMethod) => set({ paymentMethod }),
   setStatus: (status) => set({ status }),
+  incrementAttempt: () => set((s) => ({ attempt: s.attempt + 1 })),
 }));
