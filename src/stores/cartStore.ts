@@ -14,14 +14,12 @@ export type CartStatus = 'draft' | 'sent' | 'confirmed';
 export interface CartState {
   items: CartItem[];
   round: number;
-  consolidationTimer: number | null;
   status: CartStatus;
   addItem: (item: Omit<CartItem, 'quantity'>) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
   setStatus: (status: CartStatus) => void;
-  setConsolidationTimer: (seconds: number | null) => void;
   getTotal: () => number;
   getItemCount: () => number;
 }
@@ -29,7 +27,6 @@ export interface CartState {
 export const useCartStore = create<CartState>((set, get) => ({
   items: [],
   round: 1,
-  consolidationTimer: null,
   status: 'draft',
   addItem: (item) =>
     set((state) => {
@@ -54,7 +51,6 @@ export const useCartStore = create<CartState>((set, get) => ({
     })),
   clearCart: () => set({ items: [], status: 'draft' }),
   setStatus: (status) => set({ status }),
-  setConsolidationTimer: (consolidationTimer) => set({ consolidationTimer }),
   getTotal: () => get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
   getItemCount: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
 }));

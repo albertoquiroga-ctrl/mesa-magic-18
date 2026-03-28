@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search } from 'lucide-react';
 import { mockMenuItems, mockCategories, mockRestaurant } from '@/data/mockData';
 import { useCartStore } from '@/stores/cartStore';
-import { ConsolidationBanner } from '@/components/shared/ConsolidationBanner';
+
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { ItemDetailSheet } from '@/components/guest/ItemDetailSheet';
 import { CartBar } from '@/components/guest/CartBar';
@@ -45,10 +45,6 @@ const Menu = () => {
           </button>
         </div>
 
-        {/* Consolidation banner */}
-        <div className="px-4 pb-2">
-          <ConsolidationBanner names={['Ana', 'Carlos']} timerText="1:32" />
-        </div>
 
         {/* Category pills */}
         <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-none">
