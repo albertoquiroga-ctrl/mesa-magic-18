@@ -13,7 +13,7 @@ const CheckoutCard = () => {
   const [expiry, setExpiry] = useState('');
   const [cvv, setCvv] = useState('');
   const [name, setName] = useState('');
-  const [processing, setProcessing] = useState(false);
+  const [attempt, setAttempt] = useState(0);
 
   const formatCardNumber = (val: string) => {
     const digits = val.replace(/\D/g, '').slice(0, 16);
