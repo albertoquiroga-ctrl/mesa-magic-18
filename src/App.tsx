@@ -46,7 +46,7 @@ const App = () => (
           <Route path="/guest" element={<GuestLayout />}>
             <Route path="onboarding" element={<GuestOnboarding />} />
             <Route path="menu" element={<GuestMenu />} />
-            <Route path="menu/:itemId" element={<GuestMenu />} />
+            <Route path="menu/:itemId" element={<GuestItemDetail />} />
             <Route path="cart" element={<GuestCart />} />
             
             <Route path="order-rejected" element={<GuestOrderRejected />} />
