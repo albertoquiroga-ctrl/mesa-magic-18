@@ -21,6 +21,22 @@ const SplitTip = () => {
 
   const [customTip, setCustomTip] = useState('');
   const [isCustomTip, setIsCustomTip] = useState(false);
+  const [showBreakdown, setShowBreakdown] = useState(false);
+
+  // Flatten all round items into a consolidated list
+  const allItems = rounds.flatMap((r) => r.items);
+  const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number }[]>(
+    (acc, item) => {
+      const existing = acc.find((a) => a.name === item.name && a.price === item.price);
+      if (existing) {
+        existing.quantity += item.quantity;
+      } else {
+        acc.push({ ...item });
+      }
+      return acc;
+    },
+    []
+  );
 
   const subtotal = rounds.reduce(
     (sum, r) => sum + r.items.reduce((s, i) => s + i.price * i.quantity, 0),
