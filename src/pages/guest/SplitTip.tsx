@@ -114,6 +114,45 @@ const SplitTip = () => {
           </div>
         </section>
 
+        {/* Order breakdown */}
+        <section className="mb-6">
+          <button
+            onClick={() => setShowBreakdown((v) => !v)}
+            className="flex items-center justify-between w-full py-2 text-sm font-medium text-foreground"
+          >
+            <span>Desglose del pedido</span>
+            {showBreakdown ? (
+              <ChevronUp className="w-4 h-4 text-muted-foreground" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            )}
+          </button>
+          {showBreakdown && (
+            <div className="bg-card border border-border rounded-card overflow-hidden mt-2">
+              {consolidatedItems.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`flex items-center justify-between px-4 py-2.5 ${
+                    idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
+                  }`}
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
+                      {item.quantity}×
+                    </span>
+                    <span className="text-sm text-foreground truncate">{item.name}</span>
+                  </div>
+                  <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                </div>
+              ))}
+              <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
+                <span className="text-xs text-muted-foreground">Subtotal mesa</span>
+                <PriceDisplay amount={subtotal} size="sm" className="font-semibold" />
+              </div>
+            </div>
+          )}
+        </section>
+
         {/* Subtotal display */}
         <div className="flex items-center justify-between py-3 border-b border-border mb-6">
           <span className="text-sm text-muted-foreground">
