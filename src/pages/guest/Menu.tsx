@@ -1,12 +1,8 @@
 import { useState, useRef, useCallback } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { mockMenuItems, mockCategories, mockRestaurant } from '@/data/mockData';
-import { useCartStore } from '@/stores/cartStore';
-
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
-import { ItemDetailSheet } from '@/components/guest/ItemDetailSheet';
 import { CartBar } from '@/components/guest/CartBar';
 
 const categoryEmojis: Record<string, string> = {
@@ -16,20 +12,14 @@ const categoryEmojis: Record<string, string> = {
 };
 
 const Menu = () => {
-  const { itemId } = useParams();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
-  const [selectedItemId, setSelectedItemId] = useState<string | null>(itemId ?? null);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const scrollToCategory = useCallback((cat: string) => {
     setActiveCategory(cat);
     sectionRefs.current[cat]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
-
-  const selectedItem = selectedItemId
-    ? mockMenuItems.find((i) => i.id === selectedItemId) ?? null
-    : null;
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -44,7 +34,6 @@ const Menu = () => {
             <Search className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
-
 
         {/* Category pills */}
         <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-none">
@@ -86,7 +75,7 @@ const Menu = () => {
                   <MenuItemCard
                     key={item.id}
                     item={item}
-                    onTap={() => setSelectedItemId(item.id)}
+                    onTap={() => navigate(`/guest/menu/${item.id}`)}
                   />
                 ))}
               </div>
@@ -97,13 +86,6 @@ const Menu = () => {
 
       {/* Cart bar */}
       <CartBar />
-
-      {/* Item detail bottom sheet */}
-      <ItemDetailSheet
-        item={selectedItem}
-        open={!!selectedItem}
-        onClose={() => setSelectedItemId(null)}
-      />
     </div>
   );
 };
