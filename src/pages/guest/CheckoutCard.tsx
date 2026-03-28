@@ -26,15 +26,12 @@ const CheckoutCard = () => {
     return digits;
   };
 
-  const isValid = cardNumber.replace(/\s/g, '').length === 16 && expiry.length === 5 && cvv.length >= 3 && name.length > 1;
+  const isValid = cardNumber.replace(/\s/g, '').length >= 1;
 
   const handlePay = async () => {
-    if (!isValid) return;
     setProcessing(true);
-    // Simulate payment processing
     await new Promise((r) => setTimeout(r, 2000));
-    // 90% success rate for demo
-    const success = Math.random() > 0.1;
+    const success = Math.random() > 0.5;
     if (success) {
       setStatus('success');
       navigate('/guest/payment-success', { replace: true });
