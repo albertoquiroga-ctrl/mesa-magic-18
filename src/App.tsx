@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 import GuestOnboarding from "./pages/guest/Onboarding";
 import GuestMenu from "./pages/guest/Menu";
 import GuestCart from "./pages/guest/Cart";
+import GuestItemDetail from "./pages/guest/ItemDetail";
 
 import GuestOrderRejected from "./pages/guest/OrderRejected";
 import GuestOffline from "./pages/guest/Offline";
