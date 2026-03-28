@@ -47,7 +47,7 @@ const App = () => (
             <Route path="menu" element={<GuestMenu />} />
             <Route path="menu/:itemId" element={<GuestMenu />} />
             <Route path="cart" element={<GuestCart />} />
-            <Route path="tracker" element={<GuestTracker />} />
+            
             <Route path="order-rejected" element={<GuestOrderRejected />} />
             <Route path="offline" element={<GuestOffline />} />
             <Route path="my-consumption" element={<GuestMyConsumption />} />
