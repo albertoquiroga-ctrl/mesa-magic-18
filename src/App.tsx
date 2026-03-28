@@ -11,7 +11,7 @@ import NotFound from "./pages/NotFound";
 import GuestOnboarding from "./pages/guest/Onboarding";
 import GuestMenu from "./pages/guest/Menu";
 import GuestCart from "./pages/guest/Cart";
-import GuestTracker from "./pages/guest/Tracker";
+
 import GuestOrderRejected from "./pages/guest/OrderRejected";
 import GuestOffline from "./pages/guest/Offline";
 import GuestMyConsumption from "./pages/guest/MyConsumption";
@@ -47,7 +47,7 @@ const App = () => (
             <Route path="menu" element={<GuestMenu />} />
             <Route path="menu/:itemId" element={<GuestMenu />} />
             <Route path="cart" element={<GuestCart />} />
-            <Route path="tracker" element={<GuestTracker />} />
+            
             <Route path="order-rejected" element={<GuestOrderRejected />} />
             <Route path="offline" element={<GuestOffline />} />
             <Route path="my-consumption" element={<GuestMyConsumption />} />
