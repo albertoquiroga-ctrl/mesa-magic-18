@@ -135,7 +135,7 @@ const ItemDetail = () => {
 
       {/* Sticky CTA */}
       {!item.soldOut && (
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] px-5 pb-6 pt-3 bg-background border-t border-border z-30">
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] px-5 pb-3 pt-3 bg-background border-t border-border z-30">
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={handleAdd}
