@@ -5,7 +5,7 @@ import { useCartStore } from '@/stores/cartStore';
 const tabs = [
   { to: '/guest/menu', icon: '🍽️', label: 'Menú' },
   { to: '/guest/cart', icon: '📋', label: 'Mi orden' },
-  { to: '/guest/split-tip', icon: '💳', label: 'Pagar' },
+  { to: '/guest/my-consumption', icon: '💳', label: 'Pagar' },
 ];
 
 export const GuestBottomNav = () => {
