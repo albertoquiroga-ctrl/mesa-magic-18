@@ -151,9 +151,13 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                   {roundLaps.map((lap, idx) => {
                     const itemElapsed = Math.floor((now - new Date(lap.createdAt).getTime()) / 1000);
                     const lapSeconds = lap.prepTime * 60;
-                    const isDone = itemElapsed >= lapSeconds;
+                    const remaining = Math.max(lapSeconds - itemElapsed, 0);
+                    const isDone = remaining <= 0;
                     const isActive = !isDone && itemElapsed > 0;
                     const lapProgress = isDone ? 100 : Math.min((itemElapsed / lapSeconds) * 100, 100);
+                    const remMin = Math.floor(remaining / 60);
+                    const remSec = remaining % 60;
+                    const remStr = `${String(remMin).padStart(2, '0')}:${String(remSec).padStart(2, '0')}`;
 
                     return (
                       <motion.div
@@ -204,7 +208,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                                     {lap.name}
                                   </span>
                                   <span className={`text-[11px] font-mono shrink-0 ml-2 ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
-                                    {isDone ? '✓ Listo' : `~${lap.prepTime} min`}
+                                    {isDone ? '✓ Listo' : remStr}
                                   </span>
                                 </div>
                                 {(isActive || isDone) && (
