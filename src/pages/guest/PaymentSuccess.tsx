@@ -44,6 +44,25 @@ const PaymentSuccess = () => {
   const remaining = Math.max(tableSubtotal - paidSubtotal, 0);
   const progressPercent = tableSubtotal > 0 ? Math.min((paidSubtotal / tableSubtotal) * 100, 100) : 0;
 
+  // Simulate unpaid items for demo — items nobody claimed
+  const allItems = rounds.flatMap((r) => r.items);
+  const unpaidItems = remaining > 0
+    ? (() => {
+        // Pick items that add up roughly to the remaining amount for the demo
+        const items: { name: string; quantity: number; price: number }[] = [];
+        let acc = 0;
+        for (const item of allItems) {
+          if (acc >= remaining) break;
+          const itemTotal = item.price * item.quantity;
+          if (acc + itemTotal <= remaining + 50) {
+            items.push(item);
+            acc += itemTotal;
+          }
+        }
+        return items.length > 0 ? items : [{ name: 'Platillos sin asignar', quantity: 1, price: remaining }];
+      })()
+    : [];
+
   return (
     <div className="flex flex-col items-center min-h-screen bg-background px-6 py-12">
       <motion.div
