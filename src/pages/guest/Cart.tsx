@@ -16,12 +16,14 @@ const Cart = () => {
   const clearCart = useCartStore((s) => s.clearCart);
   const getTotal = useCartStore((s) => s.getTotal);
   const addRound = useOrderStore((s) => s.addRound);
+  const rounds = useOrderStore((s) => s.rounds);
   const currentRound = useOrderStore((s) => s.currentRound);
   const setCurrentRound = useOrderStore((s) => s.setCurrentRound);
   const [sent, setSent] = useState(false);
 
   const total = getTotal();
   const isEmpty = items.length === 0;
+  const hasActiveOrder = rounds.length > 0;
 
   const handleSend = () => {
     if (isEmpty) return;
