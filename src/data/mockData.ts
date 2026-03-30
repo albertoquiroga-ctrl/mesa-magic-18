@@ -79,6 +79,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Fettuccine al huevo con crema de trufa negra y parmesano',
     image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=600&fit=crop',
     tags: ['vegetariano'],
+    prepTime: 18,
   },
   {
     id: 'ensalada',
