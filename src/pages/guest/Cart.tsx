@@ -30,6 +30,23 @@ const Cart = () => {
 
   const handleSend = () => {
     if (isEmpty) return;
+    
+    // If first round, simulate other guests' prior orders
+    if (rounds.length === 0) {
+      addRound({
+        id: crypto.randomUUID(),
+        round: 0,
+        items: [
+          { name: 'Guacamole', quantity: 1, price: 95, category: 'Entradas', orderedByDevice: false },
+          { name: 'Ensalada Mixta', quantity: 1, price: 130, category: 'Entradas', orderedByDevice: false },
+          { name: 'Entrecot a las Brasas', quantity: 1, price: 295, category: 'Platos Fuertes', orderedByDevice: false },
+          { name: 'Agua de Jamaica', quantity: 2, price: 65, category: 'Bebidas', orderedByDevice: false },
+        ],
+        status: 'confirmed',
+        createdAt: new Date(Date.now() - 600000).toISOString(),
+      });
+    }
+
     addRound({
       id: crypto.randomUUID(),
       round: currentRound,
