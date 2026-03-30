@@ -18,7 +18,8 @@ const SplitTip = () => {
   const rounds = useOrderStore((s) => s.rounds);
   const {
     splitMode, setSplitMode, tipPercent, setTipPercent,
-    setTipAmount, setTotal, itemAssignments, setItemAssignment, resetAssignments,
+    setTipAmount, setTotal, itemAssignments, setItemAssignment,
+    sharedAmong, setSharedAmong, resetAssignments,
   } = usePaymentStore();
 
   const [customTip, setCustomTip] = useState('');
