@@ -33,10 +33,14 @@ export const MenuItemCard = ({ item, onTap }: MenuItemCardProps) => {
       }`}
     >
       {/* Photo placeholder */}
-      <div className="aspect-square bg-muted relative flex items-center justify-center">
-        <span className="text-3xl">
-          {item.category === 'Bebidas' ? '🥤' : item.category === 'Entradas' ? '🥗' : '🍽️'}
-        </span>
+      <div className="aspect-square bg-muted relative flex items-center justify-center overflow-hidden">
+        {item.image ? (
+          <img src={item.image} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
+        ) : (
+          <span className="text-3xl">
+            {item.category === 'Bebidas' ? '🥤' : item.category === 'Entradas' ? '🥗' : '🍽️'}
+          </span>
+        )}
         {item.soldOut && (
           <div className="absolute inset-0 bg-background/70 flex items-center justify-center">
             <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-chip">
