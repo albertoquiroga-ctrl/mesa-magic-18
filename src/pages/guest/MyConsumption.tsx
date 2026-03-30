@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Receipt, Smartphone, Users } from 'lucide-react';
+import { ArrowLeft, Receipt, Smartphone, Users, UtensilsCrossed } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
 import { useTableStore } from '@/stores/tableStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
