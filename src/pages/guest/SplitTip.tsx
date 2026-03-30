@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift, Smartphone, UtensilsCrossed } from 'lucide-react';
+import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift, Smartphone, UtensilsCrossed, CreditCard, Landmark, Banknote } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { useAuthStore } from '@/stores/authStore';
