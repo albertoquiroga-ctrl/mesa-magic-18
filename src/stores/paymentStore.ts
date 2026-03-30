@@ -12,7 +12,7 @@ export interface PaymentState {
   paymentMethod: PaymentMethod;
   status: PaymentStatus;
   attempt: number;
-  itemAssignments: Record<string, 'mine' | 'shared'>;
+  itemAssignments: Record<string, 'mine' | 'shared' | 'none'>;
   setSplitMode: (mode: SplitMode) => void;
   setTipPercent: (percent: number) => void;
   setTipAmount: (amount: number) => void;
