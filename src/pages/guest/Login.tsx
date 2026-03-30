@@ -8,7 +8,9 @@ import { Input } from '@/components/ui/input';
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const returnTo = (location.state as { returnTo?: string })?.returnTo || '/guest/profile';
+  const state = location.state as { returnTo?: string; nudgeOrigin?: string } | null;
+  const returnTo = state?.returnTo || '/guest/profile';
+  const nudgeOrigin = state?.nudgeOrigin || 'general';
   const login = useAuthStore((s) => s.login);
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
