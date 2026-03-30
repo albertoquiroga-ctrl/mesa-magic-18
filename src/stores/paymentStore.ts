@@ -20,7 +20,7 @@ export interface PaymentState {
   setPaymentMethod: (method: PaymentMethod) => void;
   setStatus: (status: PaymentStatus) => void;
   incrementAttempt: () => void;
-  setItemAssignment: (key: string, value: 'mine' | 'shared') => void;
+  setItemAssignment: (key: string, value: 'mine' | 'shared' | 'none') => void;
   resetAssignments: () => void;
 }
 
