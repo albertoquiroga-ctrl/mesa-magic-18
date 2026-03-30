@@ -129,6 +129,80 @@ const SplitTip = () => {
     }
   };
 
+  const renderItemRow = (item: typeof consolidatedItems[0], idx: number, totalCount: number) => {
+    const assignment = itemAssignments[item.key] || 'shared';
+    const divisor = sharedAmong[item.key] || guestCount;
+    return (
+      <div
+        key={item.key}
+        className={`px-3 py-2.5 ${idx < totalCount - 1 ? 'border-b border-border' : ''}`}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
+              {item.quantity}×
+            </span>
+            <div className="min-w-0">
+              <span className="text-sm text-foreground truncate block">{item.name}</span>
+              {item.category && (
+                <span className="text-[10px] text-muted-foreground">{item.category}</span>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            {assignment === 'shared' ? (
+              <span className="text-[11px] font-mono text-muted-foreground">
+                ${item.price * item.quantity} ÷ {divisor} = <span className="text-foreground font-semibold">${Math.ceil((item.price * item.quantity) / divisor)}</span>
+              </span>
+            ) : (
+              <PriceDisplay amount={item.price * item.quantity} size="sm" />
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 mt-2 ml-7">
+          <div className="flex rounded-full border border-border overflow-hidden">
+            {([
+              { value: 'mine', label: 'Mío' },
+              { value: 'shared', label: 'Compartido' },
+              { value: 'none', label: 'No pago' },
+            ] as const).map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setItemAssignment(item.key, opt.value)}
+                className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                  assignment === opt.value
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-card text-muted-foreground'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {assignment === 'shared' && (
+            <div className="flex items-center gap-1.5 ml-auto">
+              <button
+                onClick={() => setSharedAmong(item.key, Math.max(2, divisor - 1))}
+                className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"
+                aria-label="Menos personas"
+              >
+                <Minus className="w-3 h-3" />
+              </button>
+              <span className="font-mono text-xs w-4 text-center tabular-nums">{divisor}</span>
+              <button
+                onClick={() => setSharedAmong(item.key, divisor + 1)}
+                className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                aria-label="Más personas"
+              >
+                <Plus className="w-3 h-3" />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       <header className="sticky top-0 z-30 bg-card border-b border-border">
