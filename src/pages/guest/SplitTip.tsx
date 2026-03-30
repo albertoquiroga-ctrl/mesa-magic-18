@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, User, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
@@ -16,22 +16,24 @@ const tipOptions = [
 const SplitTip = () => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
-  const { splitMode, setSplitMode, tipPercent, setTipPercent, setTipAmount, setTotal } =
-    usePaymentStore();
+  const {
+    splitMode, setSplitMode, tipPercent, setTipPercent,
+    setTipAmount, setTotal, itemAssignments, setItemAssignment, resetAssignments,
+  } = usePaymentStore();
 
   const [customTip, setCustomTip] = useState('');
   const [isCustomTip, setIsCustomTip] = useState(false);
   const [showBreakdown, setShowBreakdown] = useState(false);
 
-  // Flatten all round items into a consolidated list
   const allItems = rounds.flatMap((r) => r.items);
-  const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number }[]>(
+  const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string }[]>(
     (acc, item) => {
-      const existing = acc.find((a) => a.name === item.name && a.price === item.price);
+      const key = `${item.name}::${item.price}`;
+      const existing = acc.find((a) => a.key === key);
       if (existing) {
         existing.quantity += item.quantity;
       } else {
-        acc.push({ ...item });
+        acc.push({ ...item, key });
       }
       return acc;
     },
@@ -44,7 +46,28 @@ const SplitTip = () => {
   );
 
   const guestCount = mockGuests.length;
-  const perPerson = splitMode === 'full' ? subtotal : Math.ceil(subtotal / guestCount);
+
+  // Calculate perPerson based on split mode
+  let perPerson: number;
+  let mineTotal = 0;
+  let sharedTotal = 0;
+
+  if (splitMode === 'custom') {
+    consolidatedItems.forEach((item) => {
+      const assignment = itemAssignments[item.key] || 'shared';
+      const itemTotal = item.price * item.quantity;
+      if (assignment === 'mine') {
+        mineTotal += itemTotal;
+      } else {
+        sharedTotal += itemTotal;
+      }
+    });
+    perPerson = mineTotal + Math.ceil(sharedTotal / guestCount);
+  } else if (splitMode === 'full') {
+    perPerson = subtotal;
+  } else {
+    perPerson = Math.ceil(subtotal / guestCount);
+  }
 
   const activeTip = isCustomTip ? Number(customTip) || 0 : tipPercent;
   const tipAmount = isCustomTip
@@ -58,9 +81,15 @@ const SplitTip = () => {
     navigate('/guest/checkout/card');
   };
 
+  const handleSplitModeChange = (mode: 'full' | 'equal' | 'custom') => {
+    setSplitMode(mode);
+    if (mode === 'custom') {
+      resetAssignments();
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* Header */}
       <header className="sticky top-0 z-30 bg-card border-b border-border">
         <div className="flex items-center gap-3 px-4 h-14">
           <button
@@ -80,83 +109,158 @@ const SplitTip = () => {
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
             ¿Cómo pagar?
           </h2>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-2">
             <button
-              onClick={() => setSplitMode('full')}
-              className={`flex flex-col items-center gap-2 p-4 rounded-card border transition-colors ${
-                splitMode === 'full'
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border bg-card'
+              onClick={() => handleSplitModeChange('full')}
+              className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                splitMode === 'full' ? 'border-primary bg-primary/5' : 'border-border bg-card'
               }`}
             >
-              <User className={`w-6 h-6 ${splitMode === 'full' ? 'text-primary' : 'text-muted-foreground'}`} />
-              <span className={`text-sm font-medium ${splitMode === 'full' ? 'text-primary' : 'text-foreground'}`}>
+              <User className={`w-5 h-5 ${splitMode === 'full' ? 'text-primary' : 'text-muted-foreground'}`} />
+              <span className={`text-xs font-medium ${splitMode === 'full' ? 'text-primary' : 'text-foreground'}`}>
                 Pago total
               </span>
-              <span className="text-xs text-muted-foreground">Tú pagas todo</span>
+              <span className="text-[10px] text-muted-foreground leading-tight text-center">Tú pagas todo</span>
             </button>
             <button
-              onClick={() => setSplitMode('equal')}
-              className={`flex flex-col items-center gap-2 p-4 rounded-card border transition-colors ${
-                splitMode === 'equal'
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border bg-card'
+              onClick={() => handleSplitModeChange('equal')}
+              className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                splitMode === 'equal' ? 'border-primary bg-primary/5' : 'border-border bg-card'
               }`}
             >
-              <Users className={`w-6 h-6 ${splitMode === 'equal' ? 'text-primary' : 'text-muted-foreground'}`} />
-              <span className={`text-sm font-medium ${splitMode === 'equal' ? 'text-primary' : 'text-foreground'}`}>
+              <Users className={`w-5 h-5 ${splitMode === 'equal' ? 'text-primary' : 'text-muted-foreground'}`} />
+              <span className={`text-xs font-medium ${splitMode === 'equal' ? 'text-primary' : 'text-foreground'}`}>
                 Dividir
               </span>
-              <span className="text-xs text-muted-foreground">
-                Entre {guestCount} personas
+              <span className="text-[10px] text-muted-foreground leading-tight text-center">
+                Entre {guestCount}
               </span>
+            </button>
+            <button
+              onClick={() => handleSplitModeChange('custom')}
+              className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                splitMode === 'custom' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+              }`}
+            >
+              <Scissors className={`w-5 h-5 ${splitMode === 'custom' ? 'text-primary' : 'text-muted-foreground'}`} />
+              <span className={`text-xs font-medium ${splitMode === 'custom' ? 'text-primary' : 'text-foreground'}`}>
+                Pago justo
+              </span>
+              <span className="text-[10px] text-muted-foreground leading-tight text-center">Tus platillos</span>
             </button>
           </div>
         </section>
 
-        {/* Order breakdown */}
-        <section className="mb-6">
-          <button
-            onClick={() => setShowBreakdown((v) => !v)}
-            className="flex items-center justify-between w-full py-2 text-sm font-medium text-foreground"
-          >
-            <span>Desglose del pedido</span>
-            {showBreakdown ? (
-              <ChevronUp className="w-4 h-4 text-muted-foreground" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            )}
-          </button>
-          {showBreakdown && (
-            <div className="bg-card border border-border rounded-card overflow-hidden mt-2">
-              {consolidatedItems.map((item, idx) => (
-                <div
-                  key={idx}
-                  className={`flex items-center justify-between px-4 py-2.5 ${
-                    idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
-                  }`}
-                >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
-                      {item.quantity}×
-                    </span>
-                    <span className="text-sm text-foreground truncate">{item.name}</span>
+        {/* Fair pay item assignment */}
+        {splitMode === 'custom' && (
+          <section className="mb-6">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+              Marca tus platillos
+            </h2>
+            <div className="bg-card border border-border rounded-card overflow-hidden">
+              {consolidatedItems.map((item, idx) => {
+                const assignment = itemAssignments[item.key] || 'shared';
+                return (
+                  <div
+                    key={item.key}
+                    className={`flex items-center justify-between px-3 py-2.5 gap-2 ${
+                      idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
+                        {item.quantity}×
+                      </span>
+                      <span className="text-sm text-foreground truncate">{item.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                      <div className="flex rounded-full border border-border overflow-hidden ml-1">
+                        <button
+                          onClick={() => setItemAssignment(item.key, 'mine')}
+                          className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                            assignment === 'mine'
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-card text-muted-foreground'
+                          }`}
+                        >
+                          Mío
+                        </button>
+                        <button
+                          onClick={() => setItemAssignment(item.key, 'shared')}
+                          className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                            assignment === 'shared'
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-card text-muted-foreground'
+                          }`}
+                        >
+                          Compartido
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                );
+              })}
+              {/* Summary */}
+              <div className="px-3 py-2.5 bg-muted/50 space-y-1">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Tus platillos</span>
+                  <PriceDisplay amount={mineTotal} size="sm" />
                 </div>
-              ))}
-              <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
-                <span className="text-xs text-muted-foreground">Subtotal mesa</span>
-                <PriceDisplay amount={subtotal} size="sm" className="font-semibold" />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Compartidos ÷ {guestCount}</span>
+                  <PriceDisplay amount={Math.ceil(sharedTotal / guestCount)} size="sm" />
+                </div>
               </div>
             </div>
-          )}
-        </section>
+          </section>
+        )}
+
+        {/* Order breakdown (for non-custom modes) */}
+        {splitMode !== 'custom' && (
+          <section className="mb-6">
+            <button
+              onClick={() => setShowBreakdown((v) => !v)}
+              className="flex items-center justify-between w-full py-2 text-sm font-medium text-foreground"
+            >
+              <span>Desglose del pedido</span>
+              {showBreakdown ? (
+                <ChevronUp className="w-4 h-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-muted-foreground" />
+              )}
+            </button>
+            {showBreakdown && (
+              <div className="bg-card border border-border rounded-card overflow-hidden mt-2">
+                {consolidatedItems.map((item, idx) => (
+                  <div
+                    key={idx}
+                    className={`flex items-center justify-between px-4 py-2.5 ${
+                      idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
+                        {item.quantity}×
+                      </span>
+                      <span className="text-sm text-foreground truncate">{item.name}</span>
+                    </div>
+                    <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                  </div>
+                ))}
+                <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
+                  <span className="text-xs text-muted-foreground">Subtotal mesa</span>
+                  <PriceDisplay amount={subtotal} size="sm" className="font-semibold" />
+                </div>
+              </div>
+            )}
+          </section>
+        )}
 
         {/* Subtotal display */}
         <div className="flex items-center justify-between py-3 border-b border-border mb-6">
           <span className="text-sm text-muted-foreground">
-            {splitMode === 'full' ? 'Total mesa' : 'Tu parte'}
+            {splitMode === 'full' ? 'Total mesa' : splitMode === 'custom' ? 'Tu subtotal' : 'Tu parte'}
           </span>
           <PriceDisplay amount={perPerson} size="md" className="font-semibold text-foreground" />
         </div>
