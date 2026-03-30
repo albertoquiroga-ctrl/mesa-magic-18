@@ -24,7 +24,9 @@ const Login = () => {
   };
 
   const handleVerify = () => {
-    login();
+    // For demo: if name matches mock user, treat as returning user
+    const isReturning = name.trim().toLowerCase() === 'maría garcía' || name.trim().toLowerCase() === 'maria garcia';
+    login(!isReturning);
     navigate('/guest/post-registration', { replace: true, state: { nudgeOrigin, returnTo } });
   };
 

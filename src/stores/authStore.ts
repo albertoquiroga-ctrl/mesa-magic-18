@@ -26,8 +26,9 @@ export interface AuthUser {
 
 interface AuthState {
   isLoggedIn: boolean;
+  isNewUser: boolean;
   user: AuthUser | null;
-  login: (email?: string, password?: string) => void;
+  login: (isNew?: boolean) => void;
   logout: () => void;
 }
 
@@ -71,7 +72,8 @@ const mockUser: AuthUser = {
 
 export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
+  isNewUser: false,
   user: null,
-  login: () => set({ isLoggedIn: true, user: mockUser }),
-  logout: () => set({ isLoggedIn: false, user: null }),
+  login: (isNew = true) => set({ isLoggedIn: true, isNewUser: isNew, user: mockUser }),
+  logout: () => set({ isLoggedIn: false, isNewUser: false, user: null }),
 }));
