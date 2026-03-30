@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Plus, Minus } from 'lucide-react';
+import { Plus, Minus, Clock } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import type { MenuItem } from '@/data/mockData';
 
