@@ -18,6 +18,7 @@ const MyConsumption = () => {
   const grandTotal = allItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const myTotal = myItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const othersTotal = othersItems.reduce((s, i) => s + i.price * i.quantity, 0);
+  const sharedTotal = sharedItems.reduce((s, i) => s + i.price * i.quantity, 0);
 
   const isEmpty = rounds.length === 0;
 
