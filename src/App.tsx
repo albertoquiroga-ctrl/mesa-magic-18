@@ -21,6 +21,7 @@ import GuestCheckoutSpei from "./pages/guest/CheckoutSpei";
 import GuestPaymentFailed from "./pages/guest/PaymentFailed";
 import GuestPaymentSuccess from "./pages/guest/PaymentSuccess";
 import GuestEarlyExit from "./pages/guest/EarlyExit";
+import GuestOrderTracking from "./pages/guest/OrderTracking";
 
 const queryClient = new QueryClient();
 
