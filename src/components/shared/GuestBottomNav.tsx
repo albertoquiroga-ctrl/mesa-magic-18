@@ -1,11 +1,13 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '@/stores/cartStore';
+import { useAuthStore } from '@/stores/authStore';
 
 const tabs = [
   { to: '/guest/menu', icon: '🍽️', label: 'Menú' },
   { to: '/guest/cart', icon: '📋', label: 'Mi orden' },
   { to: '/guest/my-consumption', icon: '💳', label: 'Pagar' },
+  { to: '/guest/profile', icon: '👤', label: 'Perfil' },
 ];
 
 export const GuestBottomNav = () => {
