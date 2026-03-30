@@ -10,6 +10,7 @@ const CheckoutCash = () => {
   const navigate = useNavigate();
   const total = usePaymentStore((s) => s.total);
   const setStatus = usePaymentStore((s) => s.setStatus);
+  const tableNumber = useSessionStore((s) => s.tableNumber);
 
   const handleDone = () => {
     setStatus('success');
