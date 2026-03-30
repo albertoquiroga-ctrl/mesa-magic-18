@@ -14,6 +14,7 @@ const categoryEmojis: Record<string, string> = {
 
 const Menu = () => {
   const navigate = useNavigate();
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
