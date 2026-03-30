@@ -1,3 +1,15 @@
+/**
+ * Mock Data
+ * 
+ * All demo/hardcoded data used throughout the app.
+ * In production this would come from an API. Centralizing it here
+ * makes it easy to swap for real data later.
+ */
+
+// ---------------------------------------------------------------------------
+// Menu items
+// ---------------------------------------------------------------------------
+
 export interface MenuItem {
   id: string;
   name: string;
@@ -7,6 +19,7 @@ export interface MenuItem {
   image?: string;
   soldOut?: boolean;
   tags?: string[];
+  /** Estimated preparation time in minutes */
   prepTime?: number;
 }
 
@@ -20,26 +33,6 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1556855810-ac404aa91e85?w=600&h=600&fit=crop',
     tags: ['popular'],
     prepTime: 3,
-  },
-  {
-    id: 'guacamole',
-    name: 'Guacamole',
-    price: 95,
-    category: 'Entradas',
-    description: 'Aguacate molcajeteado con cilantro, cebolla y chile serrano',
-    image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=600&h=600&fit=crop',
-    tags: ['vegetariano'],
-    prepTime: 7,
-  },
-  {
-    id: 'tacos-asada',
-    name: 'Tacos de Asada',
-    price: 160,
-    category: 'Platos Fuertes',
-    description: 'Tres tacos de arrachera en tortilla de maíz con guarniciones',
-    image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&h=600&fit=crop',
-    tags: ['popular'],
-    prepTime: 15,
   },
   {
     id: 'agua-jamaica',
@@ -62,6 +55,36 @@ export const mockMenuItems: MenuItem[] = [
     prepTime: 3,
   },
   {
+    id: 'guacamole',
+    name: 'Guacamole',
+    price: 95,
+    category: 'Entradas',
+    description: 'Aguacate molcajeteado con cilantro, cebolla y chile serrano',
+    image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=600&h=600&fit=crop',
+    tags: ['vegetariano'],
+    prepTime: 7,
+  },
+  {
+    id: 'ensalada',
+    name: 'Ensalada Mixta',
+    price: 130,
+    category: 'Entradas',
+    description: 'Mezcla de lechugas, tomate cherry, aguacate y vinagreta cítrica',
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=600&fit=crop',
+    tags: ['vegetariano', 'ligero'],
+    prepTime: 8,
+  },
+  {
+    id: 'tacos-asada',
+    name: 'Tacos de Asada',
+    price: 160,
+    category: 'Platos Fuertes',
+    description: 'Tres tacos de arrachera en tortilla de maíz con guarniciones',
+    image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&h=600&fit=crop',
+    tags: ['popular'],
+    prepTime: 15,
+  },
+  {
     id: 'entrecot',
     name: 'Entrecot a las Brasas',
     price: 295,
@@ -81,28 +104,33 @@ export const mockMenuItems: MenuItem[] = [
     tags: ['vegetariano'],
     prepTime: 18,
   },
-  {
-    id: 'ensalada',
-    name: 'Ensalada Mixta',
-    price: 130,
-    category: 'Entradas',
-    description: 'Mezcla de lechugas, tomate cherry, aguacate y vinagreta cítrica',
-    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=600&fit=crop',
-    tags: ['vegetariano', 'ligero'],
-    prepTime: 8,
-  },
 ];
 
-export const mockCategories = ['Bebidas', 'Entradas', 'Platos Fuertes'];
+// ---------------------------------------------------------------------------
+// Categories (ordered as they appear in the menu)
+// ---------------------------------------------------------------------------
+
+export const mockCategories = ['Bebidas', 'Entradas', 'Platos Fuertes'] as const;
+
+// ---------------------------------------------------------------------------
+// Restaurant & table
+// ---------------------------------------------------------------------------
 
 export const mockRestaurant = {
   name: 'La Piazza',
   table: 4,
 };
 
+// ---------------------------------------------------------------------------
+// Guests at the table (used in payment success breakdown)
+// ---------------------------------------------------------------------------
+
 export const mockGuests = ['Tú', 'Ana', 'Carlos'];
 
-// Personalized recommendations for logged-in users (based on mock history)
+// ---------------------------------------------------------------------------
+// Personalized recommendations (shown to logged-in users)
+// ---------------------------------------------------------------------------
+
 export const mockRecommendations: MenuItem[] = [
   mockMenuItems.find((i) => i.id === 'margarita')!,
   mockMenuItems.find((i) => i.id === 'tacos-asada')!,

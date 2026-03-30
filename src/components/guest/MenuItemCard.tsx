@@ -1,10 +1,32 @@
+/**
+ * MenuItemCard
+ * 
+ * A compact card for a single menu item, used in the grid layout.
+ * Shows photo, name, prep time, price, and an add-to-cart button.
+ * When the item is already in the cart, shows ± quantity controls instead.
+ */
 import { motion } from 'framer-motion';
 import { Plus, Minus, Clock } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import type { MenuItem } from '@/data/mockData';
 
+// ---------------------------------------------------------------------------
+// Category → fallback emoji mapping
+// ---------------------------------------------------------------------------
+
+const categoryEmoji: Record<string, string> = {
+  Bebidas: '🥤',
+  Entradas: '🥗',
+  'Platos Fuertes': '🍽️',
+};
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 interface MenuItemCardProps {
   item: MenuItem;
+  /** Called when the card body is tapped (navigates to item detail) */
   onTap: () => void;
 }
 
@@ -13,12 +35,14 @@ export const MenuItemCard = ({ item, onTap }: MenuItemCardProps) => {
   const addItem = useCartStore((s) => s.addItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
 
+  /** Add one unit to cart (stop propagation so it doesn't trigger onTap) */
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (item.soldOut) return;
     addItem({ id: item.id, name: item.name, price: item.price });
   };
 
+  /** Remove one unit from cart */
   const handleDecrement = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (cartItem) updateQuantity(item.id, cartItem.quantity - 1);
@@ -32,14 +56,12 @@ export const MenuItemCard = ({ item, onTap }: MenuItemCardProps) => {
         item.soldOut ? 'opacity-50' : ''
       }`}
     >
-      {/* Photo placeholder */}
+      {/* Photo */}
       <div className="aspect-square bg-muted relative flex items-center justify-center overflow-hidden">
         {item.image ? (
           <img src={item.image} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
         ) : (
-          <span className="text-3xl">
-            {item.category === 'Bebidas' ? '🥤' : item.category === 'Entradas' ? '🥗' : '🍽️'}
-          </span>
+          <span className="text-3xl">{categoryEmoji[item.category] ?? '🍽️'}</span>
         )}
         {item.soldOut && (
           <div className="absolute inset-0 bg-background/70 flex items-center justify-center">
@@ -52,19 +74,17 @@ export const MenuItemCard = ({ item, onTap }: MenuItemCardProps) => {
 
       {/* Info */}
       <div className="p-3">
-        <p className="text-sm font-medium leading-tight line-clamp-2 mb-1">
-          {item.name}
-        </p>
+        <p className="text-sm font-medium leading-tight line-clamp-2 mb-1">{item.name}</p>
+
         {item.prepTime && (
           <div className="flex items-center gap-1 mb-1.5">
             <Clock className="w-3 h-3 text-muted-foreground" />
             <span className="text-[11px] text-muted-foreground">{item.prepTime} min</span>
           </div>
         )}
+
         <div className="flex items-center justify-between">
-          <span className="font-mono text-sm text-primary tabular-nums">
-            ${item.price}
-          </span>
+          <span className="font-mono text-sm text-primary tabular-nums">${item.price}</span>
 
           {/* Add / quantity selector */}
           {!item.soldOut && (

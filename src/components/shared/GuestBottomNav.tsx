@@ -1,14 +1,30 @@
+/**
+ * GuestBottomNav
+ * 
+ * Fixed bottom navigation bar for the guest experience.
+ * Shows four tabs: Menu, My Order, Pay, Profile.
+ * Includes a badge on "My Order" when the cart has items,
+ * and redirects unauthenticated users to login when tapping Profile.
+ */
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useCartStore } from '@/stores/cartStore';
 import { useAuthStore } from '@/stores/authStore';
+
+// ---------------------------------------------------------------------------
+// Tab configuration
+// ---------------------------------------------------------------------------
 
 const tabs = [
   { to: '/guest/menu', icon: '🍽️', label: 'Menú' },
   { to: '/guest/cart', icon: '📋', label: 'Mi orden' },
   { to: '/guest/my-consumption', icon: '💳', label: 'Pagar' },
   { to: '/guest/profile', icon: '👤', label: 'Perfil' },
-];
+] as const;
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 export const GuestBottomNav = () => {
   const { pathname } = useLocation();
@@ -16,6 +32,7 @@ export const GuestBottomNav = () => {
   const itemCount = useCartStore((s) => s.getItemCount());
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
 
+  /** Redirect to login if guest taps Profile while unauthenticated */
   const handleProfileTap = (e: React.MouseEvent) => {
     if (!isLoggedIn) {
       e.preventDefault();
@@ -43,6 +60,8 @@ export const GuestBottomNav = () => {
               >
                 {tab.label}
               </span>
+
+              {/* Cart badge */}
               {tab.to === '/guest/cart' && itemCount > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
@@ -52,6 +71,8 @@ export const GuestBottomNav = () => {
                   {itemCount}
                 </motion.span>
               )}
+
+              {/* Active tab indicator */}
               {isActive && (
                 <motion.div
                   layoutId="guest-tab-indicator"
