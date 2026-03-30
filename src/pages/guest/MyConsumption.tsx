@@ -11,8 +11,9 @@ const MyConsumption = () => {
   const guests = useTableStore((s) => s.guests);
 
   const allItems = rounds.flatMap((r) => r.items);
-  const myItems = allItems.filter((i) => i.orderedByDevice);
-  const othersItems = allItems.filter((i) => !i.orderedByDevice);
+  const sharedItems = allItems.filter((i) => i.category === 'Entradas');
+  const myItems = allItems.filter((i) => i.orderedByDevice && i.category !== 'Entradas');
+  const othersItems = allItems.filter((i) => !i.orderedByDevice && i.category !== 'Entradas');
 
   const grandTotal = allItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const myTotal = myItems.reduce((s, i) => s + i.price * i.quantity, 0);
