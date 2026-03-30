@@ -235,8 +235,8 @@ const SplitTip = () => {
                   <PriceDisplay amount={mineTotal} size="sm" />
                 </div>
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Compartidos ÷ {guestCount}</span>
-                  <PriceDisplay amount={Math.ceil(sharedTotal / guestCount)} size="sm" />
+                  <span>Tu parte de compartidos</span>
+                  <PriceDisplay amount={sharedTotal} size="sm" />
                 </div>
               </div>
             </div>
