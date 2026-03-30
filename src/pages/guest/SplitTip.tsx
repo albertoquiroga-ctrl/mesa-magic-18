@@ -561,7 +561,7 @@ const SplitTip = () => {
           )}
 
           {/* Payment method selection */}
-          <section className="mb-6">
+          <section className="mb-6 mt-2">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               Método de pago
             </h2>
