@@ -23,6 +23,8 @@ import GuestPaymentSuccess from "./pages/guest/PaymentSuccess";
 import GuestEarlyExit from "./pages/guest/EarlyExit";
 import GuestOrderTracking from "./pages/guest/OrderTracking";
 import GuestQuickPay from "./pages/guest/QuickPay";
+import GuestLogin from "./pages/guest/Login";
+import GuestProfile from "./pages/guest/Profile";
 
 const queryClient = new QueryClient();
 
