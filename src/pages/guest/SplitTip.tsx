@@ -457,9 +457,22 @@ const SplitTip = () => {
             </span>
           </div>
         ) : null}
+        {loyaltyDiscount > 0 && (
+          <div className="flex items-center justify-between mb-2 px-1">
+            <span className="text-xs font-medium text-green-700">🎁 Descuento de bienvenida</span>
+            <span className="text-xs font-semibold text-green-700">-${ loyaltyDiscount }</span>
+          </div>
+        )}
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm text-muted-foreground">Total a pagar</span>
-          <PriceDisplay amount={finalTotal} size="lg" className="font-bold text-foreground" />
+          <div className="flex items-center gap-2">
+            {loyaltyDiscount > 0 && (
+              <span className="text-xs text-muted-foreground line-through">
+                ${perPerson + tipAmount}
+              </span>
+            )}
+            <PriceDisplay amount={finalTotal} size="lg" className="font-bold text-foreground" />
+          </div>
         </div>
         <Button
           className="w-full h-12 rounded-button text-base font-bold"
