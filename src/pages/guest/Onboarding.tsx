@@ -38,7 +38,7 @@ const Onboarding = () => {
 
   return (
     <div
-      className="min-h-screen bg-background flex flex-col relative select-none"
+      className="h-[100dvh] bg-background flex flex-col relative select-none overflow-hidden"
       onClick={goNext}
     >
       {/* Top bar */}
