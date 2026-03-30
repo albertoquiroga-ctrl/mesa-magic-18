@@ -116,11 +116,20 @@ const SplitTip = () => {
 
   const canContinue = isUnlocked && (!isLowRating || feedback.trim().length > 0);
 
+  const [selectedPayMethod, setSelectedPayMethod] = useState<'card' | 'terminal' | 'cash'>('card');
+
   const handleContinue = () => {
     if (!canContinue) return;
     setTipAmount(tipAmount);
     setTotal(finalTotal);
-    navigate('/guest/checkout/card');
+    setPaymentMethod(selectedPayMethod);
+    if (selectedPayMethod === 'card') {
+      navigate('/guest/checkout/card');
+    } else if (selectedPayMethod === 'terminal') {
+      navigate('/guest/checkout/terminal');
+    } else {
+      navigate('/guest/checkout/cash');
+    }
   };
 
   const handleSplitModeChange = (mode: 'full' | 'equal' | 'custom') => {
