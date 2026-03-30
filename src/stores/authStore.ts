@@ -72,7 +72,8 @@ const mockUser: AuthUser = {
 
 export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
+  isNewUser: false,
   user: null,
-  login: () => set({ isLoggedIn: true, user: mockUser }),
-  logout: () => set({ isLoggedIn: false, user: null }),
+  login: (isNew = true) => set({ isLoggedIn: true, isNewUser: isNew, user: mockUser }),
+  logout: () => set({ isLoggedIn: false, isNewUser: false, user: null }),
 }));
