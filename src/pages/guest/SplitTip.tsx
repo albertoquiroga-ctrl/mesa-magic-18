@@ -23,7 +23,7 @@ const SplitTip = () => {
   const isNewUser = useAuthStore((s) => s.isNewUser);
   const {
     splitMode, setSplitMode, tipPercent, setTipPercent,
-    setTipAmount, setTotal, itemAssignments, setItemAssignment,
+    setTipAmount, setTotal, setPaymentMethod, itemAssignments, setItemAssignment,
     sharedAmong, setSharedAmong, resetAssignments,
     rating, setRating, feedback, setFeedback,
   } = usePaymentStore();
