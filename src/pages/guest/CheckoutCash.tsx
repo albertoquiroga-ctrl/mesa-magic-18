@@ -3,12 +3,14 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Banknote, MapPin } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
+import { useSessionStore } from '@/stores/sessionStore';
 import { Button } from '@/components/ui/button';
 
 const CheckoutCash = () => {
   const navigate = useNavigate();
   const total = usePaymentStore((s) => s.total);
   const setStatus = usePaymentStore((s) => s.setStatus);
+  const tableNumber = useSessionStore((s) => s.tableNumber);
 
   const handleDone = () => {
     setStatus('success');
@@ -53,7 +55,7 @@ const CheckoutCash = () => {
 
           <div className="flex items-center justify-center gap-2 text-muted-foreground mb-6">
             <MapPin className="w-4 h-4" />
-            <span className="text-xs">Menciona tu mesa al llegar a caja</span>
+            <span className="text-xs">Menciona tu mesa al llegar a caja: <strong className="text-foreground">Mesa {tableNumber}</strong></span>
           </div>
         </div>
 
