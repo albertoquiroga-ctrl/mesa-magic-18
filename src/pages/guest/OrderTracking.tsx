@@ -64,7 +64,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const remainingSeconds = Math.max(estimatedSeconds - elapsed, 0);
   const remainingMin = Math.ceil(remainingSeconds / 60);
 
-  if (!latestRound) {
+  if (rounds.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 px-6">
         <p className="text-sm text-muted-foreground">No hay órdenes activas</p>
