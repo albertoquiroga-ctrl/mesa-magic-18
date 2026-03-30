@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Receipt, Smartphone, Users } from 'lucide-react';
+import { ArrowLeft, Receipt, Smartphone, Users, UtensilsCrossed } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
 import { useTableStore } from '@/stores/tableStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
@@ -11,12 +11,14 @@ const MyConsumption = () => {
   const guests = useTableStore((s) => s.guests);
 
   const allItems = rounds.flatMap((r) => r.items);
-  const myItems = allItems.filter((i) => i.orderedByDevice);
-  const othersItems = allItems.filter((i) => !i.orderedByDevice);
+  const sharedItems = allItems.filter((i) => i.category === 'Entradas');
+  const myItems = allItems.filter((i) => i.orderedByDevice && i.category !== 'Entradas');
+  const othersItems = allItems.filter((i) => !i.orderedByDevice && i.category !== 'Entradas');
 
   const grandTotal = allItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const myTotal = myItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const othersTotal = othersItems.reduce((s, i) => s + i.price * i.quantity, 0);
+  const sharedTotal = sharedItems.reduce((s, i) => s + i.price * i.quantity, 0);
 
   const isEmpty = rounds.length === 0;
 
@@ -35,6 +37,7 @@ const MyConsumption = () => {
 
   const myConsolidated = consolidate(myItems);
   const othersConsolidated = consolidate(othersItems);
+  const sharedConsolidated = consolidate(sharedItems);
 
   const renderItemList = (items: ReturnType<typeof consolidate>, label: string, icon: React.ReactNode, total: number) => {
     if (items.length === 0) return null;
@@ -128,6 +131,14 @@ const MyConsumption = () => {
               'Pedido desde tu dispositivo',
               <Smartphone className="w-3.5 h-3.5 text-primary" />,
               myTotal
+            )}
+
+            {/* Shared / al centro items */}
+            {renderItemList(
+              sharedConsolidated,
+              'Típicamente al centro',
+              <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />,
+              sharedTotal
             )}
 
             {/* Others' items */}

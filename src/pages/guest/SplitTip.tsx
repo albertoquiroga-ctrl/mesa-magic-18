@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift, Smartphone } from 'lucide-react';
+import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift, Smartphone, UtensilsCrossed } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -54,8 +54,9 @@ const SplitTip = () => {
     []
   );
 
-  const myDeviceItems = consolidatedItems.filter((i) => i.orderedByDevice);
-  const othersItems = consolidatedItems.filter((i) => !i.orderedByDevice);
+  const alCentroItems = consolidatedItems.filter((i) => i.category === 'Entradas');
+  const myDeviceItems = consolidatedItems.filter((i) => i.orderedByDevice && i.category !== 'Entradas');
+  const othersItems = consolidatedItems.filter((i) => !i.orderedByDevice && i.category !== 'Entradas');
 
   // Auto-assign on custom mode switch
   useEffect(() => {
@@ -332,6 +333,21 @@ const SplitTip = () => {
                 </div>
               )}
 
+              {/* Al centro items */}
+              {alCentroItems.length > 0 && (
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />
+                    <span className="text-[11px] font-semibold text-amber-600 uppercase tracking-wide">
+                      Típicamente al centro
+                    </span>
+                  </div>
+                  <div className="bg-card border border-amber-200 rounded-card overflow-hidden">
+                    {alCentroItems.map((item, idx) => renderItemRow(item, idx, alCentroItems.length))}
+                  </div>
+                </div>
+              )}
+
               {/* Others' items */}
               {othersItems.length > 0 && (
                 <div className="mb-3">
@@ -386,6 +402,26 @@ const SplitTip = () => {
                       <div className="bg-card border border-primary/20 rounded-card overflow-hidden">
                         {myDeviceItems.map((item, idx) => (
                           <div key={idx} className={`flex items-center justify-between px-4 py-2.5 ${idx < myDeviceItems.length - 1 ? 'border-b border-border' : ''}`}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">{item.quantity}×</span>
+                              <span className="text-sm text-foreground truncate">{item.name}</span>
+                            </div>
+                            <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {/* Al centro items */}
+                  {alCentroItems.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <UtensilsCrossed className="w-3 h-3 text-amber-600" />
+                        <span className="text-[10px] font-semibold text-amber-600 uppercase tracking-wide">Típicamente al centro</span>
+                      </div>
+                      <div className="bg-card border border-amber-200 rounded-card overflow-hidden">
+                        {alCentroItems.map((item, idx) => (
+                          <div key={idx} className={`flex items-center justify-between px-4 py-2.5 ${idx < alCentroItems.length - 1 ? 'border-b border-border' : ''}`}>
                             <div className="flex items-center gap-2 min-w-0">
                               <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">{item.quantity}×</span>
                               <span className="text-sm text-foreground truncate">{item.name}</span>
