@@ -58,9 +58,10 @@ const SplitTip = () => {
       const itemTotal = item.price * item.quantity;
       if (assignment === 'mine') {
         mineTotal += itemTotal;
-      } else {
+      } else if (assignment === 'shared') {
         sharedTotal += itemTotal;
       }
+      // 'none' → no se suma
     });
     perPerson = mineTotal + Math.ceil(sharedTotal / guestCount);
   } else if (splitMode === 'full') {
