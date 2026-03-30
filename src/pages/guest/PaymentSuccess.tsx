@@ -185,7 +185,7 @@ const PaymentSuccess = () => {
                 className="flex items-center gap-1.5 w-full pt-2 text-[11px] font-medium text-destructive"
               >
                 <AlertTriangle className="w-3 h-3" />
-                <span>Ver platillos sin pagar</span>
+                <span>Ver platillos pendientes</span>
                 {showUnpaid ? (
                   <ChevronUp className="w-3 h-3 ml-auto" />
                 ) : (
@@ -194,25 +194,42 @@ const PaymentSuccess = () => {
               </button>
               {showUnpaid && (
                 <div className="mt-1.5 rounded-lg border border-destructive/20 bg-destructive/5 overflow-hidden">
-                  <div className="px-3 py-2 border-b border-destructive/10">
-                    <p className="text-[11px] text-muted-foreground">
-                      Estos platillos no fueron incluidos en el pago de ningún comensal:
-                    </p>
-                  </div>
-                  {unpaidItems.map((item, idx) => (
+                  {unpaidOrPartial.map((item, idx) => (
                     <div
                       key={idx}
-                      className={`flex items-center justify-between px-3 py-2 ${
-                        idx < unpaidItems.length - 1 ? 'border-b border-destructive/10' : ''
+                      className={`px-3 py-2.5 ${
+                        idx < unpaidOrPartial.length - 1 ? 'border-b border-destructive/10' : ''
                       }`}
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[11px] font-mono text-muted-foreground w-4 shrink-0">
-                          {item.quantity}×
-                        </span>
-                        <span className="text-xs text-foreground truncate">{item.name}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-[11px] font-mono text-muted-foreground w-4 shrink-0">
+                            {item.quantity}×
+                          </span>
+                          <span className="text-xs text-foreground truncate">{item.name}</span>
+                        </div>
+                        <PriceDisplay amount={item.totalCost} size="sm" className="text-muted-foreground" />
                       </div>
-                      <PriceDisplay amount={item.price * item.quantity} size="sm" className="text-destructive font-medium" />
+                      {item.status === 'unpaid' ? (
+                        <div className="flex items-center gap-1.5 mt-1.5 ml-6">
+                          <div className="flex-1 h-1.5 bg-muted rounded-full" />
+                          <span className="text-[10px] font-medium text-destructive">
+                            Nadie lo pagó — $0 / ${item.totalCost}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 mt-1.5 ml-6">
+                          <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-yellow-500 rounded-full"
+                              style={{ width: `${(item.paidAmount / item.totalCost) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-[10px] font-medium text-yellow-600">
+                            Parcial — ${item.paidAmount} / ${item.totalCost}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
