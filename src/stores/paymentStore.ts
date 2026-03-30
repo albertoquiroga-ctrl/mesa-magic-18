@@ -40,6 +40,8 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   attempt: 0,
   itemAssignments: {},
   sharedAmong: {},
+  rating: 0,
+  feedback: '',
   setSplitMode: (splitMode) => set({ splitMode }),
   setTipPercent: (tipPercent) => set({ tipPercent }),
   setTipAmount: (tipAmount) => set({ tipAmount }),
