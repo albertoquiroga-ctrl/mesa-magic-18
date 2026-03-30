@@ -1,9 +1,10 @@
 import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search } from 'lucide-react';
-import { mockMenuItems, mockCategories, mockRestaurant } from '@/data/mockData';
+import { Search, Lock, Sparkles } from 'lucide-react';
+import { mockMenuItems, mockCategories, mockRestaurant, mockRecommendations } from '@/data/mockData';
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { CartBar } from '@/components/guest/CartBar';
+import { useAuthStore } from '@/stores/authStore';
 
 const categoryEmojis: Record<string, string> = {
   Bebidas: '🥤',
