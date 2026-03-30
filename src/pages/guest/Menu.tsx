@@ -34,7 +34,7 @@ const Menu = () => {
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   /** Scroll to a category section and update the active pill */
   const scrollToCategory = useCallback((cat: string) => {
