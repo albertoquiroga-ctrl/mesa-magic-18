@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Banknote, MapPin } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
+import { useSessionStore } from '@/stores/sessionStore';
 import { Button } from '@/components/ui/button';
 
 const CheckoutCash = () => {
