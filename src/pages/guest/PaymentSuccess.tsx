@@ -12,6 +12,10 @@ const PaymentSuccess = () => {
   const navigate = useNavigate();
   const total = usePaymentStore((s) => s.total);
   const tipAmount = usePaymentStore((s) => s.tipAmount);
+  const setTotal = usePaymentStore((s) => s.setTotal);
+  const setTipAmount = usePaymentStore((s) => s.setTipAmount);
+  const setRating = usePaymentStore((s) => s.setRating);
+  const setFeedback = usePaymentStore((s) => s.setFeedback);
   const rounds = useOrderStore((s) => s.rounds);
   const [showAudit, setShowAudit] = useState(false);
   const [showUnpaid, setShowUnpaid] = useState(false);
