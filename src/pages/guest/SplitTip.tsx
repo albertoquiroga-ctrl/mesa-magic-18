@@ -177,26 +177,23 @@ const SplitTip = () => {
                     <div className="flex items-center gap-1.5 shrink-0">
                       <PriceDisplay amount={item.price * item.quantity} size="sm" />
                       <div className="flex rounded-full border border-border overflow-hidden ml-1">
-                        <button
-                          onClick={() => setItemAssignment(item.key, 'mine')}
-                          className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                            assignment === 'mine'
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-card text-muted-foreground'
-                          }`}
-                        >
-                          Mío
-                        </button>
-                        <button
-                          onClick={() => setItemAssignment(item.key, 'shared')}
-                          className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                            assignment === 'shared'
-                              ? 'bg-primary text-primary-foreground'
-                              : 'bg-card text-muted-foreground'
-                          }`}
-                        >
-                          Compartido
-                        </button>
+                        {([
+                          { value: 'mine', label: 'Mío' },
+                          { value: 'shared', label: 'Compartido' },
+                          { value: 'none', label: 'No pago' },
+                        ] as const).map((opt) => (
+                          <button
+                            key={opt.value}
+                            onClick={() => setItemAssignment(item.key, opt.value)}
+                            className={`px-2 py-1 text-[11px] font-medium transition-colors ${
+                              assignment === opt.value
+                                ? 'bg-primary text-primary-foreground'
+                                : 'bg-card text-muted-foreground'
+                            }`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
                   </div>
