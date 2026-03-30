@@ -12,42 +12,55 @@ interface ItemLap {
   quantity: number;
   prepTime: number; // minutes
   image?: string;
+  roundNum: number;
+  createdAt: string; // ISO timestamp of the round this item belongs to
 }
 
 const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
-  const latestRound = rounds[rounds.length - 1];
+  const firstRound = rounds[0];
 
   const [elapsed, setElapsed] = useState(0);
 
+  // Timer counts from the first round's creation
   useEffect(() => {
-    if (!latestRound) return;
-    const start = new Date(latestRound.createdAt).getTime();
+    if (!firstRound) return;
+    const start = new Date(firstRound.createdAt).getTime();
     const tick = () => setElapsed(Math.floor((Date.now() - start) / 1000));
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [latestRound]);
+  }, [firstRound]);
 
-  // Build item laps sorted by prepTime
+  // Build item laps from ALL rounds, sorted by prepTime
   const laps: ItemLap[] = useMemo(() => {
-    if (!latestRound) return [];
-    return latestRound.items
-      .map((item) => {
-        const menuItem = mockMenuItems.find((m) => m.name === item.name);
-        return {
-          name: item.name,
-          quantity: item.quantity,
-          prepTime: menuItem?.prepTime ?? 10,
-          image: menuItem?.image,
-        };
-      })
+    if (rounds.length === 0) return [];
+    return rounds
+      .flatMap((round) =>
+        round.items.map((item) => {
+          const menuItem = mockMenuItems.find((m) => m.name === item.name);
+          return {
+            name: item.name,
+            quantity: item.quantity,
+            prepTime: menuItem?.prepTime ?? 10,
+            image: menuItem?.image,
+            roundNum: round.round,
+            createdAt: round.createdAt,
+          };
+        })
+      )
       .sort((a, b) => a.prepTime - b.prepTime);
-  }, [latestRound]);
+  }, [rounds]);
 
-  const maxPrepTime = laps.length > 0 ? Math.max(...laps.map((l) => l.prepTime)) : 15;
-  const estimatedSeconds = maxPrepTime * 60;
+  // Max finish time = offset from first round + prepTime for each item
+  const firstStart = firstRound ? new Date(firstRound.createdAt).getTime() : Date.now();
+  const estimatedSeconds = laps.length > 0
+    ? Math.max(...laps.map((l) => {
+        const offsetSec = Math.floor((new Date(l.createdAt).getTime() - firstStart) / 1000);
+        return offsetSec + l.prepTime * 60;
+      }))
+    : 15 * 60;
 
   const minutes = Math.floor(elapsed / 60);
   const seconds = elapsed % 60;
@@ -57,7 +70,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const remainingSeconds = Math.max(estimatedSeconds - elapsed, 0);
   const remainingMin = Math.ceil(remainingSeconds / 60);
 
-  if (!latestRound) {
+  if (rounds.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 px-6">
         <p className="text-sm text-muted-foreground">No hay órdenes activas</p>
@@ -128,10 +141,15 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
           </h2>
           <div className="space-y-0">
             {laps.map((lap, idx) => {
+              // Each item's elapsed is relative to its own round's createdAt
+              const itemElapsed = Math.floor((Date.now() - new Date(lap.createdAt).getTime()) / 1000);
               const lapSeconds = lap.prepTime * 60;
-              const isDone = elapsed >= lapSeconds;
-              const isNext = !isDone && (idx === 0 || elapsed >= laps[idx - 1].prepTime * 60);
-              const lapProgress = isDone ? 100 : isNext ? Math.min((elapsed / lapSeconds) * 100, 100) : 0;
+              const isDone = itemElapsed >= lapSeconds;
+              const isNext = !isDone && (idx === 0 || laps.slice(0, idx).every((prev) => {
+                const prevElapsed = Math.floor((Date.now() - new Date(prev.createdAt).getTime()) / 1000);
+                return prevElapsed >= prev.prepTime * 60;
+              }) || itemElapsed > 0);
+              const lapProgress = isDone ? 100 : Math.min((itemElapsed / lapSeconds) * 100, 100);
 
               return (
                 <motion.div
