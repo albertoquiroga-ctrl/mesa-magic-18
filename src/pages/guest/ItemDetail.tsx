@@ -44,10 +44,14 @@ const ItemDetail = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Hero photo area */}
-      <div className="w-full aspect-[4/3] bg-muted relative flex items-center justify-center">
-        <span className="text-7xl">
-          {item.category === 'Bebidas' ? '🥤' : item.category === 'Entradas' ? '🥗' : '🍽️'}
-        </span>
+      <div className="w-full aspect-[4/3] bg-muted relative flex items-center justify-center overflow-hidden">
+        {item.image ? (
+          <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-7xl">
+            {item.category === 'Bebidas' ? '🥤' : item.category === 'Entradas' ? '🥗' : '🍽️'}
+          </span>
+        )}
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background to-transparent" />
 
         {/* Back button */}

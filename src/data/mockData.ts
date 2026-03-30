@@ -61,6 +61,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 295,
     category: 'Platos Fuertes',
     description: 'Corte de res premium a la parrilla con papas rústicas',
+    image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&h=600&fit=crop',
     tags: ['premium'],
   },
   {
@@ -69,6 +70,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 245,
     category: 'Platos Fuertes',
     description: 'Fettuccine al huevo con crema de trufa negra y parmesano',
+    image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=600&fit=crop',
     tags: ['vegetariano'],
   },
   {
@@ -77,6 +79,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 130,
     category: 'Entradas',
     description: 'Mezcla de lechugas, tomate cherry, aguacate y vinagreta cítrica',
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=600&fit=crop',
     tags: ['vegetariano', 'ligero'],
   },
 ];
