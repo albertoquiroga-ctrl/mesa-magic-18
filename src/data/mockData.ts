@@ -39,6 +39,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Tres tacos de arrachera en tortilla de maíz con guarniciones',
     image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&h=600&fit=crop',
     tags: ['popular'],
+    prepTime: 15,
   },
   {
     id: 'agua-jamaica',
