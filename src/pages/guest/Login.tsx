@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Gift, Star, Mail } from 'lucide-react';
+import { ArrowLeft, Gift, Star, Phone } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,11 +8,19 @@ import { Input } from '@/components/ui/input';
 const Login = () => {
   const navigate = useNavigate();
   const login = useAuthStore((s) => s.login);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [name, setName] = useState('');
+  const [step, setStep] = useState<'phone' | 'otp'>('phone');
+  const [otp, setOtp] = useState('');
 
-  const handleLogin = () => {
-    login(email, password);
+  const handleSendCode = () => {
+    if (phone.length >= 10) {
+      setStep('otp');
+    }
+  };
+
+  const handleVerify = () => {
+    login();
     navigate('/guest/profile');
   };
 
@@ -20,13 +28,15 @@ const Login = () => {
     <div className="flex flex-col min-h-screen bg-background">
       <header className="flex items-center gap-3 px-4 h-14">
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => step === 'otp' ? setStep('phone') : navigate(-1)}
           className="min-w-touch min-h-touch flex items-center justify-center -ml-2"
           aria-label="Volver"
         >
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
-        <h1 className="text-base font-semibold text-foreground">Iniciar sesión</h1>
+        <h1 className="text-base font-semibold text-foreground">
+          {step === 'phone' ? 'Crear cuenta' : 'Verificar código'}
+        </h1>
       </header>
 
       <div className="flex-1 px-6 pt-4 pb-8">
@@ -52,44 +62,101 @@ const Login = () => {
           </ul>
         </div>
 
-        {/* Form */}
-        <div className="space-y-4 mb-6">
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Email</label>
-            <Input
-              type="email"
-              placeholder="tu@email.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Contraseña</label>
-            <Input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-        </div>
+        {step === 'phone' ? (
+          <>
+            <div className="space-y-4 mb-6">
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Tu nombre</label>
+                <Input
+                  type="text"
+                  placeholder="Ej: María García"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Número de teléfono</label>
+                <div className="flex gap-2">
+                  <div className="flex items-center px-3 h-10 rounded-md border border-input bg-muted text-sm text-muted-foreground shrink-0">
+                    🇲🇽 +52
+                  </div>
+                  <Input
+                    type="tel"
+                    placeholder="55 1234 5678"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value.replace(/[^0-9\s]/g, ''))}
+                    className="flex-1"
+                  />
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1.5">
+                  Te enviaremos un código por SMS para verificar tu número
+                </p>
+              </div>
+            </div>
 
-        <Button className="w-full h-12 rounded-button text-base font-bold mb-3" onClick={handleLogin}>
-          Iniciar sesión
-        </Button>
+            <Button
+              className="w-full h-12 rounded-button text-base font-bold mb-3 gap-2"
+              onClick={handleSendCode}
+              disabled={phone.length < 10 || name.trim().length === 0}
+            >
+              <Phone className="w-4 h-4" />
+              Enviar código
+            </Button>
+          </>
+        ) : (
+          <>
+            <div className="text-center mb-6">
+              <Phone className="w-10 h-10 text-primary mx-auto mb-3" />
+              <p className="text-sm text-foreground font-medium mb-1">
+                Ingresa el código de 4 dígitos
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Enviado a +52 {phone}
+              </p>
+            </div>
 
-        <Button
-          variant="outline"
-          className="w-full h-12 rounded-button text-sm mb-6 gap-2"
-          onClick={handleLogin}
-        >
-          <Mail className="w-4 h-4" />
-          Continuar con Google
-        </Button>
+            <div className="flex justify-center gap-3 mb-6">
+              {[0, 1, 2, 3].map((i) => (
+                <input
+                  key={i}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  value={otp[i] || ''}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9]/g, '');
+                    const newOtp = otp.split('');
+                    newOtp[i] = val;
+                    setOtp(newOtp.join(''));
+                    if (val && e.target.nextElementSibling) {
+                      (e.target.nextElementSibling as HTMLInputElement).focus();
+                    }
+                  }}
+                  className="w-14 h-14 text-center text-2xl font-mono font-bold rounded-card border border-border bg-card focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+              ))}
+            </div>
+
+            <Button
+              className="w-full h-12 rounded-button text-base font-bold mb-3"
+              onClick={handleVerify}
+              disabled={otp.length < 4}
+            >
+              Verificar y crear cuenta
+            </Button>
+
+            <button
+              onClick={() => setStep('phone')}
+              className="w-full text-center text-xs text-muted-foreground py-2"
+            >
+              ¿No recibiste el código? Reenviar
+            </button>
+          </>
+        )}
 
         <button
           onClick={() => navigate('/guest/menu')}
-          className="w-full text-center text-sm text-muted-foreground py-2"
+          className="w-full text-center text-sm text-muted-foreground py-2 mt-4"
         >
           Continuar sin cuenta →
         </button>
