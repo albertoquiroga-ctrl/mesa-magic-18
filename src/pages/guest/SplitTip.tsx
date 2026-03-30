@@ -434,9 +434,9 @@ const SplitTip = () => {
 
       {/* Sticky footer */}
       <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
-        {!useAuthStore.getState().isLoggedIn && isUnlocked && (
+        {!useAuthStore.getState().isLoggedIn && isUnlocked ? (
           <button
-            onClick={() => navigate('/guest/login')}
+            onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/split-tip' } })}
             className="flex items-center gap-2 w-full p-2.5 mb-3 rounded-lg bg-primary/5 border border-primary/20 text-left"
           >
             <Gift className="w-4 h-4 text-primary shrink-0" />
@@ -444,7 +444,14 @@ const SplitTip = () => {
               <strong className="text-foreground">Gana puntos</strong> por esta compra — inicia sesión
             </span>
           </button>
-        )}
+        ) : useAuthStore.getState().isLoggedIn && isUnlocked ? (
+          <div className="flex items-center gap-2 w-full p-2.5 mb-3 rounded-lg bg-green-50 border border-green-200 text-left">
+            <Gift className="w-4 h-4 text-green-600 shrink-0" />
+            <span className="text-[11px] text-muted-foreground">
+              Ganarás <strong className="text-green-700">+{Math.round(finalTotal * 0.1)} puntos</strong> con esta compra ⭐
+            </span>
+          </div>
+        ) : null}
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm text-muted-foreground">Total a pagar</span>
           <PriceDisplay amount={finalTotal} size="lg" className="font-bold text-foreground" />

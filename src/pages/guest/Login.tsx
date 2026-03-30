@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Gift, Star, Phone } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = (location.state as { returnTo?: string })?.returnTo || '/guest/profile';
   const login = useAuthStore((s) => s.login);
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
@@ -21,7 +23,7 @@ const Login = () => {
 
   const handleVerify = () => {
     login();
-    navigate('/guest/profile');
+    navigate(returnTo, { replace: true });
   };
 
   return (
