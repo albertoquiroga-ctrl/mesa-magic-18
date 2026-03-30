@@ -80,7 +80,7 @@ const QuickPaySuccess = () => {
           transition={{ delay: 0.65 }}
         >
           <button
-            onClick={() => navigate('/guest/login')}
+            onClick={() => navigate('/guest/login', { state: { nudgeOrigin: 'farewell' } })}
             className="w-full max-w-[360px] p-4 rounded-card border border-primary/20 bg-primary/5 text-left mb-6"
           >
             <div className="flex items-center gap-2 mb-1">

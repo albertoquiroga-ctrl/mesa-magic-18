@@ -167,7 +167,7 @@ const LoyaltyFarewell = () => {
             </p>
             <Button
               className="w-full h-11 rounded-button text-sm font-semibold"
-              onClick={() => navigate('/guest/login')}
+              onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/farewell', nudgeOrigin: 'farewell' } })}
             >
               Crear cuenta gratis
             </Button>
