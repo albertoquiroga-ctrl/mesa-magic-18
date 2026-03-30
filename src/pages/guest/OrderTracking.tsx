@@ -135,10 +135,15 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
           </h2>
           <div className="space-y-0">
             {laps.map((lap, idx) => {
+              // Each item's elapsed is relative to its own round's createdAt
+              const itemElapsed = Math.floor((Date.now() - new Date(lap.createdAt).getTime()) / 1000);
               const lapSeconds = lap.prepTime * 60;
-              const isDone = elapsed >= lapSeconds;
-              const isNext = !isDone && (idx === 0 || elapsed >= laps[idx - 1].prepTime * 60);
-              const lapProgress = isDone ? 100 : isNext ? Math.min((elapsed / lapSeconds) * 100, 100) : 0;
+              const isDone = itemElapsed >= lapSeconds;
+              const isNext = !isDone && (idx === 0 || laps.slice(0, idx).every((prev) => {
+                const prevElapsed = Math.floor((Date.now() - new Date(prev.createdAt).getTime()) / 1000);
+                return prevElapsed >= prev.prepTime * 60;
+              }) || itemElapsed > 0);
+              const lapProgress = isDone ? 100 : Math.min((itemElapsed / lapSeconds) * 100, 100);
 
               return (
                 <motion.div
