@@ -77,7 +77,7 @@ export const GuestFAB = () => {
       <motion.button
         whileTap={{ scale: 0.92 }}
         onClick={() => setOpen(!open)}
-        className="fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center text-xl"
+        className={`fixed right-4 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center text-xl ${hasPinnedCTA ? 'bottom-36' : 'bottom-24'}`}
         aria-label="Llamar mesero"
       >
         {open ? <X size={24} /> : '🙋'}
