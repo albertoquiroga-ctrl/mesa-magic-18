@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Plus, Minus, ArrowLeft } from 'lucide-react';
+import { Plus, Minus, ArrowLeft, Clock } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { mockMenuItems } from '@/data/mockData';
 
