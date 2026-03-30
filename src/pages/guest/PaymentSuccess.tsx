@@ -44,24 +44,48 @@ const PaymentSuccess = () => {
   const remaining = Math.max(tableSubtotal - paidSubtotal, 0);
   const progressPercent = tableSubtotal > 0 ? Math.min((paidSubtotal / tableSubtotal) * 100, 100) : 0;
 
-  // Simulate unpaid items for demo — items nobody claimed
+  // Simulate item payment status for demo
   const allItems = rounds.flatMap((r) => r.items);
-  const unpaidItems = remaining > 0
-    ? (() => {
-        // Pick items that add up roughly to the remaining amount for the demo
-        const items: { name: string; quantity: number; price: number }[] = [];
-        let acc = 0;
-        for (const item of allItems) {
-          if (acc >= remaining) break;
-          const itemTotal = item.price * item.quantity;
-          if (acc + itemTotal <= remaining + 50) {
-            items.push(item);
-            acc += itemTotal;
-          }
+  const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string }[]>(
+    (acc, item) => {
+      const key = `${item.name}::${item.price}`;
+      const existing = acc.find((a) => a.key === key);
+      if (existing) {
+        existing.quantity += item.quantity;
+      } else {
+        acc.push({ ...item, key });
+      }
+      return acc;
+    },
+    []
+  );
+
+  // For demo: classify items as fully unpaid, partially paid, or fully paid
+  type ItemPaymentStatus = {
+    name: string;
+    quantity: number;
+    price: number;
+    totalCost: number;
+    paidAmount: number;
+    status: 'unpaid' | 'partial' | 'paid';
+  };
+
+  const itemPaymentStatuses: ItemPaymentStatus[] = remaining > 0
+    ? consolidatedItems.map((item, idx) => {
+        const totalCost = item.price * item.quantity;
+        // Simulate: first item nobody paid, second item partially paid, rest paid
+        if (idx === consolidatedItems.length - 1) {
+          return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount: 0, status: 'unpaid' as const };
         }
-        return items.length > 0 ? items : [{ name: 'Platillos sin asignar', quantity: 1, price: remaining }];
-      })()
+        if (idx === consolidatedItems.length - 2 && consolidatedItems.length > 2) {
+          const paid = Math.round(totalCost * 0.33);
+          return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount: paid, status: 'partial' as const };
+        }
+        return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount: totalCost, status: 'paid' as const };
+      })
     : [];
+
+  const unpaidOrPartial = itemPaymentStatuses.filter((i) => i.status !== 'paid');
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-background px-6 py-12">
@@ -161,7 +185,7 @@ const PaymentSuccess = () => {
                 className="flex items-center gap-1.5 w-full pt-2 text-[11px] font-medium text-destructive"
               >
                 <AlertTriangle className="w-3 h-3" />
-                <span>Ver platillos sin pagar</span>
+                <span>Ver platillos pendientes</span>
                 {showUnpaid ? (
                   <ChevronUp className="w-3 h-3 ml-auto" />
                 ) : (
@@ -170,25 +194,42 @@ const PaymentSuccess = () => {
               </button>
               {showUnpaid && (
                 <div className="mt-1.5 rounded-lg border border-destructive/20 bg-destructive/5 overflow-hidden">
-                  <div className="px-3 py-2 border-b border-destructive/10">
-                    <p className="text-[11px] text-muted-foreground">
-                      Estos platillos no fueron incluidos en el pago de ningún comensal:
-                    </p>
-                  </div>
-                  {unpaidItems.map((item, idx) => (
+                  {unpaidOrPartial.map((item, idx) => (
                     <div
                       key={idx}
-                      className={`flex items-center justify-between px-3 py-2 ${
-                        idx < unpaidItems.length - 1 ? 'border-b border-destructive/10' : ''
+                      className={`px-3 py-2.5 ${
+                        idx < unpaidOrPartial.length - 1 ? 'border-b border-destructive/10' : ''
                       }`}
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-[11px] font-mono text-muted-foreground w-4 shrink-0">
-                          {item.quantity}×
-                        </span>
-                        <span className="text-xs text-foreground truncate">{item.name}</span>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="text-[11px] font-mono text-muted-foreground w-4 shrink-0">
+                            {item.quantity}×
+                          </span>
+                          <span className="text-xs text-foreground truncate">{item.name}</span>
+                        </div>
+                        <PriceDisplay amount={item.totalCost} size="sm" className="text-muted-foreground" />
                       </div>
-                      <PriceDisplay amount={item.price * item.quantity} size="sm" className="text-destructive font-medium" />
+                      {item.status === 'unpaid' ? (
+                        <div className="flex items-center gap-1.5 mt-1.5 ml-6">
+                          <div className="flex-1 h-1.5 bg-muted rounded-full" />
+                          <span className="text-[10px] font-medium text-destructive">
+                            Nadie lo pagó — $0 / ${item.totalCost}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1.5 mt-1.5 ml-6">
+                          <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-yellow-500 rounded-full"
+                              style={{ width: `${(item.paidAmount / item.totalCost) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-[10px] font-medium text-yellow-600">
+                            Parcial — ${item.paidAmount} / ${item.totalCost}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
