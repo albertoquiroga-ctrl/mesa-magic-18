@@ -208,7 +208,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                                     {lap.name}
                                   </span>
                                   <span className={`text-[11px] font-mono shrink-0 ml-2 ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
-                                    {isDone ? '✓ Listo' : `~${lap.prepTime} min`}
+                                    {isDone ? '✓ Listo' : remStr}
                                   </span>
                                 </div>
                                 {(isActive || isDone) && (
