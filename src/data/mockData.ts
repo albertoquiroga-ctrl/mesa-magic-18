@@ -19,6 +19,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Tequila, limón fresco, triple sec y sal de gusano',
     image: 'https://images.unsplash.com/photo-1556855810-ac404aa91e85?w=600&h=600&fit=crop',
     tags: ['popular'],
+    prepTime: 3,
   },
   {
     id: 'guacamole',
