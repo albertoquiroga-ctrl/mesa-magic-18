@@ -45,10 +45,8 @@ const PaymentSuccess = () => {
   const totalPaid = guestPayments.reduce((s, g) => s + g.paid, 0);
   const totalTips = guestPayments.reduce((s, g) => s + g.tipPaid, 0);
   const paidSubtotal = totalPaid - totalTips;
-  const remaining = Math.max(tableSubtotal - paidSubtotal, 0);
-  const progressPercent = tableSubtotal > 0 ? Math.min((paidSubtotal / tableSubtotal) * 100, 100) : 0;
 
-  // Simulate item payment status for demo
+  // Consolidate items
   const allItems = rounds.flatMap((r) => r.items);
   const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string }[]>(
     (acc, item) => {
@@ -64,32 +62,47 @@ const PaymentSuccess = () => {
     []
   );
 
-  // For demo: classify items as fully unpaid, partially paid, or fully paid
+  // Classify items — distribute the remaining unpaid amount across items
   type ItemPaymentStatus = {
     name: string;
     quantity: number;
     price: number;
     totalCost: number;
     paidAmount: number;
+    owedAmount: number;
     status: 'unpaid' | 'partial' | 'paid';
   };
 
-  const itemPaymentStatuses: ItemPaymentStatus[] = remaining > 0
-    ? consolidatedItems.map((item, idx) => {
-        const totalCost = item.price * item.quantity;
-        // Simulate: first item nobody paid, second item partially paid, rest paid
-        if (idx === consolidatedItems.length - 1) {
-          return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount: 0, status: 'unpaid' as const };
-        }
-        if (idx === consolidatedItems.length - 2 && consolidatedItems.length > 2) {
-          const paid = Math.round(totalCost * 0.33);
-          return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount: paid, status: 'partial' as const };
-        }
-        return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount: totalCost, status: 'paid' as const };
-      })
-    : [];
+  const rawRemaining = Math.max(tableSubtotal - paidSubtotal, 0);
+
+  const itemPaymentStatuses: ItemPaymentStatus[] = (() => {
+    if (rawRemaining <= 0) return [];
+
+    // Distribute remaining across items for demo consistency
+    let left = rawRemaining;
+    return consolidatedItems.map((item, idx) => {
+      const totalCost = item.price * item.quantity;
+      let owed: number;
+      // Last item: fully unpaid
+      if (idx === consolidatedItems.length - 1) {
+        owed = Math.min(totalCost, left);
+      // Second to last: partially paid
+      } else if (idx === consolidatedItems.length - 2 && consolidatedItems.length > 2) {
+        owed = Math.min(Math.round(totalCost * 0.67), left);
+      } else {
+        owed = 0;
+      }
+      left -= owed;
+      const paidAmount = totalCost - owed;
+      const status = owed === 0 ? 'paid' as const : owed === totalCost ? 'unpaid' as const : 'partial' as const;
+      return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount, owedAmount: owed, status };
+    });
+  })();
 
   const unpaidOrPartial = itemPaymentStatuses.filter((i) => i.status !== 'paid');
+  // Remaining is the exact sum of what's owed per item
+  const remaining = unpaidOrPartial.reduce((s, i) => s + i.owedAmount, 0);
+  const progressPercent = tableSubtotal > 0 ? Math.min(((tableSubtotal - remaining) / tableSubtotal) * 100, 100) : 0;
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-background px-6 py-12">
@@ -236,8 +249,7 @@ const PaymentSuccess = () => {
                       )}
                       <button
                         onClick={() => {
-                          const owed = item.totalCost - item.paidAmount;
-                          setTotal(owed);
+                          setTotal(item.owedAmount);
                           setTipAmount(0);
                           setRating(0);
                           setFeedback('');
@@ -245,7 +257,7 @@ const PaymentSuccess = () => {
                         }}
                         className="mt-2 ml-6 px-3 py-1.5 text-[11px] font-medium rounded-button border border-primary text-primary hover:bg-primary/5 transition-colors"
                       >
-                        Pagar ${item.totalCost - item.paidAmount} de este platillo
+                        Pagar ${item.owedAmount} de este platillo
                       </button>
                     </div>
                   ))}
