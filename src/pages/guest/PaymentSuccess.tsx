@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User, AlertTriangle } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
@@ -14,6 +14,7 @@ const PaymentSuccess = () => {
   const tipAmount = usePaymentStore((s) => s.tipAmount);
   const rounds = useOrderStore((s) => s.rounds);
   const [showAudit, setShowAudit] = useState(false);
+  const [showUnpaid, setShowUnpaid] = useState(false);
 
   // Table total from all rounds
   const tableSubtotal = rounds.reduce(
@@ -42,6 +43,25 @@ const PaymentSuccess = () => {
   const paidSubtotal = totalPaid - totalTips;
   const remaining = Math.max(tableSubtotal - paidSubtotal, 0);
   const progressPercent = tableSubtotal > 0 ? Math.min((paidSubtotal / tableSubtotal) * 100, 100) : 0;
+
+  // Simulate unpaid items for demo — items nobody claimed
+  const allItems = rounds.flatMap((r) => r.items);
+  const unpaidItems = remaining > 0
+    ? (() => {
+        // Pick items that add up roughly to the remaining amount for the demo
+        const items: { name: string; quantity: number; price: number }[] = [];
+        let acc = 0;
+        for (const item of allItems) {
+          if (acc >= remaining) break;
+          const itemTotal = item.price * item.quantity;
+          if (acc + itemTotal <= remaining + 50) {
+            items.push(item);
+            acc += itemTotal;
+          }
+        }
+        return items.length > 0 ? items : [{ name: 'Platillos sin asignar', quantity: 1, price: remaining }];
+      })()
+    : [];
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-background px-6 py-12">
@@ -129,10 +149,51 @@ const PaymentSuccess = () => {
             <PriceDisplay amount={paidSubtotal} size="sm" className="text-foreground" />
           </div>
           {remaining > 0 && (
-            <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border">
-              <span className="font-medium text-destructive">Falta por pagar</span>
-              <PriceDisplay amount={remaining} size="sm" className="font-semibold text-destructive" />
-            </div>
+            <>
+              <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border">
+                <span className="font-medium text-destructive">Falta por pagar</span>
+                <PriceDisplay amount={remaining} size="sm" className="font-semibold text-destructive" />
+              </div>
+
+              {/* Unpaid items breakdown */}
+              <button
+                onClick={() => setShowUnpaid((v) => !v)}
+                className="flex items-center gap-1.5 w-full pt-2 text-[11px] font-medium text-destructive"
+              >
+                <AlertTriangle className="w-3 h-3" />
+                <span>Ver platillos sin pagar</span>
+                {showUnpaid ? (
+                  <ChevronUp className="w-3 h-3 ml-auto" />
+                ) : (
+                  <ChevronDown className="w-3 h-3 ml-auto" />
+                )}
+              </button>
+              {showUnpaid && (
+                <div className="mt-1.5 rounded-lg border border-destructive/20 bg-destructive/5 overflow-hidden">
+                  <div className="px-3 py-2 border-b border-destructive/10">
+                    <p className="text-[11px] text-muted-foreground">
+                      Estos platillos no fueron incluidos en el pago de ningún comensal:
+                    </p>
+                  </div>
+                  {unpaidItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex items-center justify-between px-3 py-2 ${
+                        idx < unpaidItems.length - 1 ? 'border-b border-destructive/10' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[11px] font-mono text-muted-foreground w-4 shrink-0">
+                          {item.quantity}×
+                        </span>
+                        <span className="text-xs text-foreground truncate">{item.name}</span>
+                      </div>
+                      <PriceDisplay amount={item.price * item.quantity} size="sm" className="text-destructive font-medium" />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
           {remaining === 0 && (
             <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border">
