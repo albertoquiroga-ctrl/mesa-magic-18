@@ -6,6 +6,7 @@ import { useOrderStore } from '@/stores/orderStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import OrderTracking from './OrderTracking';
 
 const Cart = () => {
   const navigate = useNavigate();
