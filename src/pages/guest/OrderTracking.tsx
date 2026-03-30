@@ -14,7 +14,7 @@ interface ItemLap {
   image?: string;
 }
 
-const OrderTracking = () => {
+const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
   const latestRound = rounds[rounds.length - 1];
