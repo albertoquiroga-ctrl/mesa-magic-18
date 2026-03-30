@@ -120,7 +120,7 @@ const Onboarding = () => {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              navigate('/guest/login');
+              navigate('/guest/login', { state: { nudgeOrigin: 'onboarding' } });
             }}
             className="w-full text-center text-sm text-muted-foreground py-2"
           >

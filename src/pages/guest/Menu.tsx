@@ -79,7 +79,7 @@ const Menu = () => {
             </div>
           ) : (
             <button
-              onClick={() => navigate('/guest/login')}
+              onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/menu', nudgeOrigin: 'menu' } })}
               className="w-full relative rounded-card border border-border bg-card p-5 overflow-hidden"
             >
               <div className="absolute inset-0 backdrop-blur-sm bg-card/60 z-10 flex flex-col items-center justify-center gap-2">

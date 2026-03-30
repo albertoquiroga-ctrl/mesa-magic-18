@@ -28,6 +28,7 @@ import GuestQuickPaySuccess from "./pages/guest/QuickPaySuccess";
 import GuestLoyaltyFarewell from "./pages/guest/LoyaltyFarewell";
 import GuestLogin from "./pages/guest/Login";
 import GuestProfile from "./pages/guest/Profile";
+import GuestPostRegistration from "./pages/guest/PostRegistration";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
             <Route path="quick-pay-success" element={<GuestQuickPaySuccess />} />
             <Route path="farewell" element={<GuestLoyaltyFarewell />} />
             <Route path="login" element={<GuestLogin />} />
+            <Route path="post-registration" element={<GuestPostRegistration />} />
             <Route path="profile" element={<GuestProfile />} />
           </Route>
 

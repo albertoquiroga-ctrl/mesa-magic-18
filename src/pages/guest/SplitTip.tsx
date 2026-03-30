@@ -436,7 +436,7 @@ const SplitTip = () => {
       <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
         {!useAuthStore.getState().isLoggedIn && isUnlocked ? (
           <button
-            onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/split-tip' } })}
+            onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/split-tip', nudgeOrigin: 'split-tip' } })}
             className="flex items-center gap-2 w-full p-2.5 mb-3 rounded-lg bg-primary/5 border border-primary/20 text-left"
           >
             <Gift className="w-4 h-4 text-primary shrink-0" />
