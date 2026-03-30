@@ -232,7 +232,13 @@ const SplitTip = () => {
                           <span className="text-sm text-foreground truncate">{item.name}</span>
                         </div>
                         <div className="flex items-center gap-1.5 shrink-0">
-                          <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                          {assignment === 'shared' ? (
+                            <span className="text-[11px] font-mono text-muted-foreground">
+                              ${item.price * item.quantity} ÷ {divisor} = <span className="text-foreground font-semibold">${Math.ceil((item.price * item.quantity) / divisor)}</span>
+                            </span>
+                          ) : (
+                            <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                          )}
                         </div>
                       </div>
                       <div className="flex items-center gap-2 mt-2 ml-7">
