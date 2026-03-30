@@ -55,7 +55,7 @@ const CheckoutCash = () => {
 
           <div className="flex items-center justify-center gap-2 text-muted-foreground mb-6">
             <MapPin className="w-4 h-4" />
-            <span className="text-xs">Menciona tu mesa al llegar a caja</span>
+            <span className="text-xs">Menciona tu mesa al llegar a caja: <strong className="text-foreground">Mesa {tableNumber}</strong></span>
           </div>
         </div>
 
