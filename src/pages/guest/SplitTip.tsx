@@ -18,6 +18,8 @@ const tipOptions = [
 const SplitTip = () => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const isNewUser = useAuthStore((s) => s.isNewUser);
   const {
     splitMode, setSplitMode, tipPercent, setTipPercent,
     setTipAmount, setTotal, itemAssignments, setItemAssignment,
