@@ -133,6 +133,14 @@ const MyConsumption = () => {
               myTotal
             )}
 
+            {/* Shared / al centro items */}
+            {renderItemList(
+              sharedConsolidated,
+              'Típicamente al centro',
+              <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />,
+              sharedTotal
+            )}
+
             {/* Others' items */}
             {renderItemList(
               othersConsolidated,
