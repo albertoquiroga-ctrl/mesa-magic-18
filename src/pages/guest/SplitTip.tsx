@@ -54,8 +54,9 @@ const SplitTip = () => {
     []
   );
 
-  const myDeviceItems = consolidatedItems.filter((i) => i.orderedByDevice);
-  const othersItems = consolidatedItems.filter((i) => !i.orderedByDevice);
+  const alCentroItems = consolidatedItems.filter((i) => i.category === 'Entradas');
+  const myDeviceItems = consolidatedItems.filter((i) => i.orderedByDevice && i.category !== 'Entradas');
+  const othersItems = consolidatedItems.filter((i) => !i.orderedByDevice && i.category !== 'Entradas');
 
   // Auto-assign on custom mode switch
   useEffect(() => {
