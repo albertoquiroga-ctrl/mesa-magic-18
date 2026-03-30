@@ -1,25 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, ChefHat, UtensilsCrossed, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Clock, Check } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
+import { mockMenuItems } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 
-const STEPS = [
-  { icon: CheckCircle2, label: 'Orden recibida', description: 'Tu mesero confirmó tu pedido' },
-  { icon: ChefHat, label: 'En preparación', description: 'La cocina está trabajando en tu orden' },
-  { icon: UtensilsCrossed, label: '¡Lista!', description: 'Tu orden está en camino a la mesa' },
-];
-
-const ESTIMATED_MINUTES = 18;
+interface ItemLap {
+  name: string;
+  quantity: number;
+  prepTime: number; // minutes
+  image?: string;
+}
 
 const OrderTracking = () => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
   const latestRound = rounds[rounds.length - 1];
 
-  // Elapsed seconds since the latest round was created
   const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
@@ -31,16 +30,30 @@ const OrderTracking = () => {
     return () => clearInterval(id);
   }, [latestRound]);
 
-  // Simulate step progression based on elapsed time (demo purposes)
-  const currentStep = elapsed < 8 ? 0 : elapsed < 25 ? 1 : 2;
+  // Build item laps sorted by prepTime
+  const laps: ItemLap[] = useMemo(() => {
+    if (!latestRound) return [];
+    return latestRound.items
+      .map((item) => {
+        const menuItem = mockMenuItems.find((m) => m.name === item.name);
+        return {
+          name: item.name,
+          quantity: item.quantity,
+          prepTime: menuItem?.prepTime ?? 10,
+          image: menuItem?.image,
+        };
+      })
+      .sort((a, b) => a.prepTime - b.prepTime);
+  }, [latestRound]);
+
+  const maxPrepTime = laps.length > 0 ? Math.max(...laps.map((l) => l.prepTime)) : 15;
+  const estimatedSeconds = maxPrepTime * 60;
 
   const minutes = Math.floor(elapsed / 60);
   const seconds = elapsed % 60;
   const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 
-  const estimatedSeconds = ESTIMATED_MINUTES * 60;
   const progressPct = Math.min((elapsed / estimatedSeconds) * 100, 100);
-
   const remainingSeconds = Math.max(estimatedSeconds - elapsed, 0);
   const remainingMin = Math.ceil(remainingSeconds / 60);
 
@@ -77,10 +90,9 @@ const OrderTracking = () => {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-          className="flex flex-col items-center mb-8"
+          className="flex flex-col items-center mb-6"
         >
           <div className="relative w-32 h-32 mb-4">
-            {/* Pulsing ring */}
             <motion.div
               animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.08, 0.3] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
@@ -95,7 +107,6 @@ const OrderTracking = () => {
               </div>
             </div>
           </div>
-
           <p className="text-sm text-muted-foreground">
             {remainingSeconds > 0
               ? `Tiempo estimado: ~${remainingMin} min restantes`
@@ -103,88 +114,97 @@ const OrderTracking = () => {
           </p>
         </motion.div>
 
-        {/* Progress bar */}
+        {/* Global progress */}
         <div className="mb-8">
           <Progress value={progressPct} className="h-2" />
         </div>
 
-        {/* Steps */}
-        <div className="space-y-1 mb-8">
-          {STEPS.map((step, idx) => {
-            const isActive = idx === currentStep;
-            const isDone = idx < currentStep;
-            const Icon = step.icon;
+        {/* Item timeline / laps */}
+        <div className="mb-6">
+          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-4">
+            Timeline de tu orden
+          </h2>
+          <div className="space-y-0">
+            {laps.map((lap, idx) => {
+              const lapSeconds = lap.prepTime * 60;
+              const isDone = elapsed >= lapSeconds;
+              const isNext = !isDone && (idx === 0 || elapsed >= laps[idx - 1].prepTime * 60);
+              const lapProgress = isDone ? 100 : isNext ? Math.min((elapsed / lapSeconds) * 100, 100) : 0;
 
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.15 }}
-                className="flex items-start gap-4 py-3"
-              >
-                {/* Icon + connector */}
-                <div className="flex flex-col items-center">
-                  <motion.div
-                    animate={isActive ? { scale: [1, 1.15, 1] } : {}}
-                    transition={isActive ? { duration: 1.5, repeat: Infinity } : {}}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                      isDone
-                        ? 'bg-primary text-primary-foreground'
-                        : isActive
-                        ? 'bg-primary/20 text-primary ring-2 ring-primary'
-                        : 'bg-muted text-muted-foreground'
-                    }`}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </motion.div>
-                  {idx < STEPS.length - 1 && (
-                    <div
-                      className={`w-0.5 h-8 mt-1 ${
-                        isDone ? 'bg-primary' : 'bg-border'
-                      }`}
-                    />
-                  )}
-                </div>
+              return (
+                <motion.div
+                  key={`${lap.name}-${idx}`}
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Timeline connector */}
+                    <div className="flex flex-col items-center pt-1">
+                      <motion.div
+                        animate={isNext ? { scale: [1, 1.2, 1] } : {}}
+                        transition={isNext ? { duration: 1.5, repeat: Infinity } : {}}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                          isDone
+                            ? 'bg-primary text-primary-foreground'
+                            : isNext
+                            ? 'bg-primary/20 text-primary ring-2 ring-primary'
+                            : 'bg-muted text-muted-foreground'
+                        }`}
+                      >
+                        {isDone ? (
+                          <Check className="w-4 h-4" />
+                        ) : (
+                          <span className="text-[10px] font-bold font-mono">{lap.prepTime}′</span>
+                        )}
+                      </motion.div>
+                      {idx < laps.length - 1 && (
+                        <div className={`w-0.5 h-10 mt-1 ${isDone ? 'bg-primary' : 'bg-border'}`} />
+                      )}
+                    </div>
 
-                {/* Text */}
-                <div className="pt-2">
-                  <p
-                    className={`text-sm font-semibold ${
-                      isDone || isActive ? 'text-foreground' : 'text-muted-foreground'
-                    }`}
-                  >
-                    {step.label}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{step.description}</p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Order items */}
-        <div className="bg-card border border-border rounded-card overflow-hidden">
-          <div className="px-4 py-3 border-b border-border">
-            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-              Ronda {latestRound.round}
-            </span>
+                    {/* Item card */}
+                    <div className={`flex-1 pb-4 ${!isDone && !isNext ? 'opacity-50' : ''}`}>
+                      <div className="flex items-center gap-3">
+                        {lap.image && (
+                          <img
+                            src={lap.image}
+                            alt={lap.name}
+                            className="w-10 h-10 rounded-lg object-cover shrink-0"
+                          />
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-medium text-foreground truncate">
+                              {lap.quantity > 1 && (
+                                <span className="text-muted-foreground font-mono mr-1">{lap.quantity}×</span>
+                              )}
+                              {lap.name}
+                            </span>
+                            <span className={`text-[11px] font-mono shrink-0 ml-2 ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
+                              {isDone ? '✓ Listo' : `~${lap.prepTime} min`}
+                            </span>
+                          </div>
+                          {(isNext || isDone) && (
+                            <div className="mt-1.5">
+                              <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                                <motion.div
+                                  className="h-full bg-primary rounded-full"
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${lapProgress}%` }}
+                                  transition={{ duration: 0.5 }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
-          {latestRound.items.map((item, idx) => (
-            <div
-              key={idx}
-              className={`flex items-center justify-between px-4 py-3 ${
-                idx < latestRound.items.length - 1 ? 'border-b border-border' : ''
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
-                  {item.quantity}×
-                </span>
-                <span className="text-sm text-foreground">{item.name}</span>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 

@@ -7,6 +7,7 @@ export interface MenuItem {
   image?: string;
   soldOut?: boolean;
   tags?: string[];
+  prepTime?: number; // estimated prep time in minutes
 }
 
 export const mockMenuItems: MenuItem[] = [
@@ -18,6 +19,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Tequila, limón fresco, triple sec y sal de gusano',
     image: 'https://images.unsplash.com/photo-1556855810-ac404aa91e85?w=600&h=600&fit=crop',
     tags: ['popular'],
+    prepTime: 3,
   },
   {
     id: 'guacamole',
@@ -27,6 +29,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Aguacate molcajeteado con cilantro, cebolla y chile serrano',
     image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=600&h=600&fit=crop',
     tags: ['vegetariano'],
+    prepTime: 7,
   },
   {
     id: 'tacos-asada',
@@ -36,6 +39,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Tres tacos de arrachera en tortilla de maíz con guarniciones',
     image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&h=600&fit=crop',
     tags: ['popular'],
+    prepTime: 15,
   },
   {
     id: 'agua-jamaica',
@@ -45,6 +49,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Agua fresca de jamaica natural',
     image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&h=600&fit=crop',
     tags: ['sin alcohol'],
+    prepTime: 2,
   },
   {
     id: 'mezcal',
@@ -54,6 +59,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Mezcal artesanal de Oaxaca con naranja y sal de chapulín',
     image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=600&h=600&fit=crop',
     soldOut: true,
+    prepTime: 3,
   },
   {
     id: 'entrecot',
@@ -63,6 +69,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Corte de res premium a la parrilla con papas rústicas',
     image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&h=600&fit=crop',
     tags: ['premium'],
+    prepTime: 22,
   },
   {
     id: 'pasta-trufa',
@@ -72,6 +79,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Fettuccine al huevo con crema de trufa negra y parmesano',
     image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=600&fit=crop',
     tags: ['vegetariano'],
+    prepTime: 18,
   },
   {
     id: 'ensalada',
@@ -81,6 +89,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Mezcla de lechugas, tomate cherry, aguacate y vinagreta cítrica',
     image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=600&fit=crop',
     tags: ['vegetariano', 'ligero'],
+    prepTime: 8,
   },
 ];
 
