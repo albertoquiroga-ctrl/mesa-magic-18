@@ -25,6 +25,8 @@ export interface PaymentState {
   incrementAttempt: () => void;
   setItemAssignment: (key: string, value: 'mine' | 'shared' | 'none') => void;
   setSharedAmong: (key: string, count: number) => void;
+  setRating: (rating: number) => void;
+  setFeedback: (feedback: string) => void;
   resetAssignments: () => void;
 }
 
