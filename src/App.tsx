@@ -19,6 +19,8 @@ import GuestTableStatus from "./pages/guest/TableStatus";
 import GuestSplitTip from "./pages/guest/SplitTip";
 import GuestCheckoutCard from "./pages/guest/CheckoutCard";
 import GuestCheckoutSpei from "./pages/guest/CheckoutSpei";
+import GuestCheckoutTerminal from "./pages/guest/CheckoutTerminal";
+import GuestCheckoutCash from "./pages/guest/CheckoutCash";
 import GuestPaymentFailed from "./pages/guest/PaymentFailed";
 import GuestPaymentSuccess from "./pages/guest/PaymentSuccess";
 import GuestEarlyExit from "./pages/guest/EarlyExit";
@@ -55,6 +57,8 @@ const App = () => (
             <Route path="split-tip" element={<GuestSplitTip />} />
             <Route path="checkout/card" element={<GuestCheckoutCard />} />
             <Route path="checkout/spei" element={<GuestCheckoutSpei />} />
+            <Route path="checkout/terminal" element={<GuestCheckoutTerminal />} />
+            <Route path="checkout/cash" element={<GuestCheckoutCash />} />
             <Route path="payment-failed" element={<GuestPaymentFailed />} />
             <Route path="payment-success" element={<GuestPaymentSuccess />} />
             <Route path="early-exit" element={<GuestEarlyExit />} />

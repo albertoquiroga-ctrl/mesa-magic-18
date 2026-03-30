@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export type SplitMode = 'equal' | 'custom' | 'full';
-export type PaymentMethod = 'card' | 'spei' | null;
+export type PaymentMethod = 'card' | 'spei' | 'terminal' | 'cash' | null;
 export type PaymentStatus = 'idle' | 'processing' | 'success' | 'failed';
 
 export interface PaymentState {

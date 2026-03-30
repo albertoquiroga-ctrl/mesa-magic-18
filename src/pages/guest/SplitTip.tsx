@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift, Smartphone, UtensilsCrossed } from 'lucide-react';
+import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift, Smartphone, UtensilsCrossed, CreditCard, Landmark, Banknote } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -23,7 +23,7 @@ const SplitTip = () => {
   const isNewUser = useAuthStore((s) => s.isNewUser);
   const {
     splitMode, setSplitMode, tipPercent, setTipPercent,
-    setTipAmount, setTotal, itemAssignments, setItemAssignment,
+    setTipAmount, setTotal, setPaymentMethod, itemAssignments, setItemAssignment,
     sharedAmong, setSharedAmong, resetAssignments,
     rating, setRating, feedback, setFeedback,
   } = usePaymentStore();
@@ -116,11 +116,20 @@ const SplitTip = () => {
 
   const canContinue = isUnlocked && (!isLowRating || feedback.trim().length > 0);
 
+  const [selectedPayMethod, setSelectedPayMethod] = useState<'card' | 'terminal' | 'cash'>('card');
+
   const handleContinue = () => {
     if (!canContinue) return;
     setTipAmount(tipAmount);
     setTotal(finalTotal);
-    navigate('/guest/checkout/card');
+    setPaymentMethod(selectedPayMethod);
+    if (selectedPayMethod === 'card') {
+      navigate('/guest/checkout/card');
+    } else if (selectedPayMethod === 'terminal') {
+      navigate('/guest/checkout/terminal');
+    } else {
+      navigate('/guest/checkout/cash');
+    }
   };
 
   const handleSplitModeChange = (mode: 'full' | 'equal' | 'custom') => {
@@ -550,6 +559,51 @@ const SplitTip = () => {
               </div>
             </section>
           )}
+
+          {/* Payment method selection */}
+          <section className="mb-6">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+              Método de pago
+            </h2>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setSelectedPayMethod('card')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                  selectedPayMethod === 'card' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                }`}
+              >
+                <CreditCard className={`w-5 h-5 ${selectedPayMethod === 'card' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className={`text-xs font-medium ${selectedPayMethod === 'card' ? 'text-primary' : 'text-foreground'}`}>
+                  Tarjeta
+                </span>
+                <span className="text-[10px] text-muted-foreground leading-tight text-center">Pago en app</span>
+              </button>
+              <button
+                onClick={() => setSelectedPayMethod('terminal')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                  selectedPayMethod === 'terminal' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                }`}
+              >
+                <Landmark className={`w-5 h-5 ${selectedPayMethod === 'terminal' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className={`text-xs font-medium ${selectedPayMethod === 'terminal' ? 'text-primary' : 'text-foreground'}`}>
+                  Terminal
+                </span>
+                <span className="text-[10px] text-muted-foreground leading-tight text-center">En tu mesa</span>
+              </button>
+              <button
+                onClick={() => setSelectedPayMethod('cash')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                  selectedPayMethod === 'cash' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                }`}
+              >
+                <Banknote className={`w-5 h-5 ${selectedPayMethod === 'cash' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className={`text-xs font-medium ${selectedPayMethod === 'cash' ? 'text-primary' : 'text-foreground'}`}>
+                  Efectivo
+                </span>
+                <span className="text-[10px] text-muted-foreground leading-tight text-center">Pago en caja</span>
+              </button>
+            </div>
+          </section>
         </div>
       </div>
 
@@ -595,7 +649,7 @@ const SplitTip = () => {
           onClick={handleContinue}
           disabled={!canContinue}
         >
-          Continuar al pago
+          {selectedPayMethod === 'card' ? 'Continuar al pago' : selectedPayMethod === 'terminal' ? 'Solicitar terminal' : 'Pagar en caja'}
         </Button>
       </div>
     </div>
