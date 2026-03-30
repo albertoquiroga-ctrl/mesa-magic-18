@@ -317,6 +317,8 @@ const PaymentSuccess = () => {
             onClick={() => {
               setTotal(remaining);
               setTipAmount(0);
+              setRating(0);
+              setFeedback('');
               navigate('/guest/split-tip');
             }}
           >
