@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSessionStore } from '@/stores/sessionStore';
+import { useCartStore } from '@/stores/cartStore';
+import { useOrderStore } from '@/stores/orderStore';
+import { usePaymentStore } from '@/stores/paymentStore';
+import { useAuthStore } from '@/stores/authStore';
+import { useTableStore } from '@/stores/tableStore';
 
 const slides = [
   {
@@ -25,6 +30,15 @@ const Onboarding = () => {
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
   const tableNumber = useSessionStore((s) => s.tableNumber);
+
+  // Reset all session state when onboarding is shown (demo reset)
+  useEffect(() => {
+    useCartStore.getState().clearCart();
+    useOrderStore.getState().reset();
+    usePaymentStore.getState().reset();
+    useAuthStore.getState().logout();
+    useTableStore.getState().reset();
+  }, []);
 
   const goNext = () => {
     if (current === 2) {

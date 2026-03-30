@@ -15,18 +15,22 @@ export interface TableState {
   setGuests: (guests: Guest[]) => void;
   markPaid: (guestId: string) => void;
   setTableStatus: (status: TableStatus) => void;
+  reset: () => void;
 }
 
+const initialGuests: Guest[] = [
+  { id: 'guest-tu', name: 'Tú', isCurrentUser: true },
+  { id: 'guest-ana', name: 'Ana', isCurrentUser: false },
+  { id: 'guest-carlos', name: 'Carlos', isCurrentUser: false },
+];
+
 export const useTableStore = create<TableState>((set) => ({
-  guests: [
-    { id: 'guest-tu', name: 'Tú', isCurrentUser: true },
-    { id: 'guest-ana', name: 'Ana', isCurrentUser: false },
-    { id: 'guest-carlos', name: 'Carlos', isCurrentUser: false },
-  ],
+  guests: initialGuests,
   whoHasPaid: [],
   tableStatus: 'active',
   setGuests: (guests) => set({ guests }),
   markPaid: (guestId) =>
     set((state) => ({ whoHasPaid: [...state.whoHasPaid, guestId] })),
   setTableStatus: (tableStatus) => set({ tableStatus }),
+  reset: () => set({ guests: initialGuests, whoHasPaid: [], tableStatus: 'active' }),
 }));

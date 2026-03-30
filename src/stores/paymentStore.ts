@@ -28,6 +28,7 @@ export interface PaymentState {
   setRating: (rating: number) => void;
   setFeedback: (feedback: string) => void;
   resetAssignments: () => void;
+  reset: () => void;
 }
 
 export const usePaymentStore = create<PaymentState>((set) => ({
@@ -56,4 +57,5 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   setRating: (rating) => set({ rating }),
   setFeedback: (feedback) => set({ feedback }),
   resetAssignments: () => set({ itemAssignments: {}, sharedAmong: {} }),
+  reset: () => set({ splitMode: 'equal', tipPercent: 15, tipAmount: 0, total: 0, paymentMethod: null, status: 'idle', attempt: 0, itemAssignments: {}, sharedAmong: {}, rating: 0, feedback: '' }),
 }));
