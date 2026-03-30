@@ -559,6 +559,51 @@ const SplitTip = () => {
               </div>
             </section>
           )}
+
+          {/* Payment method selection */}
+          <section className="mb-6">
+            <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+              Método de pago
+            </h2>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => setSelectedPayMethod('card')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                  selectedPayMethod === 'card' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                }`}
+              >
+                <CreditCard className={`w-5 h-5 ${selectedPayMethod === 'card' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className={`text-xs font-medium ${selectedPayMethod === 'card' ? 'text-primary' : 'text-foreground'}`}>
+                  Tarjeta
+                </span>
+                <span className="text-[10px] text-muted-foreground leading-tight text-center">Pago en app</span>
+              </button>
+              <button
+                onClick={() => setSelectedPayMethod('terminal')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                  selectedPayMethod === 'terminal' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                }`}
+              >
+                <Landmark className={`w-5 h-5 ${selectedPayMethod === 'terminal' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className={`text-xs font-medium ${selectedPayMethod === 'terminal' ? 'text-primary' : 'text-foreground'}`}>
+                  Terminal
+                </span>
+                <span className="text-[10px] text-muted-foreground leading-tight text-center">En tu mesa</span>
+              </button>
+              <button
+                onClick={() => setSelectedPayMethod('cash')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                  selectedPayMethod === 'cash' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                }`}
+              >
+                <Banknote className={`w-5 h-5 ${selectedPayMethod === 'cash' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className={`text-xs font-medium ${selectedPayMethod === 'cash' ? 'text-primary' : 'text-foreground'}`}>
+                  Efectivo
+                </span>
+                <span className="text-[10px] text-muted-foreground leading-tight text-center">Pago en caja</span>
+              </button>
+            </div>
+          </section>
         </div>
       </div>
 
