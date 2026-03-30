@@ -48,19 +48,21 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
       .sort((a, b) => a.prepTime - b.prepTime);
   }, [rounds]);
 
-  // Find the next item to arrive (smallest remaining time among non-done items)
-  const pendingItems = laps
-    .map((lap) => {
-      const itemElapsed = Math.floor((now - new Date(lap.createdAt).getTime()) / 1000);
-      const lapSeconds = lap.prepTime * 60;
-      const remaining = Math.max(lapSeconds - itemElapsed, 0);
-      return { ...lap, remaining, isDone: remaining <= 0 };
-    })
-    .filter((l) => !l.isDone);
+  // Compute status for every item
+  const itemStatuses = laps.map((lap) => {
+    const itemElapsed = Math.floor((now - new Date(lap.createdAt).getTime()) / 1000);
+    const lapSeconds = lap.prepTime * 60;
+    const remaining = Math.max(lapSeconds - itemElapsed, 0);
+    return { ...lap, remaining, isDone: remaining <= 0 };
+  });
 
-  const nextItem = pendingItems.length > 0
-    ? pendingItems.reduce((min, l) => (l.remaining < min.remaining ? l : min))
-    : null;
+  const pendingItems = itemStatuses.filter((l) => !l.isDone);
+  const doneCount = itemStatuses.filter((l) => l.isDone).length;
+  const totalCount = itemStatuses.length;
+
+  // Sort pending by remaining time ascending — next to arrive first
+  const sortedPending = [...pendingItems].sort((a, b) => a.remaining - b.remaining);
+  const nextItem = sortedPending.length > 0 ? sortedPending[0] : null;
 
   const nextRemainingSeconds = nextItem?.remaining ?? 0;
   const nextRemainingMin = Math.ceil(nextRemainingSeconds / 60);
