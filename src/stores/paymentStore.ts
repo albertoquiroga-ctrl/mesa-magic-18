@@ -53,5 +53,7 @@ export const usePaymentStore = create<PaymentState>((set) => ({
     set((s) => ({ itemAssignments: { ...s.itemAssignments, [key]: value } })),
   setSharedAmong: (key, count) =>
     set((s) => ({ sharedAmong: { ...s.sharedAmong, [key]: count } })),
+  setRating: (rating) => set({ rating }),
+  setFeedback: (feedback) => set({ feedback }),
   resetAssignments: () => set({ itemAssignments: {}, sharedAmong: {} }),
 }));
