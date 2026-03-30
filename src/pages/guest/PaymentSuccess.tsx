@@ -300,13 +300,25 @@ const PaymentSuccess = () => {
         )}
       </motion.div>
 
-      {/* Back to menu */}
+      {/* Pay remaining or back to menu */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.75 }}
-        className="w-full max-w-[360px]"
+        className="w-full max-w-[360px] space-y-3"
       >
+        {remaining > 0 && (
+          <Button
+            className="w-full h-12 rounded-button text-base font-bold"
+            onClick={() => {
+              setTotal(remaining);
+              setTipAmount(0);
+              navigate('/guest/split-tip');
+            }}
+          >
+            Pagar lo que falta — <PriceDisplay amount={remaining} size="sm" className="ml-1 text-primary-foreground" />
+          </Button>
+        )}
         <Button
           variant="outline"
           className="w-full h-12 rounded-button text-sm"
