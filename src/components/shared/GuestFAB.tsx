@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -12,6 +13,12 @@ const options = [
 
 export const GuestFAB = () => {
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  // Routes that have a fixed CTA bar above the bottom nav
+  const hasPinnedCTA = ['/guest/menu', '/guest/cart', '/guest/split-tip', '/guest/my-consumption'].some(
+    (route) => pathname.startsWith(route)
+  );
 
   const handleOption = (option: typeof options[0]) => {
     setOpen(false);
@@ -42,6 +49,7 @@ export const GuestFAB = () => {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="fixed bottom-40 right-4 z-50 w-56 bg-card border border-border rounded-2xl shadow-xl overflow-hidden"
+            style={{ bottom: hasPinnedCTA ? '13rem' : '10rem' }}
           >
             <div className="p-3 border-b border-border flex items-center justify-between">
               <span className="text-sm font-semibold text-foreground">¿En qué te ayudamos?</span>
@@ -69,7 +77,7 @@ export const GuestFAB = () => {
       <motion.button
         whileTap={{ scale: 0.92 }}
         onClick={() => setOpen(!open)}
-        className="fixed bottom-24 right-4 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center text-xl"
+        className={`fixed right-4 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center text-xl ${hasPinnedCTA ? 'bottom-36' : 'bottom-24'}`}
         aria-label="Llamar mesero"
       >
         {open ? <X size={24} /> : '🙋'}
