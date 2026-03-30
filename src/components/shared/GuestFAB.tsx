@@ -15,10 +15,16 @@ export const GuestFAB = () => {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
 
+  // Routes where the FAB should be hidden entirely (payment/checkout flows)
+  const hideFABRoutes = ['/guest/split-tip', '/guest/checkout', '/guest/quick-pay'];
+  const hideFAB = hideFABRoutes.some((route) => pathname.startsWith(route));
+
   // Routes that have a fixed CTA bar above the bottom nav
-  const hasPinnedCTA = ['/guest/menu', '/guest/cart', '/guest/split-tip', '/guest/my-consumption'].some(
+  const hasPinnedCTA = ['/guest/menu', '/guest/cart', '/guest/my-consumption'].some(
     (route) => pathname.startsWith(route)
   );
+
+  if (hideFAB) return null;
 
   const handleOption = (option: typeof options[0]) => {
     setOpen(false);
