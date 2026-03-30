@@ -7,6 +7,7 @@ export interface MenuItem {
   image?: string;
   soldOut?: boolean;
   tags?: string[];
+  prepTime?: number; // estimated prep time in minutes
 }
 
 export const mockMenuItems: MenuItem[] = [
