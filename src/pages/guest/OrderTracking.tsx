@@ -5,7 +5,7 @@ import { ArrowLeft, Clock, Check } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
 import { mockMenuItems } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+
 
 interface ItemLap {
   name: string;
@@ -19,21 +19,16 @@ interface ItemLap {
 const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
-  const firstRound = rounds[0];
 
-  const [elapsed, setElapsed] = useState(0);
+  const [now, setNow] = useState(Date.now());
 
-  // Timer counts from the first round's creation
   useEffect(() => {
-    if (!firstRound) return;
-    const start = new Date(firstRound.createdAt).getTime();
-    const tick = () => setElapsed(Math.floor((Date.now() - start) / 1000));
-    tick();
-    const id = setInterval(tick, 1000);
+    if (rounds.length === 0) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
-  }, [firstRound]);
+  }, [rounds]);
 
-  // Build item laps from ALL rounds, sorted by prepTime
+  // Build item laps from ALL rounds
   const laps: ItemLap[] = useMemo(() => {
     if (rounds.length === 0) return [];
     return rounds
@@ -53,22 +48,26 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
       .sort((a, b) => a.prepTime - b.prepTime);
   }, [rounds]);
 
-  // Max finish time = offset from first round + prepTime for each item
-  const firstStart = firstRound ? new Date(firstRound.createdAt).getTime() : Date.now();
-  const estimatedSeconds = laps.length > 0
-    ? Math.max(...laps.map((l) => {
-        const offsetSec = Math.floor((new Date(l.createdAt).getTime() - firstStart) / 1000);
-        return offsetSec + l.prepTime * 60;
-      }))
-    : 15 * 60;
+  // Find the next item to arrive (smallest remaining time among non-done items)
+  const pendingItems = laps
+    .map((lap) => {
+      const itemElapsed = Math.floor((now - new Date(lap.createdAt).getTime()) / 1000);
+      const lapSeconds = lap.prepTime * 60;
+      const remaining = Math.max(lapSeconds - itemElapsed, 0);
+      return { ...lap, remaining, isDone: remaining <= 0 };
+    })
+    .filter((l) => !l.isDone);
 
-  const minutes = Math.floor(elapsed / 60);
-  const seconds = elapsed % 60;
-  const timeStr = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  const nextItem = pendingItems.length > 0
+    ? pendingItems.reduce((min, l) => (l.remaining < min.remaining ? l : min))
+    : null;
 
-  const progressPct = Math.min((elapsed / estimatedSeconds) * 100, 100);
-  const remainingSeconds = Math.max(estimatedSeconds - elapsed, 0);
-  const remainingMin = Math.ceil(remainingSeconds / 60);
+  const nextRemainingSeconds = nextItem?.remaining ?? 0;
+  const nextRemainingMin = Math.ceil(nextRemainingSeconds / 60);
+  const timerMin = Math.floor(nextRemainingSeconds / 60);
+  const timerSec = nextRemainingSeconds % 60;
+  const timeStr = `${String(timerMin).padStart(2, '0')}:${String(timerSec).padStart(2, '0')}`;
+  const allDone = pendingItems.length === 0 && laps.length > 0;
 
   if (rounds.length === 0) {
     return (
@@ -100,7 +99,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
       )}
 
       <div className="flex-1 overflow-y-auto px-4 pt-6 pb-36">
-        {/* Timer hero */}
+        {/* Timer hero — countdown to next item */}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -117,22 +116,19 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
               <div className="text-center">
                 <Clock className="w-6 h-6 text-primary mx-auto mb-1" />
                 <span className="text-2xl font-bold font-mono tabular-nums text-foreground">
-                  {timeStr}
+                  {allDone ? '00:00' : timeStr}
                 </span>
               </div>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground">
-            {remainingSeconds > 0
-              ? `Tiempo estimado: ~${remainingMin} min restantes`
-              : '¡Tu orden debería estar lista!'}
+          <p className="text-sm text-muted-foreground text-center">
+            {allDone
+              ? '¡Todos tus platillos están listos!'
+              : nextItem
+              ? `${nextItem.name} llega en ~${nextRemainingMin} min`
+              : 'Calculando...'}
           </p>
         </motion.div>
-
-        {/* Global progress */}
-        <div className="mb-8">
-          <Progress value={progressPct} className="h-2" />
-        </div>
 
         {/* Item timeline grouped by round */}
         <div className="mb-6">
@@ -153,10 +149,10 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                 </div>
                 <div className="space-y-0">
                   {roundLaps.map((lap, idx) => {
-                    const itemElapsed = Math.floor((Date.now() - new Date(lap.createdAt).getTime()) / 1000);
+                    const itemElapsed = Math.floor((now - new Date(lap.createdAt).getTime()) / 1000);
                     const lapSeconds = lap.prepTime * 60;
                     const isDone = itemElapsed >= lapSeconds;
-                    const isNext = !isDone && itemElapsed > 0;
+                    const isActive = !isDone && itemElapsed > 0;
                     const lapProgress = isDone ? 100 : Math.min((itemElapsed / lapSeconds) * 100, 100);
 
                     return (
@@ -169,12 +165,12 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                         <div className="flex items-start gap-3">
                           <div className="flex flex-col items-center pt-1">
                             <motion.div
-                              animate={isNext ? { scale: [1, 1.2, 1] } : {}}
-                              transition={isNext ? { duration: 1.5, repeat: Infinity } : {}}
+                              animate={isActive ? { scale: [1, 1.2, 1] } : {}}
+                              transition={isActive ? { duration: 1.5, repeat: Infinity } : {}}
                               className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                                 isDone
                                   ? 'bg-primary text-primary-foreground'
-                                  : isNext
+                                  : isActive
                                   ? 'bg-primary/20 text-primary ring-2 ring-primary'
                                   : 'bg-muted text-muted-foreground'
                               }`}
@@ -190,7 +186,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                             )}
                           </div>
 
-                          <div className={`flex-1 pb-4 ${!isDone && !isNext ? 'opacity-50' : ''}`}>
+                          <div className={`flex-1 pb-4 ${!isDone && !isActive ? 'opacity-50' : ''}`}>
                             <div className="flex items-center gap-3">
                               {lap.image && (
                                 <img
@@ -211,7 +207,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                                     {isDone ? '✓ Listo' : `~${lap.prepTime} min`}
                                   </span>
                                 </div>
-                                {(isNext || isDone) && (
+                                {(isActive || isDone) && (
                                   <div className="mt-1.5">
                                     <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
                                       <motion.div
