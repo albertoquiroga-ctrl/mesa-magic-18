@@ -123,11 +123,16 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
               </div>
             </div>
           </div>
+          {!allDone && (
+            <p className="text-[11px] text-muted-foreground mb-1">
+              {doneCount > 0 ? `${doneCount} de ${totalCount} listos` : `${totalCount} platillos en preparación`}
+            </p>
+          )}
           <p className="text-sm text-muted-foreground text-center">
             {allDone
               ? '¡Todos tus platillos están listos!'
               : nextItem
-              ? `${nextItem.name} llega en ~${nextRemainingMin} min`
+              ? `Siguiente: ${nextItem.name} (~${nextRemainingMin} min)`
               : 'Calculando...'}
           </p>
         </motion.div>
