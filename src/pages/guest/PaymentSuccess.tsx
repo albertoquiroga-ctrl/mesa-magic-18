@@ -218,7 +218,7 @@ const PaymentSuccess = () => {
                         <div className="flex items-center gap-1.5 mt-1.5 ml-6">
                           <div className="flex-1 h-1.5 bg-muted rounded-full" />
                           <span className="text-[10px] font-medium text-destructive">
-                            Nadie lo pagó — $0 / ${item.totalCost}
+                            $0 / ${item.totalCost}
                           </span>
                         </div>
                       ) : (
@@ -230,10 +230,23 @@ const PaymentSuccess = () => {
                             />
                           </div>
                           <span className="text-[10px] font-medium text-yellow-600">
-                            Parcial — ${item.paidAmount} / ${item.totalCost}
+                            ${item.paidAmount} / ${item.totalCost}
                           </span>
                         </div>
                       )}
+                      <button
+                        onClick={() => {
+                          const owed = item.totalCost - item.paidAmount;
+                          setTotal(owed);
+                          setTipAmount(0);
+                          setRating(0);
+                          setFeedback('');
+                          navigate('/guest/split-tip');
+                        }}
+                        className="mt-2 ml-6 px-3 py-1.5 text-[11px] font-medium rounded-button border border-primary text-primary hover:bg-primary/5 transition-colors"
+                      >
+                        Pagar ${item.totalCost - item.paidAmount} de este platillo
+                      </button>
                     </div>
                   ))}
                 </div>
