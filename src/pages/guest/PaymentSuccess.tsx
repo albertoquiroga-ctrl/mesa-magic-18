@@ -1,17 +1,50 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
+import { useOrderStore } from '@/stores/orderStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
+import { mockGuests } from '@/data/mockData';
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
   const total = usePaymentStore((s) => s.total);
   const tipAmount = usePaymentStore((s) => s.tipAmount);
+  const rounds = useOrderStore((s) => s.rounds);
+  const [showAudit, setShowAudit] = useState(false);
+
+  // Table total from all rounds
+  const tableSubtotal = rounds.reduce(
+    (sum, r) => sum + r.items.reduce((s, i) => s + i.price * i.quantity, 0),
+    0
+  );
+
+  // Simulated payments for demo: current user paid `total`, others have mock status
+  const guestPayments = mockGuests.map((name, idx) => {
+    if (idx === 0) {
+      // Current user
+      return { name, paid: total, tipPaid: tipAmount, status: 'paid' as const };
+    }
+    if (idx === 1) {
+      // Ana paid her share
+      const share = Math.ceil(tableSubtotal / mockGuests.length);
+      const tip = Math.round(share * 0.15);
+      return { name, paid: share + tip, tipPaid: tip, status: 'paid' as const };
+    }
+    // Carlos hasn't paid yet
+    return { name, paid: 0, tipPaid: 0, status: 'pending' as const };
+  });
+
+  const totalPaid = guestPayments.reduce((s, g) => s + g.paid, 0);
+  const totalTips = guestPayments.reduce((s, g) => s + g.tipPaid, 0);
+  const paidSubtotal = totalPaid - totalTips;
+  const remaining = Math.max(tableSubtotal - paidSubtotal, 0);
+  const progressPercent = tableSubtotal > 0 ? Math.min((paidSubtotal / tableSubtotal) * 100, 100) : 0;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-background px-6">
+    <div className="flex flex-col items-center min-h-screen bg-background px-6 py-12">
       <motion.div
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
@@ -34,19 +67,20 @@ const PaymentSuccess = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.35 }}
-        className="text-muted-foreground text-center mb-8 max-w-[280px]"
+        className="text-muted-foreground text-center mb-6 max-w-[280px]"
       >
         Tu cuenta ha sido saldada. ¡Gracias por tu visita!
       </motion.p>
 
+      {/* Your payment summary */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-card border border-border rounded-card p-5 w-full max-w-[320px] mb-8"
+        className="bg-card border border-border rounded-card p-5 w-full max-w-[360px] mb-4"
       >
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-muted-foreground">Pagado</span>
+          <span className="text-sm text-muted-foreground">Tu pago</span>
           <PriceDisplay amount={total} size="lg" className="font-bold text-foreground" />
         </div>
         {tipAmount > 0 && (
@@ -57,11 +91,119 @@ const PaymentSuccess = () => {
         )}
       </motion.div>
 
+      {/* Table payment tracker */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6 }}
+        className="bg-card border border-border rounded-card p-5 w-full max-w-[360px] mb-4"
+      >
+        <h3 className="text-sm font-semibold text-foreground mb-3">Estado de la mesa</h3>
+
+        {/* Progress bar */}
+        <div className="mb-3">
+          <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
+            <span>Pagado de la cuenta</span>
+            <span>{Math.round(progressPercent)}%</span>
+          </div>
+          <div className="h-3 bg-muted rounded-full overflow-hidden">
+            <motion.div
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ delay: 0.8, duration: 0.8, ease: 'easeOut' }}
+              className={`h-full rounded-full ${
+                remaining === 0 ? 'bg-green-500' : 'bg-primary'
+              }`}
+            />
+          </div>
+        </div>
+
+        {/* Amounts */}
+        <div className="space-y-1.5 mb-3">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">Cuenta total de la mesa</span>
+            <PriceDisplay amount={tableSubtotal} size="sm" />
+          </div>
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-muted-foreground">Total pagado (sin propinas)</span>
+            <PriceDisplay amount={paidSubtotal} size="sm" className="text-foreground" />
+          </div>
+          {remaining > 0 && (
+            <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border">
+              <span className="font-medium text-destructive">Falta por pagar</span>
+              <PriceDisplay amount={remaining} size="sm" className="font-semibold text-destructive" />
+            </div>
+          )}
+          {remaining === 0 && (
+            <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border">
+              <span className="font-medium text-green-600">✓ Cuenta saldada</span>
+            </div>
+          )}
+        </div>
+
+        {/* Audit toggle */}
+        <button
+          onClick={() => setShowAudit((v) => !v)}
+          className="flex items-center justify-between w-full py-2 text-xs font-medium text-foreground"
+        >
+          <span>Desglose por comensal</span>
+          {showAudit ? (
+            <ChevronUp className="w-3.5 h-3.5 text-muted-foreground" />
+          ) : (
+            <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+          )}
+        </button>
+
+        {showAudit && (
+          <div className="space-y-2 pt-1">
+            {guestPayments.map((guest) => (
+              <div
+                key={guest.name}
+                className={`flex items-center justify-between p-2.5 rounded-lg border ${
+                  guest.status === 'paid'
+                    ? 'border-green-200 bg-green-50'
+                    : 'border-border bg-muted/30'
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <div className={`w-7 h-7 rounded-full flex items-center justify-center ${
+                    guest.status === 'paid' ? 'bg-green-100' : 'bg-muted'
+                  }`}>
+                    <User className={`w-3.5 h-3.5 ${
+                      guest.status === 'paid' ? 'text-green-600' : 'text-muted-foreground'
+                    }`} />
+                  </div>
+                  <div>
+                    <span className="text-xs font-medium text-foreground">{guest.name}</span>
+                    {guest.status === 'paid' && guest.tipPaid > 0 && (
+                      <p className="text-[10px] text-muted-foreground">
+                        Propina: ${guest.tipPaid}
+                      </p>
+                    )}
+                  </div>
+                </div>
+                <div className="text-right">
+                  {guest.status === 'paid' ? (
+                    <div>
+                      <PriceDisplay amount={guest.paid} size="sm" className="font-semibold text-green-700" />
+                      <p className="text-[10px] text-green-600">✓ Pagado</p>
+                    </div>
+                  ) : (
+                    <span className="text-xs text-muted-foreground font-medium">Pendiente</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
+
+      {/* Back to menu */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.65 }}
-        className="w-full max-w-[320px]"
+        transition={{ delay: 0.75 }}
+        className="w-full max-w-[360px]"
       >
         <Button
           variant="outline"
