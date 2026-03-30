@@ -340,9 +340,7 @@ const PaymentSuccess = () => {
             onClick={() => {
               setTotal(remaining);
               setTipAmount(0);
-              setRating(0);
-              setFeedback('');
-              navigate('/guest/split-tip');
+              navigate('/guest/quick-pay');
             }}
           >
             Pagar lo que falta — <PriceDisplay amount={remaining} size="sm" className="ml-1 text-primary-foreground" />
