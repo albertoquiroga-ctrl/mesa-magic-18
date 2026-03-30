@@ -35,6 +35,7 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   status: 'idle',
   attempt: 0,
   itemAssignments: {},
+  sharedAmong: {},
   setSplitMode: (splitMode) => set({ splitMode }),
   setTipPercent: (tipPercent) => set({ tipPercent }),
   setTipAmount: (tipAmount) => set({ tipAmount }),
@@ -44,5 +45,7 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   incrementAttempt: () => set((s) => ({ attempt: s.attempt + 1 })),
   setItemAssignment: (key, value) =>
     set((s) => ({ itemAssignments: { ...s.itemAssignments, [key]: value } })),
-  resetAssignments: () => set({ itemAssignments: {} }),
+  setSharedAmong: (key, count) =>
+    set((s) => ({ sharedAmong: { ...s.sharedAmong, [key]: count } })),
+  resetAssignments: () => set({ itemAssignments: {}, sharedAmong: {} }),
 }));
