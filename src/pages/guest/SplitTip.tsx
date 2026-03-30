@@ -649,7 +649,7 @@ const SplitTip = () => {
           onClick={handleContinue}
           disabled={!canContinue}
         >
-          Continuar al pago
+          {selectedPayMethod === 'card' ? 'Continuar al pago' : selectedPayMethod === 'terminal' ? 'Solicitar terminal' : 'Pagar en caja'}
         </Button>
       </div>
     </div>
