@@ -251,9 +251,7 @@ const PaymentSuccess = () => {
                         onClick={() => {
                           setTotal(item.owedAmount);
                           setTipAmount(0);
-                          setRating(0);
-                          setFeedback('');
-                          navigate('/guest/split-tip');
+                          navigate('/guest/quick-pay');
                         }}
                         className="mt-2 ml-6 px-3 py-1.5 text-[11px] font-medium rounded-button border border-primary text-primary hover:bg-primary/5 transition-colors"
                       >
@@ -342,9 +340,7 @@ const PaymentSuccess = () => {
             onClick={() => {
               setTotal(remaining);
               setTipAmount(0);
-              setRating(0);
-              setFeedback('');
-              navigate('/guest/split-tip');
+              navigate('/guest/quick-pay');
             }}
           >
             Pagar lo que falta — <PriceDisplay amount={remaining} size="sm" className="ml-1 text-primary-foreground" />
