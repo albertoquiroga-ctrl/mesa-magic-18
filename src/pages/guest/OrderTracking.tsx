@@ -165,12 +165,12 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                         <div className="flex items-start gap-3">
                           <div className="flex flex-col items-center pt-1">
                             <motion.div
-                              animate={isNext ? { scale: [1, 1.2, 1] } : {}}
-                              transition={isNext ? { duration: 1.5, repeat: Infinity } : {}}
+                              animate={isActive ? { scale: [1, 1.2, 1] } : {}}
+                              transition={isActive ? { duration: 1.5, repeat: Infinity } : {}}
                               className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                                 isDone
                                   ? 'bg-primary text-primary-foreground'
-                                  : isNext
+                                  : isActive
                                   ? 'bg-primary/20 text-primary ring-2 ring-primary'
                                   : 'bg-muted text-muted-foreground'
                               }`}
@@ -186,7 +186,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                             )}
                           </div>
 
-                          <div className={`flex-1 pb-4 ${!isDone && !isNext ? 'opacity-50' : ''}`}>
+                          <div className={`flex-1 pb-4 ${!isDone && !isActive ? 'opacity-50' : ''}`}>
                             <div className="flex items-center gap-3">
                               {lap.image && (
                                 <img
@@ -207,7 +207,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                                     {isDone ? '✓ Listo' : `~${lap.prepTime} min`}
                                   </span>
                                 </div>
-                                {(isNext || isDone) && (
+                                {(isActive || isDone) && (
                                   <div className="mt-1.5">
                                     <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
                                       <motion.div
