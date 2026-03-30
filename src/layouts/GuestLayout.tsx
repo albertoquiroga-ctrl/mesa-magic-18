@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { GuestBottomNav } from '@/components/shared/GuestBottomNav';
 import { GuestFAB } from '@/components/shared/GuestFAB';
 
-const hideNavRoutes = ['/guest/onboarding', '/guest/offline', '/guest/payment-success', '/guest/payment-failed', '/guest/early-exit'];
+const hideNavRoutes = ['/guest/onboarding', '/guest/offline', '/guest/payment-success', '/guest/payment-failed', '/guest/early-exit', '/guest/login'];
 
 const GuestLayout = () => {
   const { pathname } = useLocation();

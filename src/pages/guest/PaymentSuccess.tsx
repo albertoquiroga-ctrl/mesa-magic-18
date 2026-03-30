@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User, AlertTriangle } from 'lucide-react';
+import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User, AlertTriangle, Gift } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
+import { useAuthStore } from '@/stores/authStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
 import { mockGuests } from '@/data/mockData';
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const total = usePaymentStore((s) => s.total);
   const tipAmount = usePaymentStore((s) => s.tipAmount);
   const setTotal = usePaymentStore((s) => s.setTotal);
@@ -353,6 +355,27 @@ const PaymentSuccess = () => {
         >
           Volver al menú <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
+
+        {!isLoggedIn && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 }}
+          >
+            <button
+              onClick={() => navigate('/guest/login')}
+              className="w-full p-4 rounded-card border border-primary/20 bg-primary/5 text-left"
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Gift className="w-4 h-4 text-primary" />
+                <span className="text-xs font-semibold text-foreground">¿Sabías que pudiste ganar puntos?</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Crea tu cuenta y gana puntos en cada visita. <strong className="text-primary">Ahorra $50</strong> al inscribirte.
+              </p>
+            </button>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );

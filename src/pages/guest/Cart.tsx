@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { useOrderStore } from '@/stores/orderStore';
+import { useAuthStore } from '@/stores/authStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { Gift } from 'lucide-react';
 import OrderTracking from './OrderTracking';
 
 const Cart = () => {
@@ -170,6 +172,17 @@ const Cart = () => {
       {/* Sticky footer */}
       {!isEmpty && (
         <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
+          {!useAuthStore.getState().isLoggedIn && (
+            <button
+              onClick={() => navigate('/guest/login')}
+              className="flex items-center gap-2 w-full p-2.5 mb-3 rounded-lg bg-primary/5 border border-primary/20 text-left"
+            >
+              <Gift className="w-4 h-4 text-primary shrink-0" />
+              <span className="text-[11px] text-muted-foreground">
+                <strong className="text-foreground">Ahorra $50</strong> — únete al programa de lealtad
+              </span>
+            </button>
+          )}
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-muted-foreground">Total</span>
             <PriceDisplay amount={total} size="lg" className="font-bold text-foreground" />

@@ -7,7 +7,7 @@ export interface MenuItem {
   image?: string;
   soldOut?: boolean;
   tags?: string[];
-  prepTime?: number; // estimated prep time in minutes
+  prepTime?: number;
 }
 
 export const mockMenuItems: MenuItem[] = [
@@ -101,3 +101,10 @@ export const mockRestaurant = {
 };
 
 export const mockGuests = ['Tú', 'Ana', 'Carlos'];
+
+// Personalized recommendations for logged-in users (based on mock history)
+export const mockRecommendations: MenuItem[] = [
+  mockMenuItems.find((i) => i.id === 'margarita')!,
+  mockMenuItems.find((i) => i.id === 'tacos-asada')!,
+  mockMenuItems.find((i) => i.id === 'pasta-trufa')!,
+];

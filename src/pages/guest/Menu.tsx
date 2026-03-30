@@ -1,9 +1,10 @@
 import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search } from 'lucide-react';
-import { mockMenuItems, mockCategories, mockRestaurant } from '@/data/mockData';
+import { Search, Lock, Sparkles } from 'lucide-react';
+import { mockMenuItems, mockCategories, mockRestaurant, mockRecommendations } from '@/data/mockData';
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { CartBar } from '@/components/guest/CartBar';
+import { useAuthStore } from '@/stores/authStore';
 
 const categoryEmojis: Record<string, string> = {
   Bebidas: '🥤',
@@ -13,6 +14,7 @@ const categoryEmojis: Record<string, string> = {
 
 const Menu = () => {
   const navigate = useNavigate();
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -59,6 +61,43 @@ const Menu = () => {
 
       {/* Menu sections */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-28">
+        {/* Personalized recommendations */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <h2 className="text-sm font-semibold text-foreground">Recomendado para ti</h2>
+          </div>
+          {isLoggedIn ? (
+            <div className="grid grid-cols-2 gap-3">
+              {mockRecommendations.map((item) => (
+                <MenuItemCard
+                  key={item.id}
+                  item={item}
+                  onTap={() => navigate(`/guest/menu/${item.id}`)}
+                />
+              ))}
+            </div>
+          ) : (
+            <button
+              onClick={() => navigate('/guest/login')}
+              className="w-full relative rounded-card border border-border bg-card p-5 overflow-hidden"
+            >
+              <div className="absolute inset-0 backdrop-blur-sm bg-card/60 z-10 flex flex-col items-center justify-center gap-2">
+                <Lock className="w-5 h-5 text-primary" />
+                <span className="text-xs font-medium text-foreground text-center px-4">
+                  Inicia sesión para ver recomendaciones personalizadas
+                </span>
+                <span className="text-[11px] text-primary font-semibold">Crear cuenta →</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 opacity-30">
+                {mockRecommendations.slice(0, 3).map((item) => (
+                  <div key={item.id} className="h-16 rounded-lg bg-muted" />
+                ))}
+              </div>
+            </button>
+          )}
+        </div>
+
         {mockCategories.map((cat) => {
           const items = mockMenuItems.filter((i) => i.category === cat);
           return (

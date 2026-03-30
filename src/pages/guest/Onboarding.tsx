@@ -116,6 +116,17 @@ const Onboarding = () => {
         >
           {current === 2 ? 'Entrar al menú →' : 'Siguiente →'}
         </button>
+        {current === 2 && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              navigate('/guest/login');
+            }}
+            className="w-full text-center text-sm text-muted-foreground py-2"
+          >
+            ¿Ya tienes cuenta? Inicia sesión
+          </button>
+        )}
       </div>
     </div>
   );
