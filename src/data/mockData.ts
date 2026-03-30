@@ -110,7 +110,7 @@ export const mockMenuItems: MenuItem[] = [
 // Categories (ordered as they appear in the menu)
 // ---------------------------------------------------------------------------
 
-export const mockCategories = ['Bebidas', 'Entradas', 'Platos Fuertes'] as const;
+export const mockCategories = ['Bebidas', 'Entradas', 'Platos Fuertes'];
 
 // ---------------------------------------------------------------------------
 // Restaurant & table
