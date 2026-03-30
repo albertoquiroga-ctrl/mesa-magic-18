@@ -28,6 +28,7 @@ import GuestQuickPaySuccess from "./pages/guest/QuickPaySuccess";
 import GuestLoyaltyFarewell from "./pages/guest/LoyaltyFarewell";
 import GuestLogin from "./pages/guest/Login";
 import GuestProfile from "./pages/guest/Profile";
+import GuestPostRegistration from "./pages/guest/PostRegistration";
 
 const queryClient = new QueryClient();
 
