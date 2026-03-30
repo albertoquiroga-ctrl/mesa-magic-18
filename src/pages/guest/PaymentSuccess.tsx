@@ -249,8 +249,7 @@ const PaymentSuccess = () => {
                       )}
                       <button
                         onClick={() => {
-                          const owed = item.totalCost - item.paidAmount;
-                          setTotal(owed);
+                          setTotal(item.owedAmount);
                           setTipAmount(0);
                           setRating(0);
                           setFeedback('');
@@ -258,7 +257,7 @@ const PaymentSuccess = () => {
                         }}
                         className="mt-2 ml-6 px-3 py-1.5 text-[11px] font-medium rounded-button border border-primary text-primary hover:bg-primary/5 transition-colors"
                       >
-                        Pagar ${item.totalCost - item.paidAmount} de este platillo
+                        Pagar ${item.owedAmount} de este platillo
                       </button>
                     </div>
                   ))}
