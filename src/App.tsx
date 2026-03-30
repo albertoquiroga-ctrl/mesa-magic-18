@@ -22,6 +22,7 @@ import GuestPaymentFailed from "./pages/guest/PaymentFailed";
 import GuestPaymentSuccess from "./pages/guest/PaymentSuccess";
 import GuestEarlyExit from "./pages/guest/EarlyExit";
 import GuestOrderTracking from "./pages/guest/OrderTracking";
+import GuestQuickPay from "./pages/guest/QuickPay";
 
 const queryClient = new QueryClient();
 
