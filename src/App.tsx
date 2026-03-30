@@ -57,6 +57,8 @@ const App = () => (
             <Route path="split-tip" element={<GuestSplitTip />} />
             <Route path="checkout/card" element={<GuestCheckoutCard />} />
             <Route path="checkout/spei" element={<GuestCheckoutSpei />} />
+            <Route path="checkout/terminal" element={<GuestCheckoutTerminal />} />
+            <Route path="checkout/cash" element={<GuestCheckoutCash />} />
             <Route path="payment-failed" element={<GuestPaymentFailed />} />
             <Route path="payment-success" element={<GuestPaymentSuccess />} />
             <Route path="early-exit" element={<GuestEarlyExit />} />
