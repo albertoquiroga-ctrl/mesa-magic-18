@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, Star } from 'lucide-react';
+import { CheckCircle, ArrowRight } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
@@ -10,13 +9,6 @@ const PaymentSuccess = () => {
   const navigate = useNavigate();
   const total = usePaymentStore((s) => s.total);
   const tipAmount = usePaymentStore((s) => s.tipAmount);
-  const [rating, setRating] = useState(0);
-  const [hoveredStar, setHoveredStar] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmitRating = () => {
-    if (rating > 0) setSubmitted(true);
-  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-background px-6">
@@ -51,7 +43,7 @@ const PaymentSuccess = () => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="bg-card border border-border rounded-card p-5 w-full max-w-[320px] mb-6"
+        className="bg-card border border-border rounded-card p-5 w-full max-w-[320px] mb-8"
       >
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-muted-foreground">Pagado</span>
@@ -66,45 +58,9 @@ const PaymentSuccess = () => {
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6 }}
-        className="bg-card border border-border rounded-card p-5 w-full max-w-[320px] mb-8 text-center"
-      >
-        <p className="text-sm font-medium text-foreground mb-3">
-          {submitted ? '¡Gracias por tu opinión!' : '¿Cómo fue tu experiencia?'}
-        </p>
-        <div className="flex items-center justify-center gap-1 mb-3">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <button
-              key={star}
-              disabled={submitted}
-              onClick={() => setRating(star)}
-              onMouseEnter={() => setHoveredStar(star)}
-              onMouseLeave={() => setHoveredStar(0)}
-              className="p-1 transition-transform hover:scale-110 disabled:cursor-default"
-            >
-              <Star
-                className={`w-8 h-8 transition-colors ${
-                  star <= (hoveredStar || rating)
-                    ? 'fill-yellow-400 text-yellow-400'
-                    : 'text-muted-foreground/30'
-                }`}
-              />
-            </button>
-          ))}
-        </div>
-        {!submitted && rating > 0 && (
-          <Button size="sm" variant="outline" onClick={handleSubmitRating} className="rounded-button">
-            Enviar
-          </Button>
-        )}
-      </motion.div>
-
-      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.75 }}
+        transition={{ delay: 0.65 }}
         className="w-full max-w-[320px]"
       >
         <Button

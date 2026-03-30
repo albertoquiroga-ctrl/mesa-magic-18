@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus } from 'lucide-react';
+import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { mockGuests } from '@/data/mockData';
 
 const tipOptions = [
@@ -20,11 +21,16 @@ const SplitTip = () => {
     splitMode, setSplitMode, tipPercent, setTipPercent,
     setTipAmount, setTotal, itemAssignments, setItemAssignment,
     sharedAmong, setSharedAmong, resetAssignments,
+    rating, setRating, feedback, setFeedback,
   } = usePaymentStore();
 
   const [customTip, setCustomTip] = useState('');
   const [isCustomTip, setIsCustomTip] = useState(false);
   const [showBreakdown, setShowBreakdown] = useState(false);
+  const [hoveredStar, setHoveredStar] = useState(0);
+
+  const isUnlocked = rating > 0;
+  const isLowRating = rating > 0 && rating <= 2;
 
   const allItems = rounds.flatMap((r) => r.items);
   const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string }[]>(
@@ -48,7 +54,6 @@ const SplitTip = () => {
 
   const guestCount = mockGuests.length;
 
-  // Calculate perPerson based on split mode
   let perPerson: number;
   let mineTotal = 0;
   let sharedTotal = 0;
@@ -63,7 +68,6 @@ const SplitTip = () => {
         const divisor = sharedAmong[item.key] || guestCount;
         sharedTotal += Math.ceil(itemTotal / divisor);
       }
-      // 'none' → no se suma
     });
     perPerson = mineTotal + sharedTotal;
   } else if (splitMode === 'full') {
@@ -72,13 +76,18 @@ const SplitTip = () => {
     perPerson = Math.ceil(subtotal / guestCount);
   }
 
+  const tipAmount = isLowRating
+    ? 0
+    : isCustomTip
+      ? Number(customTip) || 0
+      : Math.round(perPerson * (tipPercent / 100));
   const activeTip = isCustomTip ? Number(customTip) || 0 : tipPercent;
-  const tipAmount = isCustomTip
-    ? Number(customTip) || 0
-    : Math.round(perPerson * (tipPercent / 100));
   const finalTotal = perPerson + tipAmount;
 
+  const canContinue = isUnlocked && (!isLowRating || feedback.trim().length > 0);
+
   const handleContinue = () => {
+    if (!canContinue) return;
     setTipAmount(tipAmount);
     setTotal(finalTotal);
     navigate('/guest/checkout/card');
@@ -107,245 +116,314 @@ const SplitTip = () => {
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 pt-6 pb-36">
-        {/* Split mode */}
-        <section className="mb-8">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            ¿Cómo pagar?
-          </h2>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              onClick={() => handleSplitModeChange('full')}
-              className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
-                splitMode === 'full' ? 'border-primary bg-primary/5' : 'border-border bg-card'
-              }`}
-            >
-              <User className={`w-5 h-5 ${splitMode === 'full' ? 'text-primary' : 'text-muted-foreground'}`} />
-              <span className={`text-xs font-medium ${splitMode === 'full' ? 'text-primary' : 'text-foreground'}`}>
-                Pago total
-              </span>
-              <span className="text-[10px] text-muted-foreground leading-tight text-center">Tú pagas todo</span>
-            </button>
-            <button
-              onClick={() => handleSplitModeChange('equal')}
-              className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
-                splitMode === 'equal' ? 'border-primary bg-primary/5' : 'border-border bg-card'
-              }`}
-            >
-              <Users className={`w-5 h-5 ${splitMode === 'equal' ? 'text-primary' : 'text-muted-foreground'}`} />
-              <span className={`text-xs font-medium ${splitMode === 'equal' ? 'text-primary' : 'text-foreground'}`}>
-                Dividir
-              </span>
-              <span className="text-[10px] text-muted-foreground leading-tight text-center">
-                Entre {guestCount}
-              </span>
-            </button>
-            <button
-              onClick={() => handleSplitModeChange('custom')}
-              className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
-                splitMode === 'custom' ? 'border-primary bg-primary/5' : 'border-border bg-card'
-              }`}
-            >
-              <Scissors className={`w-5 h-5 ${splitMode === 'custom' ? 'text-primary' : 'text-muted-foreground'}`} />
-              <span className={`text-xs font-medium ${splitMode === 'custom' ? 'text-primary' : 'text-foreground'}`}>
-                Pago justo
-              </span>
-              <span className="text-[10px] text-muted-foreground leading-tight text-center">Tus platillos</span>
-            </button>
+        {/* Rating section — always visible */}
+        <section className="mb-6">
+          <div className="bg-card border border-border rounded-card p-5 text-center">
+            <h2 className="text-sm font-semibold text-foreground mb-1">
+              ¿Cómo fue tu experiencia?
+            </h2>
+            <p className="text-xs text-muted-foreground mb-4">
+              Califica para continuar con el pago
+            </p>
+            <div className="flex items-center justify-center gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  onClick={() => setRating(star)}
+                  onMouseEnter={() => setHoveredStar(star)}
+                  onMouseLeave={() => setHoveredStar(0)}
+                  className="p-1 transition-transform hover:scale-110"
+                >
+                  <Star
+                    className={`w-9 h-9 transition-colors ${
+                      star <= (hoveredStar || rating)
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-muted-foreground/30'
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+            {rating > 0 && (
+              <p className="text-xs text-muted-foreground mt-2">
+                {rating <= 2 ? 'Lamentamos escuchar eso' : rating <= 4 ? '¡Gracias!' : '¡Excelente!'}
+              </p>
+            )}
           </div>
         </section>
 
-        {/* Fair pay item assignment */}
-        {splitMode === 'custom' && (
-          <section className="mb-6">
+        {/* Rest of page — greyed out if not unlocked */}
+        <div className={!isUnlocked ? 'opacity-40 pointer-events-none select-none' : ''}>
+          {!isUnlocked && (
+            <p className="text-center text-xs text-muted-foreground mb-4">
+              Califica tu experiencia para desbloquear el pago
+            </p>
+          )}
+
+          {/* Split mode */}
+          <section className="mb-8">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              Marca tus platillos
+              ¿Cómo pagar?
             </h2>
-            <div className="bg-card border border-border rounded-card overflow-hidden">
-              {consolidatedItems.map((item, idx) => {
-                const assignment = itemAssignments[item.key] || 'shared';
-                const divisor = sharedAmong[item.key] || guestCount;
-                return (
-                  <div
-                    key={item.key}
-                    className={`px-3 py-2.5 ${
-                      idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0 flex-1">
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={() => handleSplitModeChange('full')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                  splitMode === 'full' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                }`}
+              >
+                <User className={`w-5 h-5 ${splitMode === 'full' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className={`text-xs font-medium ${splitMode === 'full' ? 'text-primary' : 'text-foreground'}`}>
+                  Pago total
+                </span>
+                <span className="text-[10px] text-muted-foreground leading-tight text-center">Tú pagas todo</span>
+              </button>
+              <button
+                onClick={() => handleSplitModeChange('equal')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                  splitMode === 'equal' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                }`}
+              >
+                <Users className={`w-5 h-5 ${splitMode === 'equal' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className={`text-xs font-medium ${splitMode === 'equal' ? 'text-primary' : 'text-foreground'}`}>
+                  Dividir
+                </span>
+                <span className="text-[10px] text-muted-foreground leading-tight text-center">
+                  Entre {guestCount}
+                </span>
+              </button>
+              <button
+                onClick={() => handleSplitModeChange('custom')}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-card border transition-colors ${
+                  splitMode === 'custom' ? 'border-primary bg-primary/5' : 'border-border bg-card'
+                }`}
+              >
+                <Scissors className={`w-5 h-5 ${splitMode === 'custom' ? 'text-primary' : 'text-muted-foreground'}`} />
+                <span className={`text-xs font-medium ${splitMode === 'custom' ? 'text-primary' : 'text-foreground'}`}>
+                  Pago justo
+                </span>
+                <span className="text-[10px] text-muted-foreground leading-tight text-center">Tus platillos</span>
+              </button>
+            </div>
+          </section>
+
+          {/* Fair pay item assignment */}
+          {splitMode === 'custom' && (
+            <section className="mb-6">
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                Marca tus platillos
+              </h2>
+              <div className="bg-card border border-border rounded-card overflow-hidden">
+                {consolidatedItems.map((item, idx) => {
+                  const assignment = itemAssignments[item.key] || 'shared';
+                  const divisor = sharedAmong[item.key] || guestCount;
+                  return (
+                    <div
+                      key={item.key}
+                      className={`px-3 py-2.5 ${
+                        idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
+                            {item.quantity}×
+                          </span>
+                          <span className="text-sm text-foreground truncate">{item.name}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 mt-2 ml-7">
+                        <div className="flex rounded-full border border-border overflow-hidden">
+                          {([
+                            { value: 'mine', label: 'Mío' },
+                            { value: 'shared', label: 'Compartido' },
+                            { value: 'none', label: 'No pago' },
+                          ] as const).map((opt) => (
+                            <button
+                              key={opt.value}
+                              onClick={() => setItemAssignment(item.key, opt.value)}
+                              className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                                assignment === opt.value
+                                  ? 'bg-primary text-primary-foreground'
+                                  : 'bg-card text-muted-foreground'
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                        {assignment === 'shared' && (
+                          <div className="flex items-center gap-1.5 ml-auto">
+                            <span className="text-[11px] text-muted-foreground">÷</span>
+                            <button
+                              onClick={() => setSharedAmong(item.key, Math.max(2, divisor - 1))}
+                              className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"
+                              aria-label="Menos personas"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="font-mono text-xs w-4 text-center tabular-nums">{divisor}</span>
+                            <button
+                              onClick={() => setSharedAmong(item.key, divisor + 1)}
+                              className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                              aria-label="Más personas"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                <div className="px-3 py-2.5 bg-muted/50 space-y-1">
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Tus platillos</span>
+                    <PriceDisplay amount={mineTotal} size="sm" />
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>Tu parte de compartidos</span>
+                    <PriceDisplay amount={sharedTotal} size="sm" />
+                  </div>
+                </div>
+              </div>
+            </section>
+          )}
+
+          {/* Order breakdown (for non-custom modes) */}
+          {splitMode !== 'custom' && (
+            <section className="mb-6">
+              <button
+                onClick={() => setShowBreakdown((v) => !v)}
+                className="flex items-center justify-between w-full py-2 text-sm font-medium text-foreground"
+              >
+                <span>Desglose del pedido</span>
+                {showBreakdown ? (
+                  <ChevronUp className="w-4 h-4 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                )}
+              </button>
+              {showBreakdown && (
+                <div className="bg-card border border-border rounded-card overflow-hidden mt-2">
+                  {consolidatedItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex items-center justify-between px-4 py-2.5 ${
+                        idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
                         <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
                           {item.quantity}×
                         </span>
                         <span className="text-sm text-foreground truncate">{item.name}</span>
                       </div>
-                      <div className="flex items-center gap-1.5 shrink-0">
-                        <PriceDisplay amount={item.price * item.quantity} size="sm" />
-                      </div>
+                      <PriceDisplay amount={item.price * item.quantity} size="sm" />
                     </div>
-                    {/* Assignment toggle */}
-                    <div className="flex items-center gap-2 mt-2 ml-7">
-                      <div className="flex rounded-full border border-border overflow-hidden">
-                        {([
-                          { value: 'mine', label: 'Mío' },
-                          { value: 'shared', label: 'Compartido' },
-                          { value: 'none', label: 'No pago' },
-                        ] as const).map((opt) => (
-                          <button
-                            key={opt.value}
-                            onClick={() => setItemAssignment(item.key, opt.value)}
-                            className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                              assignment === opt.value
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-card text-muted-foreground'
-                            }`}
-                          >
-                            {opt.label}
-                          </button>
-                        ))}
-                      </div>
-                      {/* Shared divisor control */}
-                      {assignment === 'shared' && (
-                        <div className="flex items-center gap-1.5 ml-auto">
-                          <span className="text-[11px] text-muted-foreground">÷</span>
-                          <button
-                            onClick={() => setSharedAmong(item.key, Math.max(2, divisor - 1))}
-                            className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"
-                            aria-label="Menos personas"
-                          >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="font-mono text-xs w-4 text-center tabular-nums">{divisor}</span>
-                          <button
-                            onClick={() => setSharedAmong(item.key, divisor + 1)}
-                            className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
-                            aria-label="Más personas"
-                          >
-                            <Plus className="w-3 h-3" />
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                  ))}
+                  <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
+                    <span className="text-xs text-muted-foreground">Subtotal mesa</span>
+                    <PriceDisplay amount={subtotal} size="sm" className="font-semibold" />
                   </div>
-                );
-              })}
-              {/* Summary */}
-              <div className="px-3 py-2.5 bg-muted/50 space-y-1">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Tus platillos</span>
-                  <PriceDisplay amount={mineTotal} size="sm" />
                 </div>
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Tu parte de compartidos</span>
-                  <PriceDisplay amount={sharedTotal} size="sm" />
-                </div>
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Order breakdown (for non-custom modes) */}
-        {splitMode !== 'custom' && (
-          <section className="mb-6">
-            <button
-              onClick={() => setShowBreakdown((v) => !v)}
-              className="flex items-center justify-between w-full py-2 text-sm font-medium text-foreground"
-            >
-              <span>Desglose del pedido</span>
-              {showBreakdown ? (
-                <ChevronUp className="w-4 h-4 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="w-4 h-4 text-muted-foreground" />
               )}
-            </button>
-            {showBreakdown && (
-              <div className="bg-card border border-border rounded-card overflow-hidden mt-2">
-                {consolidatedItems.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className={`flex items-center justify-between px-4 py-2.5 ${
-                      idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
-                    }`}
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
-                        {item.quantity}×
-                      </span>
-                      <span className="text-sm text-foreground truncate">{item.name}</span>
-                    </div>
-                    <PriceDisplay amount={item.price * item.quantity} size="sm" />
-                  </div>
-                ))}
-                <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
-                  <span className="text-xs text-muted-foreground">Subtotal mesa</span>
-                  <PriceDisplay amount={subtotal} size="sm" className="font-semibold" />
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* Subtotal display */}
-        <div className="flex items-center justify-between py-3 border-b border-border mb-6">
-          <span className="text-sm text-muted-foreground">
-            {splitMode === 'full' ? 'Total mesa' : splitMode === 'custom' ? 'Tu subtotal' : 'Tu parte'}
-          </span>
-          <PriceDisplay amount={perPerson} size="md" className="font-semibold text-foreground" />
-        </div>
-
-        {/* Tip selector */}
-        <section>
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-            Propina
-          </h2>
-          <div className="flex gap-2 mb-3">
-            {tipOptions.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => {
-                  setTipPercent(opt.value);
-                  setIsCustomTip(false);
-                }}
-                className={`flex-1 py-3 rounded-button text-sm font-semibold transition-colors ${
-                  !isCustomTip && tipPercent === opt.value
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted text-muted-foreground'
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-            <button
-              onClick={() => setIsCustomTip(true)}
-              className={`flex-1 py-3 rounded-button text-sm font-semibold transition-colors ${
-                isCustomTip
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              Otro
-            </button>
-          </div>
-
-          {isCustomTip && (
-            <div className="relative mb-3">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
-              <input
-                type="number"
-                value={customTip}
-                onChange={(e) => setCustomTip(e.target.value)}
-                placeholder="0"
-                className="w-full h-12 rounded-input bg-card border border-border pl-8 pr-4 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
+            </section>
           )}
 
-          <div className="flex items-center justify-between py-2">
+          {/* Subtotal display */}
+          <div className="flex items-center justify-between py-3 border-b border-border mb-6">
             <span className="text-sm text-muted-foreground">
-              Propina{!isCustomTip ? ` (${activeTip}%)` : ''}
+              {splitMode === 'full' ? 'Total mesa' : splitMode === 'custom' ? 'Tu subtotal' : 'Tu parte'}
             </span>
-            <PriceDisplay amount={tipAmount} size="sm" className="text-foreground" />
+            <PriceDisplay amount={perPerson} size="md" className="font-semibold text-foreground" />
           </div>
-        </section>
+
+          {/* Tip or feedback section */}
+          {isLowRating ? (
+            <section>
+              <div className="bg-card border border-destructive/30 rounded-card p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <MessageSquare className="w-5 h-5 text-destructive" />
+                  <h2 className="text-sm font-semibold text-foreground">
+                    Lamentamos tu experiencia
+                  </h2>
+                </div>
+                <p className="text-xs text-muted-foreground mb-4">
+                  Nos importa mucho mejorar. Por favor cuéntanos qué salió mal para poder corregirlo.
+                </p>
+                <Textarea
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  placeholder="¿Cómo podemos mejorar?"
+                  className="min-h-[80px] text-sm resize-none"
+                />
+                {feedback.trim().length === 0 && (
+                  <p className="text-[11px] text-destructive mt-2">
+                    Este campo es obligatorio para continuar
+                  </p>
+                )}
+              </div>
+            </section>
+          ) : (
+            <section>
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                Propina
+              </h2>
+              <div className="flex gap-2 mb-3">
+                {tipOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => {
+                      setTipPercent(opt.value);
+                      setIsCustomTip(false);
+                    }}
+                    className={`flex-1 py-3 rounded-button text-sm font-semibold transition-colors ${
+                      !isCustomTip && tipPercent === opt.value
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted text-muted-foreground'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setIsCustomTip(true)}
+                  className={`flex-1 py-3 rounded-button text-sm font-semibold transition-colors ${
+                    isCustomTip
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted text-muted-foreground'
+                  }`}
+                >
+                  Otro
+                </button>
+              </div>
+
+              {isCustomTip && (
+                <div className="relative mb-3">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">$</span>
+                  <input
+                    type="number"
+                    value={customTip}
+                    onChange={(e) => setCustomTip(e.target.value)}
+                    placeholder="0"
+                    className="w-full h-12 rounded-input bg-card border border-border pl-8 pr-4 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                </div>
+              )}
+
+              <div className="flex items-center justify-between py-2">
+                <span className="text-sm text-muted-foreground">
+                  Propina{!isCustomTip ? ` (${activeTip}%)` : ''}
+                </span>
+                <PriceDisplay amount={tipAmount} size="sm" className="text-foreground" />
+              </div>
+            </section>
+          )}
+        </div>
       </div>
 
       {/* Sticky footer */}
@@ -357,6 +435,7 @@ const SplitTip = () => {
         <Button
           className="w-full h-12 rounded-button text-base font-bold"
           onClick={handleContinue}
+          disabled={!canContinue}
         >
           Continuar al pago
         </Button>
