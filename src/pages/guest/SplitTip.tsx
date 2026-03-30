@@ -228,7 +228,7 @@ const SplitTip = () => {
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-36">
+      <div className="flex-1 overflow-y-auto px-4 pt-6 pb-52">
         {/* Rating section — always visible */}
         <section className="mb-6">
           <div className="bg-card border border-border rounded-card p-5 text-center">
