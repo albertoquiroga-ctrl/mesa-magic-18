@@ -83,7 +83,12 @@ const SplitTip = () => {
       ? Number(customTip) || 0
       : Math.round(perPerson * (tipPercent / 100));
   const activeTip = isCustomTip ? Number(customTip) || 0 : tipPercent;
-  const finalTotal = perPerson + tipAmount;
+
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const isNewUser = useAuthStore((s) => s.isNewUser);
+  const loyaltyDiscount = isLoggedIn && isNewUser ? 50 : 0;
+
+  const finalTotal = Math.max(perPerson + tipAmount - loyaltyDiscount, 0);
 
   const canContinue = isUnlocked && (!isLowRating || feedback.trim().length > 0);
 
