@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
 import { useOrderStore } from '@/stores/orderStore';
+import { useAuthStore } from '@/stores/authStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+import { Gift } from 'lucide-react';
 import OrderTracking from './OrderTracking';
 
 const Cart = () => {
