@@ -14,6 +14,7 @@ const PaymentSuccess = () => {
   const tipAmount = usePaymentStore((s) => s.tipAmount);
   const rounds = useOrderStore((s) => s.rounds);
   const [showAudit, setShowAudit] = useState(false);
+  const [showUnpaid, setShowUnpaid] = useState(false);
 
   // Table total from all rounds
   const tableSubtotal = rounds.reduce(
