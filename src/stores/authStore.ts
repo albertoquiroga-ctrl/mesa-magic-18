@@ -18,6 +18,7 @@ export interface PastVisit {
 
 export interface AuthUser {
   name: string;
+  phone: string;
   email: string;
   loyalty: LoyaltyInfo;
   history: PastVisit[];
@@ -32,6 +33,7 @@ interface AuthState {
 
 const mockUser: AuthUser = {
   name: 'María García',
+  phone: '+52 55 1234 5678',
   email: 'maria@example.com',
   loyalty: {
     points: 340,

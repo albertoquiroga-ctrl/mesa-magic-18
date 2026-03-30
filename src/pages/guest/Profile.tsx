@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, LogOut, ChevronRight, Gift, Trophy } from 'lucide-react';
+import { ArrowLeft, LogOut, Gift, Trophy, Phone } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
@@ -46,6 +46,10 @@ const Profile = () => {
             </div>
             <div>
               <h2 className="text-base font-semibold text-foreground">{user.name}</h2>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Phone className="w-3 h-3" />
+                <span>{user.phone}</span>
+              </div>
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
           </div>
