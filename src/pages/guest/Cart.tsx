@@ -71,6 +71,11 @@ const Cart = () => {
     );
   }
 
+  // If cart is empty and there's an active order, show tracking
+  if (isEmpty && hasActiveOrder && !sent) {
+    return <OrderTracking embedded />;
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header */}
