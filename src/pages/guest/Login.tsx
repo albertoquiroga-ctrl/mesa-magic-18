@@ -25,7 +25,7 @@ const Login = () => {
 
   const handleVerify = () => {
     login();
-    navigate(returnTo, { replace: true });
+    navigate('/guest/post-registration', { replace: true, state: { nudgeOrigin, returnTo } });
   };
 
   return (
