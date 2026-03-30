@@ -21,6 +21,7 @@ import GuestCheckoutSpei from "./pages/guest/CheckoutSpei";
 import GuestPaymentFailed from "./pages/guest/PaymentFailed";
 import GuestPaymentSuccess from "./pages/guest/PaymentSuccess";
 import GuestEarlyExit from "./pages/guest/EarlyExit";
+import GuestOrderTracking from "./pages/guest/OrderTracking";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="payment-failed" element={<GuestPaymentFailed />} />
             <Route path="payment-success" element={<GuestPaymentSuccess />} />
             <Route path="early-exit" element={<GuestEarlyExit />} />
+            <Route path="order-tracking" element={<GuestOrderTracking />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
