@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, LogOut, ChevronRight, Gift, Trophy } from 'lucide-react';
+import { ArrowLeft, LogOut, Gift, Trophy, Phone } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
