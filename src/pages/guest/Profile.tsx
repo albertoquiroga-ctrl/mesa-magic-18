@@ -46,6 +46,10 @@ const Profile = () => {
             </div>
             <div>
               <h2 className="text-base font-semibold text-foreground">{user.name}</h2>
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Phone className="w-3 h-3" />
+                <span>{user.phone}</span>
+              </div>
               <p className="text-xs text-muted-foreground">{user.email}</p>
             </div>
           </div>
