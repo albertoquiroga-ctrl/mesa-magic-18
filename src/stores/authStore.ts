@@ -26,8 +26,9 @@ export interface AuthUser {
 
 interface AuthState {
   isLoggedIn: boolean;
+  isNewUser: boolean;
   user: AuthUser | null;
-  login: (email?: string, password?: string) => void;
+  login: (isNew?: boolean) => void;
   logout: () => void;
 }
 
