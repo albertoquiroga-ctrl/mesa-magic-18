@@ -1,7 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSessionStore } from '@/stores/sessionStore';
+import { useCartStore } from '@/stores/cartStore';
+import { useOrderStore } from '@/stores/orderStore';
+import { usePaymentStore } from '@/stores/paymentStore';
+import { useAuthStore } from '@/stores/authStore';
+import { useTableStore } from '@/stores/tableStore';
 
 const slides = [
   {
