@@ -60,11 +60,12 @@ const SplitTip = () => {
       if (assignment === 'mine') {
         mineTotal += itemTotal;
       } else if (assignment === 'shared') {
-        sharedTotal += itemTotal;
+        const divisor = sharedAmong[item.key] || guestCount;
+        sharedTotal += Math.ceil(itemTotal / divisor);
       }
       // 'none' → no se suma
     });
-    perPerson = mineTotal + Math.ceil(sharedTotal / guestCount);
+    perPerson = mineTotal + sharedTotal;
   } else if (splitMode === 'full') {
     perPerson = subtotal;
   } else {
