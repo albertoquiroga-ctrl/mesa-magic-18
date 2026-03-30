@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User, AlertTriangle } from 'lucide-react';
+import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User, AlertTriangle, Gift } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
+import { useAuthStore } from '@/stores/authStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
 import { mockGuests } from '@/data/mockData';
