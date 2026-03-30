@@ -37,7 +37,7 @@ const Cart = () => {
     setCurrentRound(currentRound + 1);
     clearCart();
     setSent(true);
-    setTimeout(() => navigate('/guest/order-tracking'), 1800);
+    setTimeout(() => setSent(false), 1800);
   };
 
   if (sent) {
