@@ -12,6 +12,8 @@ interface ItemLap {
   quantity: number;
   prepTime: number; // minutes
   image?: string;
+  roundNum: number;
+  createdAt: string; // ISO timestamp of the round this item belongs to
 }
 
 const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
