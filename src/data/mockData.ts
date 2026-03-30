@@ -16,6 +16,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 120,
     category: 'Bebidas',
     description: 'Tequila, limón fresco, triple sec y sal de gusano',
+    image: 'https://images.unsplash.com/photo-1556855810-ac404aa91e85?w=600&h=600&fit=crop',
     tags: ['popular'],
   },
   {
@@ -24,6 +25,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 95,
     category: 'Entradas',
     description: 'Aguacate molcajeteado con cilantro, cebolla y chile serrano',
+    image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=600&h=600&fit=crop',
     tags: ['vegetariano'],
   },
   {
@@ -32,6 +34,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 160,
     category: 'Platos Fuertes',
     description: 'Tres tacos de arrachera en tortilla de maíz con guarniciones',
+    image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&h=600&fit=crop',
     tags: ['popular'],
   },
   {
@@ -40,6 +43,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 65,
     category: 'Bebidas',
     description: 'Agua fresca de jamaica natural',
+    image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&h=600&fit=crop',
     tags: ['sin alcohol'],
   },
   {
@@ -48,6 +52,7 @@ export const mockMenuItems: MenuItem[] = [
     price: 95,
     category: 'Bebidas',
     description: 'Mezcal artesanal de Oaxaca con naranja y sal de chapulín',
+    image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=600&h=600&fit=crop',
     soldOut: true,
   },
   {
