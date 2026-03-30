@@ -31,6 +31,15 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const tableNumber = useSessionStore((s) => s.tableNumber);
 
+  // Reset all session state when onboarding is shown (demo reset)
+  useEffect(() => {
+    useCartStore.getState().clearCart();
+    useOrderStore.getState().reset();
+    usePaymentStore.getState().reset();
+    useAuthStore.getState().logout();
+    useTableStore.getState().reset();
+  }, []);
+
   const goNext = () => {
     if (current === 2) {
       navigate('/guest/menu');
