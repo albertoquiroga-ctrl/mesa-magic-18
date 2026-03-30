@@ -333,6 +333,21 @@ const SplitTip = () => {
                 </div>
               )}
 
+              {/* Al centro items */}
+              {alCentroItems.length > 0 && (
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />
+                    <span className="text-[11px] font-semibold text-amber-600 uppercase tracking-wide">
+                      Típicamente al centro
+                    </span>
+                  </div>
+                  <div className="bg-card border border-amber-200 rounded-card overflow-hidden">
+                    {alCentroItems.map((item, idx) => renderItemRow(item, idx, alCentroItems.length))}
+                  </div>
+                </div>
+              )}
+
               {/* Others' items */}
               {othersItems.length > 0 && (
                 <div className="mb-3">
