@@ -375,24 +375,48 @@ const SplitTip = () => {
                 )}
               </button>
               {showBreakdown && (
-                <div className="bg-card border border-border rounded-card overflow-hidden mt-2">
-                  {consolidatedItems.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className={`flex items-center justify-between px-4 py-2.5 ${
-                        idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
-                          {item.quantity}×
-                        </span>
-                        <span className="text-sm text-foreground truncate">{item.name}</span>
+                <div className="mt-2 space-y-3">
+                  {/* My device items */}
+                  {myDeviceItems.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Smartphone className="w-3 h-3 text-primary" />
+                        <span className="text-[10px] font-semibold text-primary uppercase tracking-wide">Tu dispositivo</span>
                       </div>
-                      <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                      <div className="bg-card border border-primary/20 rounded-card overflow-hidden">
+                        {myDeviceItems.map((item, idx) => (
+                          <div key={idx} className={`flex items-center justify-between px-4 py-2.5 ${idx < myDeviceItems.length - 1 ? 'border-b border-border' : ''}`}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">{item.quantity}×</span>
+                              <span className="text-sm text-foreground truncate">{item.name}</span>
+                            </div>
+                            <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
-                  <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
+                  )}
+                  {/* Others' items */}
+                  {othersItems.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Users className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Otros en la mesa</span>
+                      </div>
+                      <div className="bg-card border border-border rounded-card overflow-hidden">
+                        {othersItems.map((item, idx) => (
+                          <div key={idx} className={`flex items-center justify-between px-4 py-2.5 ${idx < othersItems.length - 1 ? 'border-b border-border' : ''}`}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">{item.quantity}×</span>
+                              <span className="text-sm text-foreground truncate">{item.name}</span>
+                            </div>
+                            <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="bg-card border border-border rounded-card flex items-center justify-between px-4 py-2.5">
                     <span className="text-xs text-muted-foreground">Subtotal mesa</span>
                     <PriceDisplay amount={subtotal} size="sm" className="font-semibold" />
                   </div>
