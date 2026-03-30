@@ -5,7 +5,7 @@ import { ArrowLeft, Clock, Check } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
 import { mockMenuItems } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+
 
 interface ItemLap {
   name: string;
