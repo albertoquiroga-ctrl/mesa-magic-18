@@ -36,20 +36,42 @@ const SplitTip = () => {
   const isUnlocked = rating > 0;
   const isLowRating = rating > 0 && rating <= 2;
 
+  const guests = useTableStore((s) => s.guests);
+  const guestCount = guests.length;
+
   const allItems = rounds.flatMap((r) => r.items);
-  const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string }[]>(
+  const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string; category?: string; orderedByDevice?: boolean }[]>(
     (acc, item) => {
       const key = `${item.name}::${item.price}`;
       const existing = acc.find((a) => a.key === key);
       if (existing) {
         existing.quantity += item.quantity;
       } else {
-        acc.push({ ...item, key });
+        acc.push({ name: item.name, quantity: item.quantity, price: item.price, key, category: item.category, orderedByDevice: item.orderedByDevice });
       }
       return acc;
     },
     []
   );
+
+  const myDeviceItems = consolidatedItems.filter((i) => i.orderedByDevice);
+  const othersItems = consolidatedItems.filter((i) => !i.orderedByDevice);
+
+  // Auto-assign on custom mode switch
+  useEffect(() => {
+    if (splitMode === 'custom') {
+      consolidatedItems.forEach((item) => {
+        if (item.category === 'Entradas') {
+          setItemAssignment(item.key, 'shared');
+          setSharedAmong(item.key, guestCount);
+        } else if (item.orderedByDevice) {
+          setItemAssignment(item.key, 'mine');
+        } else {
+          setItemAssignment(item.key, 'none');
+        }
+      });
+    }
+  }, [splitMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const subtotal = rounds.reduce(
     (sum, r) => sum + r.items.reduce((s, i) => s + i.price * i.quantity, 0),
