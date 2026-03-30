@@ -18,6 +18,7 @@ export interface PastVisit {
 
 export interface AuthUser {
   name: string;
+  phone: string;
   email: string;
   loyalty: LoyaltyInfo;
   history: PastVisit[];
