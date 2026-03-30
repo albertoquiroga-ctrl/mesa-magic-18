@@ -19,6 +19,8 @@ import GuestTableStatus from "./pages/guest/TableStatus";
 import GuestSplitTip from "./pages/guest/SplitTip";
 import GuestCheckoutCard from "./pages/guest/CheckoutCard";
 import GuestCheckoutSpei from "./pages/guest/CheckoutSpei";
+import GuestCheckoutTerminal from "./pages/guest/CheckoutTerminal";
+import GuestCheckoutCash from "./pages/guest/CheckoutCash";
 import GuestPaymentFailed from "./pages/guest/PaymentFailed";
 import GuestPaymentSuccess from "./pages/guest/PaymentSuccess";
 import GuestEarlyExit from "./pages/guest/EarlyExit";
