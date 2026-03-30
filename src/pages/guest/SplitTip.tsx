@@ -262,27 +262,22 @@ const SplitTip = () => {
                           ))}
                         </div>
                         {assignment === 'shared' && (
-                          <div className="flex flex-col items-end gap-1 ml-auto">
-                            <span className="text-[11px] font-mono text-muted-foreground">
-                              ${item.price * item.quantity} ÷ {divisor} {divisor === 1 ? 'persona' : 'personas'} = <span className="text-foreground font-semibold">${Math.ceil((item.price * item.quantity) / divisor)}</span>
-                            </span>
-                            <div className="flex items-center gap-1.5">
-                              <button
-                                onClick={() => setSharedAmong(item.key, Math.max(2, divisor - 1))}
-                                className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"
-                                aria-label="Menos personas"
-                              >
-                                <Minus className="w-3 h-3" />
-                              </button>
-                              <span className="font-mono text-xs w-4 text-center tabular-nums">{divisor}</span>
-                              <button
-                                onClick={() => setSharedAmong(item.key, divisor + 1)}
-                                className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
-                                aria-label="Más personas"
-                              >
-                                <Plus className="w-3 h-3" />
-                              </button>
-                            </div>
+                          <div className="flex items-center gap-1.5 ml-auto">
+                            <button
+                              onClick={() => setSharedAmong(item.key, Math.max(2, divisor - 1))}
+                              className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"
+                              aria-label="Menos personas"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="font-mono text-xs w-4 text-center tabular-nums">{divisor}</span>
+                            <button
+                              onClick={() => setSharedAmong(item.key, divisor + 1)}
+                              className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                              aria-label="Más personas"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
                           </div>
                         )}
                       </div>
