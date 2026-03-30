@@ -37,6 +37,7 @@ const MyConsumption = () => {
 
   const myConsolidated = consolidate(myItems);
   const othersConsolidated = consolidate(othersItems);
+  const sharedConsolidated = consolidate(sharedItems);
 
   const renderItemList = (items: ReturnType<typeof consolidate>, label: string, icon: React.ReactNode, total: number) => {
     if (items.length === 0) return null;
