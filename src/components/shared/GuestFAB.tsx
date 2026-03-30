@@ -13,6 +13,12 @@ const options = [
 
 export const GuestFAB = () => {
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  // Routes that have a fixed CTA bar above the bottom nav
+  const hasPinnedCTA = ['/guest/menu', '/guest/cart', '/guest/split-tip', '/guest/my-consumption'].some(
+    (route) => pathname.startsWith(route)
+  );
 
   const handleOption = (option: typeof options[0]) => {
     setOpen(false);
