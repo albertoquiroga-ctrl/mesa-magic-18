@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors } from 'lucide-react';
+import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
