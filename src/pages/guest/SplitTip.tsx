@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift } from 'lucide-react';
+import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift, Smartphone } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useTableStore } from '@/stores/tableStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -35,27 +36,49 @@ const SplitTip = () => {
   const isUnlocked = rating > 0;
   const isLowRating = rating > 0 && rating <= 2;
 
+  const guests = useTableStore((s) => s.guests);
+  const guestCount = guests.length;
+
   const allItems = rounds.flatMap((r) => r.items);
-  const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string }[]>(
+  const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string; category?: string; orderedByDevice?: boolean }[]>(
     (acc, item) => {
       const key = `${item.name}::${item.price}`;
       const existing = acc.find((a) => a.key === key);
       if (existing) {
         existing.quantity += item.quantity;
       } else {
-        acc.push({ ...item, key });
+        acc.push({ name: item.name, quantity: item.quantity, price: item.price, key, category: item.category, orderedByDevice: item.orderedByDevice });
       }
       return acc;
     },
     []
   );
 
+  const myDeviceItems = consolidatedItems.filter((i) => i.orderedByDevice);
+  const othersItems = consolidatedItems.filter((i) => !i.orderedByDevice);
+
+  // Auto-assign on custom mode switch
+  useEffect(() => {
+    if (splitMode === 'custom') {
+      consolidatedItems.forEach((item) => {
+        if (item.category === 'Entradas') {
+          setItemAssignment(item.key, 'shared');
+          setSharedAmong(item.key, guestCount);
+        } else if (item.orderedByDevice) {
+          setItemAssignment(item.key, 'mine');
+        } else {
+          setItemAssignment(item.key, 'none');
+        }
+      });
+    }
+  }, [splitMode]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const subtotal = rounds.reduce(
     (sum, r) => sum + r.items.reduce((s, i) => s + i.price * i.quantity, 0),
     0
   );
 
-  const guestCount = mockGuests.length;
+  // guestCount already defined above
 
   let perPerson: number;
   let mineTotal = 0;
@@ -104,6 +127,80 @@ const SplitTip = () => {
     if (mode === 'custom') {
       resetAssignments();
     }
+  };
+
+  const renderItemRow = (item: typeof consolidatedItems[0], idx: number, totalCount: number) => {
+    const assignment = itemAssignments[item.key] || 'shared';
+    const divisor = sharedAmong[item.key] || guestCount;
+    return (
+      <div
+        key={item.key}
+        className={`px-3 py-2.5 ${idx < totalCount - 1 ? 'border-b border-border' : ''}`}
+      >
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0 flex-1">
+            <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
+              {item.quantity}×
+            </span>
+            <div className="min-w-0">
+              <span className="text-sm text-foreground truncate block">{item.name}</span>
+              {item.category && (
+                <span className="text-[10px] text-muted-foreground">{item.category}</span>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
+            {assignment === 'shared' ? (
+              <span className="text-[11px] font-mono text-muted-foreground">
+                ${item.price * item.quantity} ÷ {divisor} = <span className="text-foreground font-semibold">${Math.ceil((item.price * item.quantity) / divisor)}</span>
+              </span>
+            ) : (
+              <PriceDisplay amount={item.price * item.quantity} size="sm" />
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 mt-2 ml-7">
+          <div className="flex rounded-full border border-border overflow-hidden">
+            {([
+              { value: 'mine', label: 'Mío' },
+              { value: 'shared', label: 'Compartido' },
+              { value: 'none', label: 'No pago' },
+            ] as const).map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setItemAssignment(item.key, opt.value)}
+                className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
+                  assignment === opt.value
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-card text-muted-foreground'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          {assignment === 'shared' && (
+            <div className="flex items-center gap-1.5 ml-auto">
+              <button
+                onClick={() => setSharedAmong(item.key, Math.max(2, divisor - 1))}
+                className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"
+                aria-label="Menos personas"
+              >
+                <Minus className="w-3 h-3" />
+              </button>
+              <span className="font-mono text-xs w-4 text-center tabular-nums">{divisor}</span>
+              <button
+                onClick={() => setSharedAmong(item.key, divisor + 1)}
+                className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                aria-label="Más personas"
+              >
+                <Plus className="w-3 h-3" />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -219,86 +316,45 @@ const SplitTip = () => {
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
                 Marca tus platillos
               </h2>
-              <div className="bg-card border border-border rounded-card overflow-hidden">
-                {consolidatedItems.map((item, idx) => {
-                  const assignment = itemAssignments[item.key] || 'shared';
-                  const divisor = sharedAmong[item.key] || guestCount;
-                  return (
-                    <div
-                      key={item.key}
-                      className={`px-3 py-2.5 ${
-                        idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-2 min-w-0 flex-1">
-                          <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
-                            {item.quantity}×
-                          </span>
-                          <span className="text-sm text-foreground truncate">{item.name}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 shrink-0">
-                          {assignment === 'shared' ? (
-                            <span className="text-[11px] font-mono text-muted-foreground">
-                              ${item.price * item.quantity} ÷ {divisor} = <span className="text-foreground font-semibold">${Math.ceil((item.price * item.quantity) / divisor)}</span>
-                            </span>
-                          ) : (
-                            <PriceDisplay amount={item.price * item.quantity} size="sm" />
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 mt-2 ml-7">
-                        <div className="flex rounded-full border border-border overflow-hidden">
-                          {([
-                            { value: 'mine', label: 'Mío' },
-                            { value: 'shared', label: 'Compartido' },
-                            { value: 'none', label: 'No pago' },
-                          ] as const).map((opt) => (
-                            <button
-                              key={opt.value}
-                              onClick={() => setItemAssignment(item.key, opt.value)}
-                              className={`px-2.5 py-1 text-[11px] font-medium transition-colors ${
-                                assignment === opt.value
-                                  ? 'bg-primary text-primary-foreground'
-                                  : 'bg-card text-muted-foreground'
-                              }`}
-                            >
-                              {opt.label}
-                            </button>
-                          ))}
-                        </div>
-                        {assignment === 'shared' && (
-                          <div className="flex items-center gap-1.5 ml-auto">
-                            <button
-                              onClick={() => setSharedAmong(item.key, Math.max(2, divisor - 1))}
-                              className="w-6 h-6 rounded-full bg-muted flex items-center justify-center"
-                              aria-label="Menos personas"
-                            >
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="font-mono text-xs w-4 text-center tabular-nums">{divisor}</span>
-                            <button
-                              onClick={() => setSharedAmong(item.key, divisor + 1)}
-                              className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
-                              aria-label="Más personas"
-                            >
-                              <Plus className="w-3 h-3" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-                <div className="px-3 py-2.5 bg-muted/50 space-y-1">
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Tus platillos</span>
-                    <PriceDisplay amount={mineTotal} size="sm" />
+
+              {/* My device items */}
+              {myDeviceItems.length > 0 && (
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Smartphone className="w-3.5 h-3.5 text-primary" />
+                    <span className="text-[11px] font-semibold text-primary uppercase tracking-wide">
+                      Pedido desde tu dispositivo
+                    </span>
                   </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>Tu parte de compartidos</span>
-                    <PriceDisplay amount={sharedTotal} size="sm" />
+                  <div className="bg-card border border-primary/20 rounded-card overflow-hidden">
+                    {myDeviceItems.map((item, idx) => renderItemRow(item, idx, myDeviceItems.length))}
                   </div>
+                </div>
+              )}
+
+              {/* Others' items */}
+              {othersItems.length > 0 && (
+                <div className="mb-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wide">
+                      Pedido por otros en la mesa
+                    </span>
+                  </div>
+                  <div className="bg-card border border-border rounded-card overflow-hidden">
+                    {othersItems.map((item, idx) => renderItemRow(item, idx, othersItems.length))}
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-card border border-border rounded-card px-3 py-2.5 space-y-1">
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Tus platillos</span>
+                  <PriceDisplay amount={mineTotal} size="sm" />
+                </div>
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>Tu parte de compartidos</span>
+                  <PriceDisplay amount={sharedTotal} size="sm" />
                 </div>
               </div>
             </section>
@@ -319,24 +375,48 @@ const SplitTip = () => {
                 )}
               </button>
               {showBreakdown && (
-                <div className="bg-card border border-border rounded-card overflow-hidden mt-2">
-                  {consolidatedItems.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className={`flex items-center justify-between px-4 py-2.5 ${
-                        idx < consolidatedItems.length - 1 ? 'border-b border-border' : ''
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
-                          {item.quantity}×
-                        </span>
-                        <span className="text-sm text-foreground truncate">{item.name}</span>
+                <div className="mt-2 space-y-3">
+                  {/* My device items */}
+                  {myDeviceItems.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Smartphone className="w-3 h-3 text-primary" />
+                        <span className="text-[10px] font-semibold text-primary uppercase tracking-wide">Tu dispositivo</span>
                       </div>
-                      <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                      <div className="bg-card border border-primary/20 rounded-card overflow-hidden">
+                        {myDeviceItems.map((item, idx) => (
+                          <div key={idx} className={`flex items-center justify-between px-4 py-2.5 ${idx < myDeviceItems.length - 1 ? 'border-b border-border' : ''}`}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">{item.quantity}×</span>
+                              <span className="text-sm text-foreground truncate">{item.name}</span>
+                            </div>
+                            <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  ))}
-                  <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
+                  )}
+                  {/* Others' items */}
+                  {othersItems.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <Users className="w-3 h-3 text-muted-foreground" />
+                        <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">Otros en la mesa</span>
+                      </div>
+                      <div className="bg-card border border-border rounded-card overflow-hidden">
+                        {othersItems.map((item, idx) => (
+                          <div key={idx} className={`flex items-center justify-between px-4 py-2.5 ${idx < othersItems.length - 1 ? 'border-b border-border' : ''}`}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">{item.quantity}×</span>
+                              <span className="text-sm text-foreground truncate">{item.name}</span>
+                            </div>
+                            <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div className="bg-card border border-border rounded-card flex items-center justify-between px-4 py-2.5">
                     <span className="text-xs text-muted-foreground">Subtotal mesa</span>
                     <PriceDisplay amount={subtotal} size="sm" className="font-semibold" />
                   </div>
