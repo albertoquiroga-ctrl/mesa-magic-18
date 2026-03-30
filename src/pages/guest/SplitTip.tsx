@@ -412,6 +412,26 @@ const SplitTip = () => {
                       </div>
                     </div>
                   )}
+                  {/* Al centro items */}
+                  {alCentroItems.length > 0 && (
+                    <div>
+                      <div className="flex items-center gap-2 mb-1.5">
+                        <UtensilsCrossed className="w-3 h-3 text-amber-600" />
+                        <span className="text-[10px] font-semibold text-amber-600 uppercase tracking-wide">Típicamente al centro</span>
+                      </div>
+                      <div className="bg-card border border-amber-200 rounded-card overflow-hidden">
+                        {alCentroItems.map((item, idx) => (
+                          <div key={idx} className={`flex items-center justify-between px-4 py-2.5 ${idx < alCentroItems.length - 1 ? 'border-b border-border' : ''}`}>
+                            <div className="flex items-center gap-2 min-w-0">
+                              <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">{item.quantity}×</span>
+                              <span className="text-sm text-foreground truncate">{item.name}</span>
+                            </div>
+                            <PriceDisplay amount={item.price * item.quantity} size="sm" />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   {/* Others' items */}
                   {othersItems.length > 0 && (
                     <div>
