@@ -172,9 +172,9 @@ const Cart = () => {
       {/* Sticky footer */}
       {!isEmpty && (
         <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
-          {!useAuthStore.getState().isLoggedIn && (
+          {!useAuthStore.getState().isLoggedIn ? (
             <button
-              onClick={() => navigate('/guest/login')}
+              onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/cart' } })}
               className="flex items-center gap-2 w-full p-2.5 mb-3 rounded-lg bg-primary/5 border border-primary/20 text-left"
             >
               <Gift className="w-4 h-4 text-primary shrink-0" />
@@ -182,7 +182,14 @@ const Cart = () => {
                 <strong className="text-foreground">Ahorra $50</strong> — únete al programa de lealtad
               </span>
             </button>
-          )}
+          ) : useAuthStore.getState().user?.loyalty.savingsAvailable ? (
+            <div className="flex items-center gap-2 w-full p-2.5 mb-3 rounded-lg bg-green-50 border border-green-200 text-left">
+              <Gift className="w-4 h-4 text-green-600 shrink-0" />
+              <span className="text-[11px] text-muted-foreground">
+                Tienes <strong className="text-green-700">${useAuthStore.getState().user?.loyalty.savingsAvailable} de descuento</strong> disponible 🎉
+              </span>
+            </div>
+          ) : null}
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-muted-foreground">Total</span>
             <PriceDisplay amount={total} size="lg" className="font-bold text-foreground" />
