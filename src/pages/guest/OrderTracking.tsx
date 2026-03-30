@@ -156,10 +156,13 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                 </div>
                 <div className="space-y-0">
                   {roundLaps.map((lap, idx) => {
+                    const status = itemStatuses.find(
+                      (s) => s.name === lap.name && s.roundNum === lap.roundNum
+                    );
+                    const remaining = status?.remaining ?? 0;
+                    const isDone = status?.isDone ?? false;
                     const itemElapsed = Math.floor((now - new Date(lap.createdAt).getTime()) / 1000);
                     const lapSeconds = lap.prepTime * 60;
-                    const remaining = Math.max(lapSeconds - itemElapsed, 0);
-                    const isDone = remaining <= 0;
                     const isActive = !isDone && itemElapsed > 0;
                     const lapProgress = isDone ? 100 : Math.min((itemElapsed / lapSeconds) * 100, 100);
                     const remMin = Math.floor(remaining / 60);
