@@ -33,7 +33,7 @@ const QuickPay = () => {
     await new Promise((r) => setTimeout(r, 2000));
     incrementAttempt();
     setStatus('success');
-    navigate('/guest/quick-pay-success', { replace: true });
+    navigate('/guest/farewell', { replace: true });
   };
 
   return (
