@@ -69,6 +69,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Corte de res premium a la parrilla con papas rústicas',
     image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&h=600&fit=crop',
     tags: ['premium'],
+    prepTime: 22,
   },
   {
     id: 'pasta-trufa',
