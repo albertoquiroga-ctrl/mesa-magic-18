@@ -11,6 +11,7 @@ import { mockGuests } from '@/data/mockData';
 
 const PaymentSuccess = () => {
   const navigate = useNavigate();
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const total = usePaymentStore((s) => s.total);
   const tipAmount = usePaymentStore((s) => s.tipAmount);
   const setTotal = usePaymentStore((s) => s.setTotal);
