@@ -12,7 +12,16 @@ const tabs = [
 
 export const GuestBottomNav = () => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const itemCount = useCartStore((s) => s.getItemCount());
+  const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+
+  const handleProfileTap = (e: React.MouseEvent) => {
+    if (!isLoggedIn) {
+      e.preventDefault();
+      navigate('/guest/login');
+    }
+  };
 
   return (
     <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border z-50">
@@ -23,6 +32,7 @@ export const GuestBottomNav = () => {
             <NavLink
               key={tab.to}
               to={tab.to}
+              onClick={tab.to === '/guest/profile' ? handleProfileTap : undefined}
               className="flex flex-col items-center justify-center min-w-touch min-h-touch gap-0.5 relative"
             >
               <span className="text-lg">{tab.icon}</span>

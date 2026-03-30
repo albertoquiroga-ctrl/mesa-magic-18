@@ -55,6 +55,8 @@ const App = () => (
             <Route path="early-exit" element={<GuestEarlyExit />} />
             <Route path="order-tracking" element={<GuestOrderTracking />} />
             <Route path="quick-pay" element={<GuestQuickPay />} />
+            <Route path="login" element={<GuestLogin />} />
+            <Route path="profile" element={<GuestProfile />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
