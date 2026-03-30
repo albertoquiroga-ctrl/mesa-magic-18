@@ -53,8 +53,14 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
       .sort((a, b) => a.prepTime - b.prepTime);
   }, [rounds]);
 
-  const maxPrepTime = laps.length > 0 ? Math.max(...laps.map((l) => l.prepTime)) : 15;
-  const estimatedSeconds = maxPrepTime * 60;
+  // Max finish time = offset from first round + prepTime for each item
+  const firstStart = firstRound ? new Date(firstRound.createdAt).getTime() : Date.now();
+  const estimatedSeconds = laps.length > 0
+    ? Math.max(...laps.map((l) => {
+        const offsetSec = Math.floor((new Date(l.createdAt).getTime() - firstStart) / 1000);
+        return offsetSec + l.prepTime * 60;
+      }))
+    : 15 * 60;
 
   const minutes = Math.floor(elapsed / 60);
   const seconds = elapsed % 60;
