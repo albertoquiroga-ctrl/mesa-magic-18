@@ -13,6 +13,7 @@ export interface PaymentState {
   status: PaymentStatus;
   attempt: number;
   itemAssignments: Record<string, 'mine' | 'shared' | 'none'>;
+  sharedAmong: Record<string, number>;
   setSplitMode: (mode: SplitMode) => void;
   setTipPercent: (percent: number) => void;
   setTipAmount: (amount: number) => void;
@@ -21,6 +22,7 @@ export interface PaymentState {
   setStatus: (status: PaymentStatus) => void;
   incrementAttempt: () => void;
   setItemAssignment: (key: string, value: 'mine' | 'shared' | 'none') => void;
+  setSharedAmong: (key: string, count: number) => void;
   resetAssignments: () => void;
 }
 
