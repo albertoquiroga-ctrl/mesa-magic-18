@@ -50,6 +50,7 @@ const App = () => (
             <Route path="payment-failed" element={<GuestPaymentFailed />} />
             <Route path="payment-success" element={<GuestPaymentSuccess />} />
             <Route path="early-exit" element={<GuestEarlyExit />} />
+            <Route path="order-tracking" element={<GuestOrderTracking />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
