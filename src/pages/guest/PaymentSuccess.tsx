@@ -44,24 +44,48 @@ const PaymentSuccess = () => {
   const remaining = Math.max(tableSubtotal - paidSubtotal, 0);
   const progressPercent = tableSubtotal > 0 ? Math.min((paidSubtotal / tableSubtotal) * 100, 100) : 0;
 
-  // Simulate unpaid items for demo — items nobody claimed
+  // Simulate item payment status for demo
   const allItems = rounds.flatMap((r) => r.items);
-  const unpaidItems = remaining > 0
-    ? (() => {
-        // Pick items that add up roughly to the remaining amount for the demo
-        const items: { name: string; quantity: number; price: number }[] = [];
-        let acc = 0;
-        for (const item of allItems) {
-          if (acc >= remaining) break;
-          const itemTotal = item.price * item.quantity;
-          if (acc + itemTotal <= remaining + 50) {
-            items.push(item);
-            acc += itemTotal;
-          }
+  const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string }[]>(
+    (acc, item) => {
+      const key = `${item.name}::${item.price}`;
+      const existing = acc.find((a) => a.key === key);
+      if (existing) {
+        existing.quantity += item.quantity;
+      } else {
+        acc.push({ ...item, key });
+      }
+      return acc;
+    },
+    []
+  );
+
+  // For demo: classify items as fully unpaid, partially paid, or fully paid
+  type ItemPaymentStatus = {
+    name: string;
+    quantity: number;
+    price: number;
+    totalCost: number;
+    paidAmount: number;
+    status: 'unpaid' | 'partial' | 'paid';
+  };
+
+  const itemPaymentStatuses: ItemPaymentStatus[] = remaining > 0
+    ? consolidatedItems.map((item, idx) => {
+        const totalCost = item.price * item.quantity;
+        // Simulate: first item nobody paid, second item partially paid, rest paid
+        if (idx === consolidatedItems.length - 1) {
+          return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount: 0, status: 'unpaid' as const };
         }
-        return items.length > 0 ? items : [{ name: 'Platillos sin asignar', quantity: 1, price: remaining }];
-      })()
+        if (idx === consolidatedItems.length - 2 && consolidatedItems.length > 2) {
+          const paid = Math.round(totalCost * 0.33);
+          return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount: paid, status: 'partial' as const };
+        }
+        return { name: item.name, quantity: item.quantity, price: item.price, totalCost, paidAmount: totalCost, status: 'paid' as const };
+      })
     : [];
+
+  const unpaidOrPartial = itemPaymentStatuses.filter((i) => i.status !== 'paid');
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-background px-6 py-12">
