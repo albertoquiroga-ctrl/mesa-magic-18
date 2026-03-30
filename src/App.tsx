@@ -23,6 +23,8 @@ import GuestPaymentSuccess from "./pages/guest/PaymentSuccess";
 import GuestEarlyExit from "./pages/guest/EarlyExit";
 import GuestOrderTracking from "./pages/guest/OrderTracking";
 import GuestQuickPay from "./pages/guest/QuickPay";
+import GuestQuickPaySuccess from "./pages/guest/QuickPaySuccess";
+import GuestLoyaltyFarewell from "./pages/guest/LoyaltyFarewell";
 import GuestLogin from "./pages/guest/Login";
 import GuestProfile from "./pages/guest/Profile";
 
