@@ -355,6 +355,27 @@ const PaymentSuccess = () => {
         >
           Volver al menú <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
+
+        {!isLoggedIn && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1 }}
+          >
+            <button
+              onClick={() => navigate('/guest/login')}
+              className="w-full p-4 rounded-card border border-primary/20 bg-primary/5 text-left"
+            >
+              <div className="flex items-center gap-2 mb-1">
+                <Gift className="w-4 h-4 text-primary" />
+                <span className="text-xs font-semibold text-foreground">¿Sabías que pudiste ganar puntos?</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Crea tu cuenta y gana puntos en cada visita. <strong className="text-primary">Ahorra $50</strong> al inscribirte.
+              </p>
+            </button>
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
