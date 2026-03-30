@@ -23,6 +23,8 @@ import GuestPaymentSuccess from "./pages/guest/PaymentSuccess";
 import GuestEarlyExit from "./pages/guest/EarlyExit";
 import GuestOrderTracking from "./pages/guest/OrderTracking";
 import GuestQuickPay from "./pages/guest/QuickPay";
+import GuestQuickPaySuccess from "./pages/guest/QuickPaySuccess";
+import GuestLoyaltyFarewell from "./pages/guest/LoyaltyFarewell";
 import GuestLogin from "./pages/guest/Login";
 import GuestProfile from "./pages/guest/Profile";
 
@@ -55,6 +57,8 @@ const App = () => (
             <Route path="early-exit" element={<GuestEarlyExit />} />
             <Route path="order-tracking" element={<GuestOrderTracking />} />
             <Route path="quick-pay" element={<GuestQuickPay />} />
+            <Route path="quick-pay-success" element={<GuestQuickPaySuccess />} />
+            <Route path="farewell" element={<GuestLoyaltyFarewell />} />
             <Route path="login" element={<GuestLogin />} />
             <Route path="profile" element={<GuestProfile />} />
           </Route>
