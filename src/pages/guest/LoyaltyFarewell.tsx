@@ -133,18 +133,17 @@ const LoyaltyFarewell = () => {
           </motion.div>
 
           {/* Savings reminder */}
-          {user.loyalty.savingsAvailable > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.1 }}
-              className="bg-primary/5 border border-primary/20 rounded-card p-4 w-full max-w-[360px] mb-6"
-            >
-              <p className="text-xs text-center text-muted-foreground">
-                Recuerda que tienes <strong className="text-primary">${user.loyalty.savingsAvailable} de descuento</strong> disponible para tu próxima visita 🎁
-              </p>
-            </motion.div>
-          )}
+          {/* Second-visit reward nudge */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1 }}
+            className="bg-primary/5 border border-primary/20 rounded-card p-4 w-full max-w-[360px] mb-6"
+          >
+            <p className="text-xs text-center text-muted-foreground">
+              En tu próxima visita, <strong className="text-primary">la primera ronda va por la casa</strong> 🍹 ¡Te esperamos pronto!
+            </p>
+          </motion.div>
         </>
       ) : (
         /* Not logged in — last chance nudge */
