@@ -33,7 +33,10 @@ const Cart = () => {
     addRound({
       id: crypto.randomUUID(),
       round: currentRound,
-      items: items.map((i) => ({ name: i.name, quantity: i.quantity, price: i.price })),
+      items: items.map((i) => {
+        const menuItem = mockMenuItems.find((m) => m.id === i.id);
+        return { name: i.name, quantity: i.quantity, price: i.price, category: menuItem?.category, orderedByDevice: true };
+      }),
       status: 'pending',
       createdAt: new Date().toISOString(),
     });
