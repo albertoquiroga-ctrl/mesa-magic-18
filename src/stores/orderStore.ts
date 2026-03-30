@@ -1,9 +1,17 @@
 import { create } from 'zustand';
 
+export interface OrderItem {
+  name: string;
+  quantity: number;
+  price: number;
+  category?: string;
+  orderedByDevice?: boolean;
+}
+
 export interface OrderRound {
   id: string;
   round: number;
-  items: { name: string; quantity: number; price: number }[];
+  items: OrderItem[];
   status: 'pending' | 'confirmed' | 'rejected';
   createdAt: string;
 }
