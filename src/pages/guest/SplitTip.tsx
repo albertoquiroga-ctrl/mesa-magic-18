@@ -78,7 +78,7 @@ const SplitTip = () => {
     0
   );
 
-  const guestCount = mockGuests.length;
+  // guestCount already defined above
 
   let perPerson: number;
   let mineTotal = 0;
