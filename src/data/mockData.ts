@@ -59,6 +59,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Mezcal artesanal de Oaxaca con naranja y sal de chapulín',
     image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=600&h=600&fit=crop',
     soldOut: true,
+    prepTime: 3,
   },
   {
     id: 'entrecot',
