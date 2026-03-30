@@ -1,5 +1,12 @@
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+/**
+ * ScrollToTop
+ * 
+ * Scrolls the window to the top on every route change.
+ * Prevents the confusing behavior where navigating to a new page
+ * leaves the user mid-scroll from the previous page.
+ */
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();

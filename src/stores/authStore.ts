@@ -1,9 +1,21 @@
+/**
+ * Auth Store
+ * 
+ * Handles user authentication state and loyalty program data.
+ * Distinguishes between new sign-ups (isNewUser = true) and
+ * returning log-ins so the app can show context-aware post-registration screens.
+ */
 import { create } from 'zustand';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 export interface LoyaltyInfo {
   points: number;
   level: 'Bronce' | 'Plata' | 'Oro';
   nextRewardAt: number;
+  /** Peso amount of available welcome/loyalty discount */
   savingsAvailable: number;
 }
 
@@ -26,13 +38,20 @@ export interface AuthUser {
 
 interface AuthState {
   isLoggedIn: boolean;
+  /** True when the user just created their account (first-time sign-up) */
   isNewUser: boolean;
   user: AuthUser | null;
+
+  // Actions
   login: (isNew?: boolean) => void;
   logout: () => void;
 }
 
-const mockUser: AuthUser = {
+// ---------------------------------------------------------------------------
+// Mock data (demo purposes)
+// ---------------------------------------------------------------------------
+
+const MOCK_USER: AuthUser = {
   name: 'María García',
   phone: '+52 55 1234 5678',
   email: 'maria@example.com',
@@ -70,10 +89,18 @@ const mockUser: AuthUser = {
   ],
 };
 
+// ---------------------------------------------------------------------------
+// Store
+// ---------------------------------------------------------------------------
+
 export const useAuthStore = create<AuthState>((set) => ({
   isLoggedIn: false,
   isNewUser: false,
   user: null,
-  login: (isNew = true) => set({ isLoggedIn: true, isNewUser: isNew, user: mockUser }),
-  logout: () => set({ isLoggedIn: false, isNewUser: false, user: null }),
+
+  login: (isNew = true) =>
+    set({ isLoggedIn: true, isNewUser: isNew, user: MOCK_USER }),
+
+  logout: () =>
+    set({ isLoggedIn: false, isNewUser: false, user: null }),
 }));

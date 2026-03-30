@@ -1,3 +1,10 @@
+/**
+ * CartBar
+ * 
+ * Sticky bottom bar shown on the Menu page.
+ * When empty, shows an inviting placeholder.
+ * When items are added, shows count + total and links to the Cart page.
+ */
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/stores/cartStore';

@@ -1,3 +1,13 @@
+/**
+ * Menu Page
+ * 
+ * The main browsing experience. Shows:
+ * 1. Sticky header with restaurant name, table number, and search
+ * 2. Horizontal category pills that scroll to sections
+ * 3. AI-powered recommendations (locked behind login)
+ * 4. Menu items grouped by category in a 2-column grid
+ * 5. Sticky cart bar at the bottom
+ */
 import { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Lock, Sparkles } from 'lucide-react';
@@ -6,18 +16,27 @@ import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { CartBar } from '@/components/guest/CartBar';
 import { useAuthStore } from '@/stores/authStore';
 
+// ---------------------------------------------------------------------------
+// Category emoji mapping for pills
+// ---------------------------------------------------------------------------
+
 const categoryEmojis: Record<string, string> = {
   Bebidas: '🥤',
   Entradas: '🥗',
   'Platos Fuertes': '🥩',
 };
 
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 const Menu = () => {
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
-  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
+  /** Scroll to a category section and update the active pill */
   const scrollToCategory = useCallback((cat: string) => {
     setActiveCategory(cat);
     sectionRefs.current[cat]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -25,7 +44,7 @@ const Menu = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* Sticky header */}
+      {/* ── Sticky header ── */}
       <header className="sticky top-0 z-30 bg-card border-b border-border">
         <div className="flex items-center justify-between px-4 h-14">
           <span className="text-base font-semibold truncate">{mockRestaurant.name}</span>
@@ -37,7 +56,7 @@ const Menu = () => {
           </button>
         </div>
 
-        {/* Category pills */}
+        {/* Category pills (horizontally scrollable) */}
         <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-none">
           {mockCategories.map((cat) => {
             const isActive = activeCategory === cat;
@@ -59,15 +78,17 @@ const Menu = () => {
         </div>
       </header>
 
-      {/* Menu sections */}
+      {/* ── Scrollable menu content ── */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-28">
         {/* Personalized recommendations */}
-        <div className="mb-6">
+        <section className="mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-primary" />
             <h2 className="text-sm font-semibold text-foreground">Recomendado para ti</h2>
           </div>
+
           {isLoggedIn ? (
+            /* Logged in → show actual recommendations */
             <div className="grid grid-cols-2 gap-3">
               {mockRecommendations.map((item) => (
                 <MenuItemCard
@@ -78,6 +99,7 @@ const Menu = () => {
               ))}
             </div>
           ) : (
+            /* Not logged in → teaser with login CTA */
             <button
               onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/menu', nudgeOrigin: 'menu' } })}
               className="w-full relative rounded-card border border-border bg-card p-5 overflow-hidden"
@@ -96,12 +118,13 @@ const Menu = () => {
               </div>
             </button>
           )}
-        </div>
+        </section>
 
+        {/* Menu sections by category */}
         {mockCategories.map((cat) => {
           const items = mockMenuItems.filter((i) => i.category === cat);
           return (
-            <div
+            <section
               key={cat}
               ref={(el) => { sectionRefs.current[cat] = el; }}
               className="mb-6 scroll-mt-28"
@@ -118,12 +141,12 @@ const Menu = () => {
                   />
                 ))}
               </div>
-            </div>
+            </section>
           );
         })}
       </div>
 
-      {/* Cart bar */}
+      {/* Sticky cart bar */}
       <CartBar />
     </div>
   );
