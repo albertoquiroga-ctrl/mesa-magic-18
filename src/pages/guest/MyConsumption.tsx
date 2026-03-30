@@ -1,20 +1,81 @@
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Receipt } from 'lucide-react';
+import { ArrowLeft, Receipt, Smartphone, Users } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
+import { useTableStore } from '@/stores/tableStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
-import { mockGuests } from '@/data/mockData';
 
 const MyConsumption = () => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
+  const guests = useTableStore((s) => s.guests);
 
-  const grandTotal = rounds.reduce(
-    (sum, r) => sum + r.items.reduce((s, i) => s + i.price * i.quantity, 0),
-    0
-  );
+  const allItems = rounds.flatMap((r) => r.items);
+  const myItems = allItems.filter((i) => i.orderedByDevice);
+  const othersItems = allItems.filter((i) => !i.orderedByDevice);
+
+  const grandTotal = allItems.reduce((s, i) => s + i.price * i.quantity, 0);
+  const myTotal = myItems.reduce((s, i) => s + i.price * i.quantity, 0);
+  const othersTotal = othersItems.reduce((s, i) => s + i.price * i.quantity, 0);
 
   const isEmpty = rounds.length === 0;
+
+  const consolidate = (items: typeof allItems) => {
+    const map: Record<string, { name: string; quantity: number; price: number; category?: string }> = {};
+    items.forEach((i) => {
+      const key = `${i.name}::${i.price}`;
+      if (map[key]) {
+        map[key].quantity += i.quantity;
+      } else {
+        map[key] = { name: i.name, quantity: i.quantity, price: i.price, category: i.category };
+      }
+    });
+    return Object.values(map);
+  };
+
+  const myConsolidated = consolidate(myItems);
+  const othersConsolidated = consolidate(othersItems);
+
+  const renderItemList = (items: ReturnType<typeof consolidate>, label: string, icon: React.ReactNode, total: number) => {
+    if (items.length === 0) return null;
+    return (
+      <div className="mb-5">
+        <div className="flex items-center gap-2 mb-2">
+          {icon}
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            {label}
+          </span>
+        </div>
+        <div className="bg-card border border-border rounded-card overflow-hidden">
+          {items.map((item, idx) => (
+            <div
+              key={idx}
+              className={`flex items-center justify-between px-4 py-3 ${
+                idx < items.length - 1 ? 'border-b border-border' : ''
+              }`}
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
+                  {item.quantity}×
+                </span>
+                <div className="min-w-0">
+                  <span className="text-sm text-foreground truncate block">{item.name}</span>
+                  {item.category && (
+                    <span className="text-[10px] text-muted-foreground">{item.category}</span>
+                  )}
+                </div>
+              </div>
+              <PriceDisplay amount={item.price * item.quantity} size="sm" />
+            </div>
+          ))}
+          <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
+            <span className="text-xs text-muted-foreground">Subtotal</span>
+            <PriceDisplay amount={total} size="sm" className="font-semibold" />
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -47,66 +108,35 @@ const MyConsumption = () => {
           <>
             {/* Guests summary */}
             <div className="flex gap-2 mb-4">
-              {mockGuests.map((g) => (
+              {guests.map((g) => (
                 <span
-                  key={g}
-                  className="text-xs bg-accent text-accent-foreground px-3 py-1.5 rounded-chip font-medium"
+                  key={g.id}
+                  className={`text-xs px-3 py-1.5 rounded-chip font-medium ${
+                    g.isCurrentUser
+                      ? 'bg-primary/10 text-primary border border-primary/20'
+                      : 'bg-accent text-accent-foreground'
+                  }`}
                 >
-                  {g}
+                  {g.name}
                 </span>
               ))}
             </div>
 
-            {/* Rounds */}
-            {rounds.map((round) => {
-              const roundTotal = round.items.reduce((s, i) => s + i.price * i.quantity, 0);
-              return (
-                <div key={round.id} className="mb-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                      Ronda {round.round}
-                    </span>
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-chip font-medium ${
-                        round.status === 'confirmed'
-                          ? 'bg-green-100 text-green-700'
-                          : round.status === 'rejected'
-                          ? 'bg-red-100 text-red-700'
-                          : 'bg-yellow-100 text-yellow-700'
-                      }`}
-                    >
-                      {round.status === 'confirmed'
-                        ? 'Confirmada'
-                        : round.status === 'rejected'
-                        ? 'Rechazada'
-                        : 'Pendiente'}
-                    </span>
-                  </div>
-                  <div className="bg-card border border-border rounded-card overflow-hidden">
-                    {round.items.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className={`flex items-center justify-between px-4 py-3 ${
-                          idx < round.items.length - 1 ? 'border-b border-border' : ''
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 min-w-0">
-                          <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
-                            {item.quantity}×
-                          </span>
-                          <span className="text-sm text-foreground truncate">{item.name}</span>
-                        </div>
-                        <PriceDisplay amount={item.price * item.quantity} size="sm" />
-                      </div>
-                    ))}
-                    <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
-                      <span className="text-xs text-muted-foreground">Subtotal ronda</span>
-                      <PriceDisplay amount={roundTotal} size="sm" className="font-semibold" />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+            {/* My device items */}
+            {renderItemList(
+              myConsolidated,
+              'Pedido desde tu dispositivo',
+              <Smartphone className="w-3.5 h-3.5 text-primary" />,
+              myTotal
+            )}
+
+            {/* Others' items */}
+            {renderItemList(
+              othersConsolidated,
+              'Pedido por otros en la mesa',
+              <Users className="w-3.5 h-3.5 text-muted-foreground" />,
+              othersTotal
+            )}
           </>
         )}
       </div>
