@@ -49,6 +49,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Agua fresca de jamaica natural',
     image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&h=600&fit=crop',
     tags: ['sin alcohol'],
+    prepTime: 2,
   },
   {
     id: 'mezcal',
