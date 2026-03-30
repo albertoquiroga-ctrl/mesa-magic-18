@@ -52,9 +52,15 @@ export const MenuItemCard = ({ item, onTap }: MenuItemCardProps) => {
 
       {/* Info */}
       <div className="p-3">
-        <p className="text-sm font-medium leading-tight line-clamp-2 mb-1.5">
+        <p className="text-sm font-medium leading-tight line-clamp-2 mb-1">
           {item.name}
         </p>
+        {item.prepTime && (
+          <div className="flex items-center gap-1 mb-1.5">
+            <Clock className="w-3 h-3 text-muted-foreground" />
+            <span className="text-[11px] text-muted-foreground">{item.prepTime} min</span>
+          </div>
+        )}
         <div className="flex items-center justify-between">
           <span className="font-mono text-sm text-primary tabular-nums">
             ${item.price}

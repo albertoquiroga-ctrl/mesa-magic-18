@@ -89,6 +89,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Mezcla de lechugas, tomate cherry, aguacate y vinagreta cítrica',
     image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=600&fit=crop',
     tags: ['vegetariano', 'ligero'],
+    prepTime: 8,
   },
 ];
 

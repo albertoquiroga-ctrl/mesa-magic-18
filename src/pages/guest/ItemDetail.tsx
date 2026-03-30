@@ -79,9 +79,17 @@ const ItemDetail = () => {
         <h1 className="font-heading text-[28px] leading-tight font-semibold">{item.name}</h1>
 
         {/* Price */}
-        <p className="font-mono text-xl text-primary mt-2 tabular-nums">
-          ${item.price} <span className="text-sm text-muted-foreground">MXN</span>
-        </p>
+        <div className="flex items-center gap-3 mt-2">
+          <p className="font-mono text-xl text-primary tabular-nums">
+            ${item.price} <span className="text-sm text-muted-foreground">MXN</span>
+          </p>
+          {item.prepTime && (
+            <span className="flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2.5 py-1 rounded-chip">
+              <Clock className="w-3.5 h-3.5" />
+              ~{item.prepTime} min
+            </span>
+          )}
+        </div>
 
         {/* Description */}
         {item.description && (
