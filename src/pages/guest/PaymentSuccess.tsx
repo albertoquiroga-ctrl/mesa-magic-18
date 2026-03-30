@@ -149,10 +149,51 @@ const PaymentSuccess = () => {
             <PriceDisplay amount={paidSubtotal} size="sm" className="text-foreground" />
           </div>
           {remaining > 0 && (
-            <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border">
-              <span className="font-medium text-destructive">Falta por pagar</span>
-              <PriceDisplay amount={remaining} size="sm" className="font-semibold text-destructive" />
-            </div>
+            <>
+              <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border">
+                <span className="font-medium text-destructive">Falta por pagar</span>
+                <PriceDisplay amount={remaining} size="sm" className="font-semibold text-destructive" />
+              </div>
+
+              {/* Unpaid items breakdown */}
+              <button
+                onClick={() => setShowUnpaid((v) => !v)}
+                className="flex items-center gap-1.5 w-full pt-2 text-[11px] font-medium text-destructive"
+              >
+                <AlertTriangle className="w-3 h-3" />
+                <span>Ver platillos sin pagar</span>
+                {showUnpaid ? (
+                  <ChevronUp className="w-3 h-3 ml-auto" />
+                ) : (
+                  <ChevronDown className="w-3 h-3 ml-auto" />
+                )}
+              </button>
+              {showUnpaid && (
+                <div className="mt-1.5 rounded-lg border border-destructive/20 bg-destructive/5 overflow-hidden">
+                  <div className="px-3 py-2 border-b border-destructive/10">
+                    <p className="text-[11px] text-muted-foreground">
+                      Estos platillos no fueron incluidos en el pago de ningún comensal:
+                    </p>
+                  </div>
+                  {unpaidItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex items-center justify-between px-3 py-2 ${
+                        idx < unpaidItems.length - 1 ? 'border-b border-destructive/10' : ''
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-[11px] font-mono text-muted-foreground w-4 shrink-0">
+                          {item.quantity}×
+                        </span>
+                        <span className="text-xs text-foreground truncate">{item.name}</span>
+                      </div>
+                      <PriceDisplay amount={item.price * item.quantity} size="sm" className="text-destructive font-medium" />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
           {remaining === 0 && (
             <div className="flex items-center justify-between text-xs pt-1.5 border-t border-border">
