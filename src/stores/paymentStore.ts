@@ -12,6 +12,7 @@ export interface PaymentState {
   paymentMethod: PaymentMethod;
   status: PaymentStatus;
   attempt: number;
+  itemAssignments: Record<string, 'mine' | 'shared'>;
   setSplitMode: (mode: SplitMode) => void;
   setTipPercent: (percent: number) => void;
   setTipAmount: (amount: number) => void;
@@ -19,6 +20,8 @@ export interface PaymentState {
   setPaymentMethod: (method: PaymentMethod) => void;
   setStatus: (status: PaymentStatus) => void;
   incrementAttempt: () => void;
+  setItemAssignment: (key: string, value: 'mine' | 'shared') => void;
+  resetAssignments: () => void;
 }
 
 export const usePaymentStore = create<PaymentState>((set) => ({
@@ -29,6 +32,7 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   paymentMethod: null,
   status: 'idle',
   attempt: 0,
+  itemAssignments: {},
   setSplitMode: (splitMode) => set({ splitMode }),
   setTipPercent: (tipPercent) => set({ tipPercent }),
   setTipAmount: (tipAmount) => set({ tipAmount }),
@@ -36,4 +40,7 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   setPaymentMethod: (paymentMethod) => set({ paymentMethod }),
   setStatus: (status) => set({ status }),
   incrementAttempt: () => set((s) => ({ attempt: s.attempt + 1 })),
+  setItemAssignment: (key, value) =>
+    set((s) => ({ itemAssignments: { ...s.itemAssignments, [key]: value } })),
+  resetAssignments: () => set({ itemAssignments: {} }),
 }));
