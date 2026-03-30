@@ -29,6 +29,7 @@ export const mockMenuItems: MenuItem[] = [
     description: 'Aguacate molcajeteado con cilantro, cebolla y chile serrano',
     image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=600&h=600&fit=crop',
     tags: ['vegetariano'],
+    prepTime: 7,
   },
   {
     id: 'tacos-asada',
