@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User } from 'lucide-react';
+import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User, AlertTriangle } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
