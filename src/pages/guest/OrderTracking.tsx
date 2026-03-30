@@ -149,10 +149,10 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                 </div>
                 <div className="space-y-0">
                   {roundLaps.map((lap, idx) => {
-                    const itemElapsed = Math.floor((Date.now() - new Date(lap.createdAt).getTime()) / 1000);
+                    const itemElapsed = Math.floor((now - new Date(lap.createdAt).getTime()) / 1000);
                     const lapSeconds = lap.prepTime * 60;
                     const isDone = itemElapsed >= lapSeconds;
-                    const isNext = !isDone && itemElapsed > 0;
+                    const isActive = !isDone && itemElapsed > 0;
                     const lapProgress = isDone ? 100 : Math.min((itemElapsed / lapSeconds) * 100, 100);
 
                     return (
