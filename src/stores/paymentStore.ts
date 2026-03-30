@@ -14,6 +14,8 @@ export interface PaymentState {
   attempt: number;
   itemAssignments: Record<string, 'mine' | 'shared' | 'none'>;
   sharedAmong: Record<string, number>;
+  rating: number;
+  feedback: string;
   setSplitMode: (mode: SplitMode) => void;
   setTipPercent: (percent: number) => void;
   setTipAmount: (amount: number) => void;
