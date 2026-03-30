@@ -19,34 +19,39 @@ interface ItemLap {
 const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
-  const latestRound = rounds[rounds.length - 1];
+  const firstRound = rounds[0];
 
   const [elapsed, setElapsed] = useState(0);
 
+  // Timer counts from the first round's creation
   useEffect(() => {
-    if (!latestRound) return;
-    const start = new Date(latestRound.createdAt).getTime();
+    if (!firstRound) return;
+    const start = new Date(firstRound.createdAt).getTime();
     const tick = () => setElapsed(Math.floor((Date.now() - start) / 1000));
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [latestRound]);
+  }, [firstRound]);
 
-  // Build item laps sorted by prepTime
+  // Build item laps from ALL rounds, sorted by prepTime
   const laps: ItemLap[] = useMemo(() => {
-    if (!latestRound) return [];
-    return latestRound.items
-      .map((item) => {
-        const menuItem = mockMenuItems.find((m) => m.name === item.name);
-        return {
-          name: item.name,
-          quantity: item.quantity,
-          prepTime: menuItem?.prepTime ?? 10,
-          image: menuItem?.image,
-        };
-      })
+    if (rounds.length === 0) return [];
+    return rounds
+      .flatMap((round) =>
+        round.items.map((item) => {
+          const menuItem = mockMenuItems.find((m) => m.name === item.name);
+          return {
+            name: item.name,
+            quantity: item.quantity,
+            prepTime: menuItem?.prepTime ?? 10,
+            image: menuItem?.image,
+            roundNum: round.round,
+            createdAt: round.createdAt,
+          };
+        })
+      )
       .sort((a, b) => a.prepTime - b.prepTime);
-  }, [latestRound]);
+  }, [rounds]);
 
   const maxPrepTime = laps.length > 0 ? Math.max(...laps.map((l) => l.prepTime)) : 15;
   const estimatedSeconds = maxPrepTime * 60;
