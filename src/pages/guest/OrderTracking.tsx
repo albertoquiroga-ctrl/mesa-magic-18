@@ -134,97 +134,106 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
           <Progress value={progressPct} className="h-2" />
         </div>
 
-        {/* Item timeline / laps */}
+        {/* Item timeline grouped by round */}
         <div className="mb-6">
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-4">
             Timeline de tu orden
           </h2>
-          <div className="space-y-0">
-            {laps.map((lap, idx) => {
-              // Each item's elapsed is relative to its own round's createdAt
-              const itemElapsed = Math.floor((Date.now() - new Date(lap.createdAt).getTime()) / 1000);
-              const lapSeconds = lap.prepTime * 60;
-              const isDone = itemElapsed >= lapSeconds;
-              const isNext = !isDone && (idx === 0 || laps.slice(0, idx).every((prev) => {
-                const prevElapsed = Math.floor((Date.now() - new Date(prev.createdAt).getTime()) / 1000);
-                return prevElapsed >= prev.prepTime * 60;
-              }) || itemElapsed > 0);
-              const lapProgress = isDone ? 100 : Math.min((itemElapsed / lapSeconds) * 100, 100);
+          {rounds.map((round) => {
+            const roundLaps = laps.filter((l) => l.roundNum === round.round);
+            if (roundLaps.length === 0) return null;
+            return (
+              <div key={round.id} className="mb-5">
+                {/* Round separator */}
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                    Ronda {round.round}
+                  </span>
+                  <div className="flex-1 h-px bg-border" />
+                </div>
+                <div className="space-y-0">
+                  {roundLaps.map((lap, idx) => {
+                    const itemElapsed = Math.floor((Date.now() - new Date(lap.createdAt).getTime()) / 1000);
+                    const lapSeconds = lap.prepTime * 60;
+                    const isDone = itemElapsed >= lapSeconds;
+                    const isNext = !isDone && itemElapsed > 0;
+                    const lapProgress = isDone ? 100 : Math.min((itemElapsed / lapSeconds) * 100, 100);
 
-              return (
-                <motion.div
-                  key={`${lap.name}-${idx}`}
-                  initial={{ opacity: 0, x: -16 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: idx * 0.1 }}
-                >
-                  <div className="flex items-start gap-3">
-                    {/* Timeline connector */}
-                    <div className="flex flex-col items-center pt-1">
+                    return (
                       <motion.div
-                        animate={isNext ? { scale: [1, 1.2, 1] } : {}}
-                        transition={isNext ? { duration: 1.5, repeat: Infinity } : {}}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                          isDone
-                            ? 'bg-primary text-primary-foreground'
-                            : isNext
-                            ? 'bg-primary/20 text-primary ring-2 ring-primary'
-                            : 'bg-muted text-muted-foreground'
-                        }`}
+                        key={`${lap.name}-${lap.roundNum}-${idx}`}
+                        initial={{ opacity: 0, x: -16 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.1 }}
                       >
-                        {isDone ? (
-                          <Check className="w-4 h-4" />
-                        ) : (
-                          <span className="text-[10px] font-bold font-mono">{lap.prepTime}′</span>
-                        )}
-                      </motion.div>
-                      {idx < laps.length - 1 && (
-                        <div className={`w-0.5 h-10 mt-1 ${isDone ? 'bg-primary' : 'bg-border'}`} />
-                      )}
-                    </div>
-
-                    {/* Item card */}
-                    <div className={`flex-1 pb-4 ${!isDone && !isNext ? 'opacity-50' : ''}`}>
-                      <div className="flex items-center gap-3">
-                        {lap.image && (
-                          <img
-                            src={lap.image}
-                            alt={lap.name}
-                            className="w-10 h-10 rounded-lg object-cover shrink-0"
-                          />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-medium text-foreground truncate">
-                              {lap.quantity > 1 && (
-                                <span className="text-muted-foreground font-mono mr-1">{lap.quantity}×</span>
+                        <div className="flex items-start gap-3">
+                          <div className="flex flex-col items-center pt-1">
+                            <motion.div
+                              animate={isNext ? { scale: [1, 1.2, 1] } : {}}
+                              transition={isNext ? { duration: 1.5, repeat: Infinity } : {}}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                                isDone
+                                  ? 'bg-primary text-primary-foreground'
+                                  : isNext
+                                  ? 'bg-primary/20 text-primary ring-2 ring-primary'
+                                  : 'bg-muted text-muted-foreground'
+                              }`}
+                            >
+                              {isDone ? (
+                                <Check className="w-4 h-4" />
+                              ) : (
+                                <span className="text-[10px] font-bold font-mono">{lap.prepTime}′</span>
                               )}
-                              {lap.name}
-                            </span>
-                            <span className={`text-[11px] font-mono shrink-0 ml-2 ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
-                              {isDone ? '✓ Listo' : `~${lap.prepTime} min`}
-                            </span>
+                            </motion.div>
+                            {idx < roundLaps.length - 1 && (
+                              <div className={`w-0.5 h-10 mt-1 ${isDone ? 'bg-primary' : 'bg-border'}`} />
+                            )}
                           </div>
-                          {(isNext || isDone) && (
-                            <div className="mt-1.5">
-                              <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
-                                <motion.div
-                                  className="h-full bg-primary rounded-full"
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${lapProgress}%` }}
-                                  transition={{ duration: 0.5 }}
+
+                          <div className={`flex-1 pb-4 ${!isDone && !isNext ? 'opacity-50' : ''}`}>
+                            <div className="flex items-center gap-3">
+                              {lap.image && (
+                                <img
+                                  src={lap.image}
+                                  alt={lap.name}
+                                  className="w-10 h-10 rounded-lg object-cover shrink-0"
                                 />
+                              )}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm font-medium text-foreground truncate">
+                                    {lap.quantity > 1 && (
+                                      <span className="text-muted-foreground font-mono mr-1">{lap.quantity}×</span>
+                                    )}
+                                    {lap.name}
+                                  </span>
+                                  <span className={`text-[11px] font-mono shrink-0 ml-2 ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
+                                    {isDone ? '✓ Listo' : `~${lap.prepTime} min`}
+                                  </span>
+                                </div>
+                                {(isNext || isDone) && (
+                                  <div className="mt-1.5">
+                                    <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
+                                      <motion.div
+                                        className="h-full bg-primary rounded-full"
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${lapProgress}%` }}
+                                        transition={{ duration: 0.5 }}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </div>
-                          )}
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
-          </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
