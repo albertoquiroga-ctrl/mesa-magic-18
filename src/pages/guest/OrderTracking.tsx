@@ -210,16 +210,18 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
-        <Button
-          variant="outline"
-          className="w-full h-12 rounded-button text-base font-medium"
-          onClick={() => navigate('/guest/menu')}
-        >
-          Volver al menú
-        </Button>
-      </div>
+      {/* Footer - only when standalone */}
+      {!embedded && (
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
+          <Button
+            variant="outline"
+            className="w-full h-12 rounded-button text-base font-medium"
+            onClick={() => navigate('/guest/menu')}
+          >
+            Volver al menú
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
