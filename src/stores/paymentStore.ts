@@ -14,6 +14,8 @@ export interface PaymentState {
   attempt: number;
   itemAssignments: Record<string, 'mine' | 'shared' | 'none'>;
   sharedAmong: Record<string, number>;
+  rating: number;
+  feedback: string;
   setSplitMode: (mode: SplitMode) => void;
   setTipPercent: (percent: number) => void;
   setTipAmount: (amount: number) => void;
@@ -23,6 +25,8 @@ export interface PaymentState {
   incrementAttempt: () => void;
   setItemAssignment: (key: string, value: 'mine' | 'shared' | 'none') => void;
   setSharedAmong: (key: string, count: number) => void;
+  setRating: (rating: number) => void;
+  setFeedback: (feedback: string) => void;
   resetAssignments: () => void;
 }
 
@@ -36,6 +40,8 @@ export const usePaymentStore = create<PaymentState>((set) => ({
   attempt: 0,
   itemAssignments: {},
   sharedAmong: {},
+  rating: 0,
+  feedback: '',
   setSplitMode: (splitMode) => set({ splitMode }),
   setTipPercent: (tipPercent) => set({ tipPercent }),
   setTipAmount: (tipAmount) => set({ tipAmount }),
@@ -47,5 +53,7 @@ export const usePaymentStore = create<PaymentState>((set) => ({
     set((s) => ({ itemAssignments: { ...s.itemAssignments, [key]: value } })),
   setSharedAmong: (key, count) =>
     set((s) => ({ sharedAmong: { ...s.sharedAmong, [key]: count } })),
+  setRating: (rating) => set({ rating }),
+  setFeedback: (feedback) => set({ feedback }),
   resetAssignments: () => set({ itemAssignments: {}, sharedAmong: {} }),
 }));
