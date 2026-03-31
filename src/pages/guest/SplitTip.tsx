@@ -80,10 +80,10 @@ const SplitTip = () => {
   const myDeviceItems = consolidatedItems.filter((i) => i.orderedByDevice && i.category !== 'Entradas');
   const othersItems = consolidatedItems.filter((i) => !i.orderedByDevice && i.category !== 'Entradas');
 
-  // Auto-assign on custom mode switch
+  // Auto-assign on custom mode switch (using expanded individual items)
   useEffect(() => {
     if (splitMode === 'custom') {
-      consolidatedItems.forEach((item) => {
+      expandedItems.forEach((item) => {
         if (item.category === 'Entradas') {
           setItemAssignment(item.key, 'shared');
           setSharedAmong(item.key, guestCount);
