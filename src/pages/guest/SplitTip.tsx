@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift, Smartphone, UtensilsCrossed, CreditCard, Landmark, Banknote } from 'lucide-react';
+import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Gift, Smartphone, UtensilsCrossed, CreditCard, Landmark, Banknote } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useTableStore } from '@/stores/tableStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { mockGuests } from '@/data/mockData';
 
 const tipOptions = [
