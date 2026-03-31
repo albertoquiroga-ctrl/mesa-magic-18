@@ -477,7 +477,6 @@ const SplitTip = () => {
                 <PriceDisplay amount={tipAmount} size="sm" className="text-foreground" />
               </div>
             </section>
-          )}
 
           {/* Payment method selection */}
           <section className="mb-6 mt-2">
