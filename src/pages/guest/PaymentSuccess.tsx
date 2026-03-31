@@ -335,6 +335,59 @@ const PaymentSuccess = () => {
         )}
       </motion.div>
 
+      {/* Rating section */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        className="bg-card border border-border rounded-card p-5 w-full max-w-[360px] mb-4 text-center"
+      >
+        <h2 className="text-sm font-semibold text-foreground mb-1">
+          ¿Cómo fue tu experiencia?
+        </h2>
+        <p className="text-xs text-muted-foreground mb-4">
+          Tu opinión nos ayuda a mejorar
+        </p>
+        <div className="flex items-center justify-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              onClick={() => setRatingStore(star)}
+              onMouseEnter={() => setHoveredStar(star)}
+              onMouseLeave={() => setHoveredStar(0)}
+              className="p-1 transition-transform hover:scale-110"
+            >
+              <Star
+                className={`w-9 h-9 transition-colors ${
+                  star <= (hoveredStar || rating)
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : 'text-muted-foreground/30'
+                }`}
+              />
+            </button>
+          ))}
+        </div>
+        {rating > 0 && (
+          <p className="text-xs text-muted-foreground mt-2">
+            {rating <= 2 ? 'Lamentamos escuchar eso' : rating <= 4 ? '¡Gracias!' : '¡Excelente!'}
+          </p>
+        )}
+        {rating > 0 && rating <= 2 && (
+          <div className="mt-4 text-left">
+            <div className="flex items-center gap-2 mb-2">
+              <MessageSquare className="w-4 h-4 text-muted-foreground" />
+              <span className="text-xs font-medium text-foreground">Cuéntanos qué podemos mejorar</span>
+            </div>
+            <Textarea
+              value={feedback}
+              onChange={(e) => setFeedbackStore(e.target.value)}
+              placeholder="¿Cómo podemos mejorar?"
+              className="min-h-[80px] text-sm resize-none"
+            />
+          </div>
+        )}
+      </motion.div>
+
       {/* Pay remaining or back to menu */}
       <motion.div
         initial={{ opacity: 0 }}
