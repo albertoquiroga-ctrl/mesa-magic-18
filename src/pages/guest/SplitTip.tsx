@@ -109,7 +109,6 @@ const SplitTip = () => {
   const [selectedPayMethod, setSelectedPayMethod] = useState<'card' | 'terminal' | 'cash'>('card');
 
   const handleContinue = () => {
-    if (!canContinue) return;
     setTipAmount(tipAmount);
     setTotal(finalTotal);
     setPaymentMethod(selectedPayMethod);
