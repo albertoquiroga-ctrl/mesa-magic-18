@@ -19,8 +19,14 @@ const PaymentSuccess = () => {
   const setTipAmount = usePaymentStore((s) => s.setTipAmount);
   const setRating = usePaymentStore((s) => s.setRating);
   const setFeedback = usePaymentStore((s) => s.setFeedback);
+  const rating = usePaymentStore((s) => s.rating);
+  const setRatingStore = usePaymentStore((s) => s.setRating);
+  const feedback = usePaymentStore((s) => s.feedback);
+  const setFeedbackStore = usePaymentStore((s) => s.setFeedback);
   const rounds = useOrderStore((s) => s.rounds);
   const [showAudit, setShowAudit] = useState(false);
+  const [showUnpaid, setShowUnpaid] = useState(false);
+  const [hoveredStar, setHoveredStar] = useState(0);
   const [showUnpaid, setShowUnpaid] = useState(false);
 
   // Table total from all rounds
