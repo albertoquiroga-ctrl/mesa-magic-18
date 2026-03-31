@@ -24,16 +24,11 @@ const SplitTip = () => {
     splitMode, setSplitMode, tipPercent, setTipPercent,
     setTipAmount, setTotal, setPaymentMethod, itemAssignments, setItemAssignment,
     sharedAmong, setSharedAmong, resetAssignments,
-    rating, setRating, feedback, setFeedback,
   } = usePaymentStore();
 
   const [customTip, setCustomTip] = useState('');
   const [isCustomTip, setIsCustomTip] = useState(false);
   const [showBreakdown, setShowBreakdown] = useState(false);
-  const [hoveredStar, setHoveredStar] = useState(0);
-
-  const isUnlocked = rating > 0;
-  const isLowRating = rating > 0 && rating <= 2;
 
   const guests = useTableStore((s) => s.guests);
   const guestCount = guests.length;
