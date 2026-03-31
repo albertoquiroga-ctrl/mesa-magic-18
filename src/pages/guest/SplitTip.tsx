@@ -522,7 +522,6 @@ const SplitTip = () => {
               </button>
             </div>
           </section>
-        </div>
       </div>
 
       {/* Sticky footer */}
