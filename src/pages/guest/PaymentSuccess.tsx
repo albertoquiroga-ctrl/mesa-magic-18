@@ -27,7 +27,6 @@ const PaymentSuccess = () => {
   const [showAudit, setShowAudit] = useState(false);
   const [showUnpaid, setShowUnpaid] = useState(false);
   const [hoveredStar, setHoveredStar] = useState(0);
-  const [showUnpaid, setShowUnpaid] = useState(false);
 
   // Table total from all rounds
   const tableSubtotal = rounds.reduce(
