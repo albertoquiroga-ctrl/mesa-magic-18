@@ -28,10 +28,21 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
     return () => clearInterval(id);
   }, [rounds]);
 
-  // Build item laps from ALL rounds
+  // Only show items ordered by this device (the user's own orders)
+  const myRounds = useMemo(() =>
+    rounds
+      .map((round) => ({
+        ...round,
+        items: round.items.filter((item) => item.orderedByDevice),
+      }))
+      .filter((round) => round.items.length > 0),
+    [rounds]
+  );
+
+  // Build item laps from the user's rounds only
   const laps: ItemLap[] = useMemo(() => {
-    if (rounds.length === 0) return [];
-    return rounds
+    if (myRounds.length === 0) return [];
+    return myRounds
       .flatMap((round) =>
         round.items.map((item) => {
           const menuItem = mockMenuItems.find((m) => m.name === item.name);
@@ -46,7 +57,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
         })
       )
       .sort((a, b) => a.prepTime - b.prepTime);
-  }, [rounds]);
+  }, [myRounds]);
 
   // Compute status for every item
   const itemStatuses = laps.map((lap) => {
