@@ -34,6 +34,8 @@ const SplitTip = () => {
   const guestCount = guests.length;
 
   const allItems = rounds.flatMap((r) => r.items);
+
+  // --- Consolidated view for non-custom modes (breakdown) ---
   const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string; category?: string; orderedByDevice?: boolean }[]>(
     (acc, item) => {
       const key = `${item.name}::${item.price}`;
@@ -48,6 +50,32 @@ const SplitTip = () => {
     []
   );
 
+  // --- Expanded view for fair-pay: each unit is a separate selectable row ---
+  const expandedItems = (() => {
+    const result: { name: string; price: number; key: string; category?: string; orderedByDevice?: boolean }[] = [];
+    const counters: Record<string, number> = {};
+    allItems.forEach((item) => {
+      const base = `${item.name}::${item.price}`;
+      for (let i = 0; i < item.quantity; i++) {
+        const idx = (counters[base] || 0);
+        counters[base] = idx + 1;
+        result.push({
+          name: item.name,
+          price: item.price,
+          key: `${base}::${idx}`,
+          category: item.category,
+          orderedByDevice: item.orderedByDevice,
+        });
+      }
+    });
+    return result;
+  })();
+
+  const alCentroExpanded = expandedItems.filter((i) => i.category === 'Entradas');
+  const myDeviceExpanded = expandedItems.filter((i) => i.orderedByDevice && i.category !== 'Entradas');
+  const othersExpanded = expandedItems.filter((i) => !i.orderedByDevice && i.category !== 'Entradas');
+
+  // Consolidated lists for non-custom breakdown
   const alCentroItems = consolidatedItems.filter((i) => i.category === 'Entradas');
   const myDeviceItems = consolidatedItems.filter((i) => i.orderedByDevice && i.category !== 'Entradas');
   const othersItems = consolidatedItems.filter((i) => !i.orderedByDevice && i.category !== 'Entradas');
