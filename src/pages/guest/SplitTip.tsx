@@ -108,14 +108,13 @@ const SplitTip = () => {
   let sharedTotal = 0;
 
   if (splitMode === 'custom') {
-    consolidatedItems.forEach((item) => {
+    expandedItems.forEach((item) => {
       const assignment = itemAssignments[item.key] || 'shared';
-      const itemTotal = item.price * item.quantity;
       if (assignment === 'mine') {
-        mineTotal += itemTotal;
+        mineTotal += item.price;
       } else if (assignment === 'shared') {
         const divisor = sharedAmong[item.key] || guestCount;
-        sharedTotal += Math.ceil(itemTotal / divisor);
+        sharedTotal += Math.ceil(item.price / divisor);
       }
     });
     perPerson = mineTotal + sharedTotal;
