@@ -73,7 +73,7 @@ export const GuestFAB = () => {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="fixed right-4 z-50 w-56 bg-card border border-border rounded-2xl shadow-xl overflow-hidden"
-            style={{ bottom: hasPinnedCTA ? '13rem' : '10rem' }}
+            style={{ bottom: hasPinnedCTA ? '15rem' : '10rem' }}
           >
             {/* Header */}
             <div className="p-3 border-b border-border flex items-center justify-between">
@@ -105,7 +105,7 @@ export const GuestFAB = () => {
         whileTap={{ scale: 0.92 }}
         onClick={() => setOpen(!open)}
         className={`fixed right-4 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center text-xl ${
-          hasPinnedCTA ? 'bottom-36' : 'bottom-24'
+          hasPinnedCTA ? 'bottom-44' : 'bottom-24'
         }`}
         aria-label="Llamar mesero"
       >
