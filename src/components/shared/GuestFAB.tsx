@@ -73,7 +73,7 @@ export const GuestFAB = () => {
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="fixed right-4 z-50 w-56 bg-card border border-border rounded-2xl shadow-xl overflow-hidden"
-            style={{ bottom: hasPinnedCTA ? '13rem' : '10rem' }}
+            style={{ bottom: hasPinnedCTA ? '15rem' : '10rem' }}
           >
             {/* Header */}
             <div className="p-3 border-b border-border flex items-center justify-between">
