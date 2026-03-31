@@ -26,7 +26,7 @@ const WAITER_OPTIONS = [
 ] as const;
 
 // Routes where the FAB is completely hidden (they have their own CTAs)
-const HIDDEN_ROUTES = ['/guest/split-tip', '/guest/checkout', '/guest/quick-pay'];
+const HIDDEN_ROUTES = ['/guest/split-tip', '/guest/checkout', '/guest/quick-pay', '/guest/my-consumption'];
 
 // Routes with a fixed CTA bar above the bottom nav (FAB needs extra lift)
 const PINNED_CTA_ROUTES = ['/guest/menu', '/guest/cart', '/guest/my-consumption'];
