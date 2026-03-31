@@ -153,7 +153,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-4">
             Timeline de tu orden
           </h2>
-          {rounds.map((round) => {
+          {myRounds.map((round) => {
             const roundLaps = laps.filter((l) => l.roundNum === round.round);
             if (roundLaps.length === 0) return null;
             return (
