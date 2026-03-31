@@ -297,7 +297,7 @@ const SplitTip = () => {
               </h2>
 
               {/* My device items */}
-              {myDeviceItems.length > 0 && (
+              {myDeviceExpanded.length > 0 && (
                 <div className="mb-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Smartphone className="w-3.5 h-3.5 text-primary" />
@@ -306,13 +306,13 @@ const SplitTip = () => {
                     </span>
                   </div>
                   <div className="bg-card border border-primary/20 rounded-card overflow-hidden">
-                    {myDeviceItems.map((item, idx) => renderItemRow(item, idx, myDeviceItems.length))}
+                    {myDeviceExpanded.map((item, idx) => renderItemRow(item, idx, myDeviceExpanded.length))}
                   </div>
                 </div>
               )}
 
               {/* Al centro items */}
-              {alCentroItems.length > 0 && (
+              {alCentroExpanded.length > 0 && (
                 <div className="mb-3">
                   <div className="flex items-center gap-2 mb-2">
                     <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />
@@ -321,13 +321,13 @@ const SplitTip = () => {
                     </span>
                   </div>
                   <div className="bg-card border border-amber-200 rounded-card overflow-hidden">
-                    {alCentroItems.map((item, idx) => renderItemRow(item, idx, alCentroItems.length))}
+                    {alCentroExpanded.map((item, idx) => renderItemRow(item, idx, alCentroExpanded.length))}
                   </div>
                 </div>
               )}
 
               {/* Others' items */}
-              {othersItems.length > 0 && (
+              {othersExpanded.length > 0 && (
                 <div className="mb-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Users className="w-3.5 h-3.5 text-muted-foreground" />
@@ -336,7 +336,7 @@ const SplitTip = () => {
                     </span>
                   </div>
                   <div className="bg-card border border-border rounded-card overflow-hidden">
-                    {othersItems.map((item, idx) => renderItemRow(item, idx, othersItems.length))}
+                    {othersExpanded.map((item, idx) => renderItemRow(item, idx, othersExpanded.length))}
                   </div>
                 </div>
               )}
