@@ -17,8 +17,6 @@ const PaymentSuccess = () => {
   const tipAmount = usePaymentStore((s) => s.tipAmount);
   const setTotal = usePaymentStore((s) => s.setTotal);
   const setTipAmount = usePaymentStore((s) => s.setTipAmount);
-  const setRating = usePaymentStore((s) => s.setRating);
-  const setFeedback = usePaymentStore((s) => s.setFeedback);
   const rating = usePaymentStore((s) => s.rating);
   const setRatingStore = usePaymentStore((s) => s.setRating);
   const feedback = usePaymentStore((s) => s.feedback);
