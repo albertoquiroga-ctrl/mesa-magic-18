@@ -97,18 +97,14 @@ const SplitTip = () => {
     perPerson = Math.ceil(subtotal / guestCount);
   }
 
-  const tipAmount = isLowRating
-    ? 0
-    : isCustomTip
-      ? Number(customTip) || 0
-      : Math.round(perPerson * (tipPercent / 100));
+  const tipAmount = isCustomTip
+    ? Number(customTip) || 0
+    : Math.round(perPerson * (tipPercent / 100));
   const activeTip = isCustomTip ? Number(customTip) || 0 : tipPercent;
 
   const loyaltyDiscount = isLoggedIn && isNewUser ? 50 : 0;
 
   const finalTotal = Math.max(perPerson + tipAmount - loyaltyDiscount, 0);
-
-  const canContinue = isUnlocked && (!isLowRating || feedback.trim().length > 0);
 
   const [selectedPayMethod, setSelectedPayMethod] = useState<'card' | 'terminal' | 'cash'>('card');
 
