@@ -155,7 +155,7 @@ const SplitTip = () => {
     }
   };
 
-  const renderItemRow = (item: typeof consolidatedItems[0], idx: number, totalCount: number) => {
+  const renderItemRow = (item: typeof expandedItems[0], idx: number, totalCount: number) => {
     const assignment = itemAssignments[item.key] || 'shared';
     const divisor = sharedAmong[item.key] || guestCount;
     return (
@@ -165,9 +165,6 @@ const SplitTip = () => {
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
-              {item.quantity}×
-            </span>
             <div className="min-w-0">
               <span className="text-sm text-foreground truncate block">{item.name}</span>
               {item.category && (
@@ -178,14 +175,14 @@ const SplitTip = () => {
           <div className="flex items-center gap-1.5 shrink-0">
             {assignment === 'shared' ? (
               <span className="text-[11px] font-mono text-muted-foreground">
-                ${item.price * item.quantity} ÷ {divisor} = <span className="text-foreground font-semibold">${Math.ceil((item.price * item.quantity) / divisor)}</span>
+                ${item.price} ÷ {divisor} = <span className="text-foreground font-semibold">${Math.ceil(item.price / divisor)}</span>
               </span>
             ) : (
-              <PriceDisplay amount={item.price * item.quantity} size="sm" />
+              <PriceDisplay amount={item.price} size="sm" />
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2 mt-2 ml-7">
+        <div className="flex items-center gap-2 mt-2">
           <div className="flex rounded-full border border-border overflow-hidden">
             {([
               { value: 'mine', label: 'Mío' },
