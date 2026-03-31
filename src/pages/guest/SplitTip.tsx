@@ -218,51 +218,7 @@ const SplitTip = () => {
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 pt-6 pb-52">
-        {/* Rating section — always visible */}
-        <section className="mb-6">
-          <div className="bg-card border border-border rounded-card p-5 text-center">
-            <h2 className="text-sm font-semibold text-foreground mb-1">
-              ¿Cómo fue tu experiencia?
-            </h2>
-            <p className="text-xs text-muted-foreground mb-4">
-              Califica para continuar con el pago
-            </p>
-            <div className="flex items-center justify-center gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHoveredStar(star)}
-                  onMouseLeave={() => setHoveredStar(0)}
-                  className="p-1 transition-transform hover:scale-110"
-                >
-                  <Star
-                    className={`w-9 h-9 transition-colors ${
-                      star <= (hoveredStar || rating)
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-muted-foreground/30'
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-            {rating > 0 && (
-              <p className="text-xs text-muted-foreground mt-2">
-                {rating <= 2 ? 'Lamentamos escuchar eso' : rating <= 4 ? '¡Gracias!' : '¡Excelente!'}
-              </p>
-            )}
-          </div>
-        </section>
-
-        {/* Rest of page — greyed out if not unlocked */}
-        <div className={!isUnlocked ? 'opacity-40 pointer-events-none select-none' : ''}>
-          {!isUnlocked && (
-            <p className="text-center text-xs text-muted-foreground mb-4">
-              Califica tu experiencia para desbloquear el pago
-            </p>
-          )}
-
-          {/* Split mode */}
+        {/* Split mode */}
           <section className="mb-8">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               ¿Cómo pagar?
