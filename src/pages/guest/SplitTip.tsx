@@ -564,7 +564,6 @@ const SplitTip = () => {
         <Button
           className="w-full h-12 rounded-button text-base font-bold"
           onClick={handleContinue}
-          disabled={!canContinue}
         >
           {selectedPayMethod === 'card' ? 'Continuar al pago' : selectedPayMethod === 'terminal' ? 'Solicitar terminal' : 'Pagar en caja'}
         </Button>
