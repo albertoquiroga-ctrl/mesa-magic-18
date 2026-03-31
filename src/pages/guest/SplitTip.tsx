@@ -423,33 +423,7 @@ const SplitTip = () => {
             <PriceDisplay amount={perPerson} size="md" className="font-semibold text-foreground" />
           </div>
 
-          {/* Tip or feedback section */}
-          {isLowRating ? (
-            <section>
-              <div className="bg-card border border-destructive/30 rounded-card p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <MessageSquare className="w-5 h-5 text-destructive" />
-                  <h2 className="text-sm font-semibold text-foreground">
-                    Lamentamos tu experiencia
-                  </h2>
-                </div>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Nos importa mucho mejorar. Por favor cuéntanos qué salió mal para poder corregirlo.
-                </p>
-                <Textarea
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  placeholder="¿Cómo podemos mejorar?"
-                  className="min-h-[80px] text-sm resize-none"
-                />
-                {feedback.trim().length === 0 && (
-                  <p className="text-[11px] text-destructive mt-2">
-                    Este campo es obligatorio para continuar
-                  </p>
-                )}
-              </div>
-            </section>
-          ) : (
+          {/* Tip section */}
             <section>
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
                 Propina
