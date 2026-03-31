@@ -34,6 +34,8 @@ const SplitTip = () => {
   const guestCount = guests.length;
 
   const allItems = rounds.flatMap((r) => r.items);
+
+  // --- Consolidated view for non-custom modes (breakdown) ---
   const consolidatedItems = allItems.reduce<{ name: string; quantity: number; price: number; key: string; category?: string; orderedByDevice?: boolean }[]>(
     (acc, item) => {
       const key = `${item.name}::${item.price}`;
@@ -48,14 +50,40 @@ const SplitTip = () => {
     []
   );
 
+  // --- Expanded view for fair-pay: each unit is a separate selectable row ---
+  const expandedItems = (() => {
+    const result: { name: string; price: number; key: string; category?: string; orderedByDevice?: boolean }[] = [];
+    const counters: Record<string, number> = {};
+    allItems.forEach((item) => {
+      const base = `${item.name}::${item.price}`;
+      for (let i = 0; i < item.quantity; i++) {
+        const idx = (counters[base] || 0);
+        counters[base] = idx + 1;
+        result.push({
+          name: item.name,
+          price: item.price,
+          key: `${base}::${idx}`,
+          category: item.category,
+          orderedByDevice: item.orderedByDevice,
+        });
+      }
+    });
+    return result;
+  })();
+
+  const alCentroExpanded = expandedItems.filter((i) => i.category === 'Entradas');
+  const myDeviceExpanded = expandedItems.filter((i) => i.orderedByDevice && i.category !== 'Entradas');
+  const othersExpanded = expandedItems.filter((i) => !i.orderedByDevice && i.category !== 'Entradas');
+
+  // Consolidated lists for non-custom breakdown
   const alCentroItems = consolidatedItems.filter((i) => i.category === 'Entradas');
   const myDeviceItems = consolidatedItems.filter((i) => i.orderedByDevice && i.category !== 'Entradas');
   const othersItems = consolidatedItems.filter((i) => !i.orderedByDevice && i.category !== 'Entradas');
 
-  // Auto-assign on custom mode switch
+  // Auto-assign on custom mode switch (using expanded individual items)
   useEffect(() => {
     if (splitMode === 'custom') {
-      consolidatedItems.forEach((item) => {
+      expandedItems.forEach((item) => {
         if (item.category === 'Entradas') {
           setItemAssignment(item.key, 'shared');
           setSharedAmong(item.key, guestCount);
@@ -80,14 +108,13 @@ const SplitTip = () => {
   let sharedTotal = 0;
 
   if (splitMode === 'custom') {
-    consolidatedItems.forEach((item) => {
+    expandedItems.forEach((item) => {
       const assignment = itemAssignments[item.key] || 'shared';
-      const itemTotal = item.price * item.quantity;
       if (assignment === 'mine') {
-        mineTotal += itemTotal;
+        mineTotal += item.price;
       } else if (assignment === 'shared') {
         const divisor = sharedAmong[item.key] || guestCount;
-        sharedTotal += Math.ceil(itemTotal / divisor);
+        sharedTotal += Math.ceil(item.price / divisor);
       }
     });
     perPerson = mineTotal + sharedTotal;
@@ -128,7 +155,7 @@ const SplitTip = () => {
     }
   };
 
-  const renderItemRow = (item: typeof consolidatedItems[0], idx: number, totalCount: number) => {
+  const renderItemRow = (item: typeof expandedItems[0], idx: number, totalCount: number) => {
     const assignment = itemAssignments[item.key] || 'shared';
     const divisor = sharedAmong[item.key] || guestCount;
     return (
@@ -138,9 +165,6 @@ const SplitTip = () => {
       >
         <div className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0 flex-1">
-            <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
-              {item.quantity}×
-            </span>
             <div className="min-w-0">
               <span className="text-sm text-foreground truncate block">{item.name}</span>
               {item.category && (
@@ -151,14 +175,14 @@ const SplitTip = () => {
           <div className="flex items-center gap-1.5 shrink-0">
             {assignment === 'shared' ? (
               <span className="text-[11px] font-mono text-muted-foreground">
-                ${item.price * item.quantity} ÷ {divisor} = <span className="text-foreground font-semibold">${Math.ceil((item.price * item.quantity) / divisor)}</span>
+                ${item.price} ÷ {divisor} = <span className="text-foreground font-semibold">${Math.ceil(item.price / divisor)}</span>
               </span>
             ) : (
-              <PriceDisplay amount={item.price * item.quantity} size="sm" />
+              <PriceDisplay amount={item.price} size="sm" />
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2 mt-2 ml-7">
+        <div className="flex items-center gap-2 mt-2">
           <div className="flex rounded-full border border-border overflow-hidden">
             {([
               { value: 'mine', label: 'Mío' },
@@ -273,7 +297,7 @@ const SplitTip = () => {
               </h2>
 
               {/* My device items */}
-              {myDeviceItems.length > 0 && (
+              {myDeviceExpanded.length > 0 && (
                 <div className="mb-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Smartphone className="w-3.5 h-3.5 text-primary" />
@@ -282,13 +306,13 @@ const SplitTip = () => {
                     </span>
                   </div>
                   <div className="bg-card border border-primary/20 rounded-card overflow-hidden">
-                    {myDeviceItems.map((item, idx) => renderItemRow(item, idx, myDeviceItems.length))}
+                    {myDeviceExpanded.map((item, idx) => renderItemRow(item, idx, myDeviceExpanded.length))}
                   </div>
                 </div>
               )}
 
               {/* Al centro items */}
-              {alCentroItems.length > 0 && (
+              {alCentroExpanded.length > 0 && (
                 <div className="mb-3">
                   <div className="flex items-center gap-2 mb-2">
                     <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />
@@ -297,13 +321,13 @@ const SplitTip = () => {
                     </span>
                   </div>
                   <div className="bg-card border border-amber-200 rounded-card overflow-hidden">
-                    {alCentroItems.map((item, idx) => renderItemRow(item, idx, alCentroItems.length))}
+                    {alCentroExpanded.map((item, idx) => renderItemRow(item, idx, alCentroExpanded.length))}
                   </div>
                 </div>
               )}
 
               {/* Others' items */}
-              {othersItems.length > 0 && (
+              {othersExpanded.length > 0 && (
                 <div className="mb-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Users className="w-3.5 h-3.5 text-muted-foreground" />
@@ -312,7 +336,7 @@ const SplitTip = () => {
                     </span>
                   </div>
                   <div className="bg-card border border-border rounded-card overflow-hidden">
-                    {othersItems.map((item, idx) => renderItemRow(item, idx, othersItems.length))}
+                    {othersExpanded.map((item, idx) => renderItemRow(item, idx, othersExpanded.length))}
                   </div>
                 </div>
               )}
