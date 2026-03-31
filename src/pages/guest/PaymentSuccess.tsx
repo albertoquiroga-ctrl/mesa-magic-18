@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User, AlertTriangle } from 'lucide-react';
+import { CheckCircle, ArrowRight, ChevronDown, ChevronUp, User, AlertTriangle, Star, MessageSquare } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { mockGuests } from '@/data/mockData';
 
 const PaymentSuccess = () => {
@@ -16,11 +17,14 @@ const PaymentSuccess = () => {
   const tipAmount = usePaymentStore((s) => s.tipAmount);
   const setTotal = usePaymentStore((s) => s.setTotal);
   const setTipAmount = usePaymentStore((s) => s.setTipAmount);
-  const setRating = usePaymentStore((s) => s.setRating);
-  const setFeedback = usePaymentStore((s) => s.setFeedback);
+  const rating = usePaymentStore((s) => s.rating);
+  const setRatingStore = usePaymentStore((s) => s.setRating);
+  const feedback = usePaymentStore((s) => s.feedback);
+  const setFeedbackStore = usePaymentStore((s) => s.setFeedback);
   const rounds = useOrderStore((s) => s.rounds);
   const [showAudit, setShowAudit] = useState(false);
   const [showUnpaid, setShowUnpaid] = useState(false);
+  const [hoveredStar, setHoveredStar] = useState(0);
 
   // Table total from all rounds
   const tableSubtotal = rounds.reduce(
@@ -325,6 +329,59 @@ const PaymentSuccess = () => {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+      </motion.div>
+
+      {/* Rating section */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.7 }}
+        className="bg-card border border-border rounded-card p-5 w-full max-w-[360px] mb-4 text-center"
+      >
+        <h2 className="text-sm font-semibold text-foreground mb-1">
+          ¿Cómo fue tu experiencia?
+        </h2>
+        <p className="text-xs text-muted-foreground mb-4">
+          Tu opinión nos ayuda a mejorar
+        </p>
+        <div className="flex items-center justify-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              onClick={() => setRatingStore(star)}
+              onMouseEnter={() => setHoveredStar(star)}
+              onMouseLeave={() => setHoveredStar(0)}
+              className="p-1 transition-transform hover:scale-110"
+            >
+              <Star
+                className={`w-9 h-9 transition-colors ${
+                  star <= (hoveredStar || rating)
+                    ? 'fill-yellow-400 text-yellow-400'
+                    : 'text-muted-foreground/30'
+                }`}
+              />
+            </button>
+          ))}
+        </div>
+        {rating > 0 && (
+          <p className="text-xs text-muted-foreground mt-2">
+            {rating <= 2 ? 'Lamentamos escuchar eso' : rating <= 4 ? '¡Gracias!' : '¡Excelente!'}
+          </p>
+        )}
+        {rating > 0 && rating <= 2 && (
+          <div className="mt-4 text-left">
+            <div className="flex items-center gap-2 mb-2">
+              <MessageSquare className="w-4 h-4 text-muted-foreground" />
+              <span className="text-xs font-medium text-foreground">Cuéntanos qué podemos mejorar</span>
+            </div>
+            <Textarea
+              value={feedback}
+              onChange={(e) => setFeedbackStore(e.target.value)}
+              placeholder="¿Cómo podemos mejorar?"
+              className="min-h-[80px] text-sm resize-none"
+            />
           </div>
         )}
       </motion.div>

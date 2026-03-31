@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Star, MessageSquare, Gift, Smartphone, UtensilsCrossed, CreditCard, Landmark, Banknote } from 'lucide-react';
+import { ArrowLeft, Users, User, ChevronDown, ChevronUp, Scissors, Minus, Plus, Gift, Smartphone, UtensilsCrossed, CreditCard, Landmark, Banknote } from 'lucide-react';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useOrderStore } from '@/stores/orderStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useTableStore } from '@/stores/tableStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { mockGuests } from '@/data/mockData';
 
 const tipOptions = [
@@ -25,16 +24,11 @@ const SplitTip = () => {
     splitMode, setSplitMode, tipPercent, setTipPercent,
     setTipAmount, setTotal, setPaymentMethod, itemAssignments, setItemAssignment,
     sharedAmong, setSharedAmong, resetAssignments,
-    rating, setRating, feedback, setFeedback,
   } = usePaymentStore();
 
   const [customTip, setCustomTip] = useState('');
   const [isCustomTip, setIsCustomTip] = useState(false);
   const [showBreakdown, setShowBreakdown] = useState(false);
-  const [hoveredStar, setHoveredStar] = useState(0);
-
-  const isUnlocked = rating > 0;
-  const isLowRating = rating > 0 && rating <= 2;
 
   const guests = useTableStore((s) => s.guests);
   const guestCount = guests.length;
@@ -103,23 +97,18 @@ const SplitTip = () => {
     perPerson = Math.ceil(subtotal / guestCount);
   }
 
-  const tipAmount = isLowRating
-    ? 0
-    : isCustomTip
-      ? Number(customTip) || 0
-      : Math.round(perPerson * (tipPercent / 100));
+  const tipAmount = isCustomTip
+    ? Number(customTip) || 0
+    : Math.round(perPerson * (tipPercent / 100));
   const activeTip = isCustomTip ? Number(customTip) || 0 : tipPercent;
 
   const loyaltyDiscount = isLoggedIn && isNewUser ? 50 : 0;
 
   const finalTotal = Math.max(perPerson + tipAmount - loyaltyDiscount, 0);
 
-  const canContinue = isUnlocked && (!isLowRating || feedback.trim().length > 0);
-
   const [selectedPayMethod, setSelectedPayMethod] = useState<'card' | 'terminal' | 'cash'>('card');
 
   const handleContinue = () => {
-    if (!canContinue) return;
     setTipAmount(tipAmount);
     setTotal(finalTotal);
     setPaymentMethod(selectedPayMethod);
@@ -229,51 +218,7 @@ const SplitTip = () => {
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 pt-6 pb-52">
-        {/* Rating section — always visible */}
-        <section className="mb-6">
-          <div className="bg-card border border-border rounded-card p-5 text-center">
-            <h2 className="text-sm font-semibold text-foreground mb-1">
-              ¿Cómo fue tu experiencia?
-            </h2>
-            <p className="text-xs text-muted-foreground mb-4">
-              Califica para continuar con el pago
-            </p>
-            <div className="flex items-center justify-center gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => setRating(star)}
-                  onMouseEnter={() => setHoveredStar(star)}
-                  onMouseLeave={() => setHoveredStar(0)}
-                  className="p-1 transition-transform hover:scale-110"
-                >
-                  <Star
-                    className={`w-9 h-9 transition-colors ${
-                      star <= (hoveredStar || rating)
-                        ? 'fill-yellow-400 text-yellow-400'
-                        : 'text-muted-foreground/30'
-                    }`}
-                  />
-                </button>
-              ))}
-            </div>
-            {rating > 0 && (
-              <p className="text-xs text-muted-foreground mt-2">
-                {rating <= 2 ? 'Lamentamos escuchar eso' : rating <= 4 ? '¡Gracias!' : '¡Excelente!'}
-              </p>
-            )}
-          </div>
-        </section>
-
-        {/* Rest of page — greyed out if not unlocked */}
-        <div className={!isUnlocked ? 'opacity-40 pointer-events-none select-none' : ''}>
-          {!isUnlocked && (
-            <p className="text-center text-xs text-muted-foreground mb-4">
-              Califica tu experiencia para desbloquear el pago
-            </p>
-          )}
-
-          {/* Split mode */}
+        {/* Split mode */}
           <section className="mb-8">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
               ¿Cómo pagar?
@@ -478,33 +423,7 @@ const SplitTip = () => {
             <PriceDisplay amount={perPerson} size="md" className="font-semibold text-foreground" />
           </div>
 
-          {/* Tip or feedback section */}
-          {isLowRating ? (
-            <section>
-              <div className="bg-card border border-destructive/30 rounded-card p-5">
-                <div className="flex items-center gap-2 mb-3">
-                  <MessageSquare className="w-5 h-5 text-destructive" />
-                  <h2 className="text-sm font-semibold text-foreground">
-                    Lamentamos tu experiencia
-                  </h2>
-                </div>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Nos importa mucho mejorar. Por favor cuéntanos qué salió mal para poder corregirlo.
-                </p>
-                <Textarea
-                  value={feedback}
-                  onChange={(e) => setFeedback(e.target.value)}
-                  placeholder="¿Cómo podemos mejorar?"
-                  className="min-h-[80px] text-sm resize-none"
-                />
-                {feedback.trim().length === 0 && (
-                  <p className="text-[11px] text-destructive mt-2">
-                    Este campo es obligatorio para continuar
-                  </p>
-                )}
-              </div>
-            </section>
-          ) : (
+          {/* Tip section */}
             <section>
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
                 Propina
@@ -558,7 +477,6 @@ const SplitTip = () => {
                 <PriceDisplay amount={tipAmount} size="sm" className="text-foreground" />
               </div>
             </section>
-          )}
 
           {/* Payment method selection */}
           <section className="mb-6 mt-2">
@@ -604,12 +522,11 @@ const SplitTip = () => {
               </button>
             </div>
           </section>
-        </div>
       </div>
 
       {/* Sticky footer */}
       <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
-        {!isLoggedIn && isUnlocked ? (
+        {!isLoggedIn ? (
           <button
             onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/split-tip', nudgeOrigin: 'split-tip' } })}
             className="flex items-center gap-2 w-full p-2.5 mb-3 rounded-lg bg-primary/5 border border-primary/20 text-left"
@@ -619,14 +536,14 @@ const SplitTip = () => {
               <strong className="text-foreground">Gana puntos</strong> por esta compra — inicia sesión
             </span>
           </button>
-        ) : isLoggedIn && isUnlocked ? (
+        ) : (
           <div className="flex items-center gap-2 w-full p-2.5 mb-3 rounded-lg bg-green-50 border border-green-200 text-left">
             <Gift className="w-4 h-4 text-green-600 shrink-0" />
             <span className="text-[11px] text-muted-foreground">
               Ganarás <strong className="text-green-700">+{Math.round(finalTotal * 0.1)} puntos</strong> con esta compra ⭐
             </span>
           </div>
-        ) : null}
+        )}
         {loyaltyDiscount > 0 && (
           <div className="flex items-center justify-between mb-2 px-1">
             <span className="text-xs font-medium text-green-700">🎁 Descuento de bienvenida</span>
@@ -647,7 +564,6 @@ const SplitTip = () => {
         <Button
           className="w-full h-12 rounded-button text-base font-bold"
           onClick={handleContinue}
-          disabled={!canContinue}
         >
           {selectedPayMethod === 'card' ? 'Continuar al pago' : selectedPayMethod === 'terminal' ? 'Solicitar terminal' : 'Pagar en caja'}
         </Button>

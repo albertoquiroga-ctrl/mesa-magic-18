@@ -88,7 +88,7 @@ const QuickPaySuccess = () => {
               <span className="text-xs font-semibold text-foreground">Pudiste ganar {pointsEarned} puntos</span>
             </div>
             <p className="text-[11px] text-muted-foreground">
-              Crea tu cuenta y acumula puntos en cada visita. <strong className="text-primary">Ahorra $50</strong> al inscribirte.
+              Crea tu cuenta y acumula puntos en cada visita. <strong className="text-primary">La primera ronda va por la casa</strong> 🍹
             </p>
           </button>
         </motion.div>
