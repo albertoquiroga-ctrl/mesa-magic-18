@@ -41,7 +41,7 @@ const MyConsumption = () => {
   const othersTotal = othersItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const sharedTotal = sharedItems.reduce((s, i) => s + i.price * i.quantity, 0);
 
-  const isEmpty = rounds.length === 0;
+  
 
   const consolidate = (items: typeof allItems) => {
     const map: Record<string, { name: string; quantity: number; price: number; category?: string }> = {};
