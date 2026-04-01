@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Receipt, Smartphone, Users, UtensilsCrossed } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
@@ -8,7 +9,27 @@ import { Button } from '@/components/ui/button';
 const MyConsumption = () => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
+  const addRound = useOrderStore((s) => s.addRound);
   const guests = useTableStore((s) => s.guests);
+
+  // Seed round 0 (table orders captured by waiter) if no rounds exist yet.
+  // Covers the case where the user ordered offline and wants to pay here.
+  useEffect(() => {
+    if (rounds.length === 0) {
+      addRound({
+        id: crypto.randomUUID(),
+        round: 0,
+        items: [
+          { name: 'Guacamole', quantity: 1, price: 95, category: 'Entradas', orderedByDevice: false },
+          { name: 'Ensalada Mixta', quantity: 1, price: 130, category: 'Entradas', orderedByDevice: false },
+          { name: 'Entrecot a las Brasas', quantity: 1, price: 295, category: 'Platos Fuertes', orderedByDevice: false },
+          { name: 'Agua de Jamaica', quantity: 2, price: 65, category: 'Bebidas', orderedByDevice: false },
+        ],
+        status: 'confirmed',
+        createdAt: new Date(Date.now() - 600000).toISOString(),
+      });
+    }
+  }, []);
 
   const allItems = rounds.flatMap((r) => r.items);
   const sharedItems = allItems.filter((i) => i.category === 'Entradas');
