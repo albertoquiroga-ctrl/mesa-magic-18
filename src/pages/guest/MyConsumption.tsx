@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Receipt, Smartphone, Users, UtensilsCrossed } from 'lucide-react';
+import { ArrowLeft, Smartphone, Users, UtensilsCrossed } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
 import { useTableStore } from '@/stores/tableStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
@@ -8,7 +9,27 @@ import { Button } from '@/components/ui/button';
 const MyConsumption = () => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
+  const addRound = useOrderStore((s) => s.addRound);
   const guests = useTableStore((s) => s.guests);
+
+  // Seed round 0 (table orders captured by waiter) if no rounds exist yet.
+  // Covers the case where the user ordered offline and wants to pay here.
+  useEffect(() => {
+    if (rounds.length === 0) {
+      addRound({
+        id: crypto.randomUUID(),
+        round: 0,
+        items: [
+          { name: 'Guacamole', quantity: 1, price: 95, category: 'Entradas', orderedByDevice: false },
+          { name: 'Ensalada Mixta', quantity: 1, price: 130, category: 'Entradas', orderedByDevice: false },
+          { name: 'Entrecot a las Brasas', quantity: 1, price: 295, category: 'Platos Fuertes', orderedByDevice: false },
+          { name: 'Agua de Jamaica', quantity: 2, price: 65, category: 'Bebidas', orderedByDevice: false },
+        ],
+        status: 'confirmed',
+        createdAt: new Date(Date.now() - 600000).toISOString(),
+      });
+    }
+  }, []);
 
   const allItems = rounds.flatMap((r) => r.items);
   const sharedItems = allItems.filter((i) => i.category === 'Entradas');
@@ -20,7 +41,7 @@ const MyConsumption = () => {
   const othersTotal = othersItems.reduce((s, i) => s + i.price * i.quantity, 0);
   const sharedTotal = sharedItems.reduce((s, i) => s + i.price * i.quantity, 0);
 
-  const isEmpty = rounds.length === 0;
+  
 
   const consolidate = (items: typeof allItems) => {
     const map: Record<string, { name: string; quantity: number; price: number; category?: string }> = {};
@@ -97,76 +118,60 @@ const MyConsumption = () => {
       </header>
 
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-36">
-        {isEmpty ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-              <Receipt className="w-8 h-8 text-muted-foreground" />
-            </div>
-            <p className="text-sm text-muted-foreground">Aún no has pedido nada</p>
-            <Button variant="outline" size="sm" onClick={() => navigate('/guest/menu')}>
-              Ir al menú
-            </Button>
-          </div>
-        ) : (
-          <>
-            {/* Guests summary */}
-            <div className="flex gap-2 mb-4">
-              {guests.map((g) => (
-                <span
-                  key={g.id}
-                  className={`text-xs px-3 py-1.5 rounded-chip font-medium ${
-                    g.isCurrentUser
-                      ? 'bg-primary/10 text-primary border border-primary/20'
-                      : 'bg-accent text-accent-foreground'
-                  }`}
-                >
-                  {g.name}
-                </span>
-              ))}
-            </div>
+        {/* Guests summary */}
+        <div className="flex gap-2 mb-4">
+          {guests.map((g) => (
+            <span
+              key={g.id}
+              className={`text-xs px-3 py-1.5 rounded-chip font-medium ${
+                g.isCurrentUser
+                  ? 'bg-primary/10 text-primary border border-primary/20'
+                  : 'bg-accent text-accent-foreground'
+              }`}
+            >
+              {g.name}
+            </span>
+          ))}
+        </div>
 
-            {/* My device items */}
-            {renderItemList(
-              myConsolidated,
-              'Pedido desde tu dispositivo',
-              <Smartphone className="w-3.5 h-3.5 text-primary" />,
-              myTotal
-            )}
+        {/* My device items */}
+        {renderItemList(
+          myConsolidated,
+          'Pedido desde tu dispositivo',
+          <Smartphone className="w-3.5 h-3.5 text-primary" />,
+          myTotal
+        )}
 
-            {/* Shared / al centro items */}
-            {renderItemList(
-              sharedConsolidated,
-              'Típicamente al centro',
-              <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />,
-              sharedTotal
-            )}
+        {/* Shared / al centro items */}
+        {renderItemList(
+          sharedConsolidated,
+          'Típicamente al centro',
+          <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />,
+          sharedTotal
+        )}
 
-            {/* Others' items */}
-            {renderItemList(
-              othersConsolidated,
-              'Pedido por otros en la mesa',
-              <Users className="w-3.5 h-3.5 text-muted-foreground" />,
-              othersTotal
-            )}
-          </>
+        {/* Others' items */}
+        {renderItemList(
+          othersConsolidated,
+          'Pedido por otros en la mesa',
+          <Users className="w-3.5 h-3.5 text-muted-foreground" />,
+          othersTotal
         )}
       </div>
 
-      {/* Sticky footer */}
-      {!isEmpty && (
-        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-muted-foreground">Total consumo</span>
-            <PriceDisplay amount={grandTotal} size="lg" className="font-bold text-foreground" />
-          </div>
-          <Button
-            className="w-full h-12 rounded-button text-base font-bold"
-            onClick={() => navigate('/guest/split-tip')}
-          >
-            Pedir la cuenta
-          </Button>
+      {/* Sticky footer — always visible */}
+      <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm text-muted-foreground">Total consumo</span>
+          <PriceDisplay amount={grandTotal} size="lg" className="font-bold text-foreground" />
         </div>
-      )}
+        <Button
+          className="w-full h-12 rounded-button text-base font-bold"
+          onClick={() => navigate('/guest/split-tip')}
+        >
+          Pedir la cuenta
+        </Button>
+      </div>
     </div>
   );
 };
