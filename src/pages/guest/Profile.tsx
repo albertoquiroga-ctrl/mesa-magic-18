@@ -71,12 +71,12 @@ const Profile = () => {
 
           <div className="mb-4">
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-              <span>{user.loyalty.points} puntos</span>
-              <span>Próxima recompensa: {user.loyalty.nextRewardAt} pts</span>
+              <span>{t('profile.points', { pts: user.loyalty.points })}</span>
+              <span>{t('profile.nextReward', { pts: user.loyalty.nextRewardAt })}</span>
             </div>
             <Progress value={progressPercent} className="h-2.5" />
             <p className="text-[11px] text-muted-foreground mt-1.5">
-              Te faltan {user.loyalty.nextRewardAt - user.loyalty.points} puntos para tu próxima recompensa
+              {t('profile.remaining', { pts: user.loyalty.nextRewardAt - user.loyalty.points })}
             </p>
           </div>
 
