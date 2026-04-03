@@ -136,7 +136,7 @@ const Cart = () => {
           <AnimatePresence initial={false}>
             {items.map((item) => (
               <motion.div
-                key={item.id}
+                key={item.cartKey}
                 layout
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
@@ -147,7 +147,12 @@ const Cart = () => {
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
-                  <PriceDisplay amount={item.price} size="sm" className="text-muted-foreground" />
+                  {item.modifiers && item.modifiers.length > 0 && (
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                      {item.modifiers.map((m) => m.optionLabel).join(', ')}
+                    </p>
+                  )}
+                  <PriceDisplay amount={item.price + (item.modifiers ?? []).reduce((s, m) => s + m.extraPrice, 0)} size="sm" className="text-muted-foreground" />
                   {item.notes && (
                     <p className="text-xs text-muted-foreground mt-0.5 truncate">📝 {item.notes}</p>
                   )}
@@ -157,7 +162,7 @@ const Cart = () => {
                 <div className="flex items-center gap-1.5 shrink-0">
                   <button
                     onClick={() =>
-                      item.quantity === 1 ? removeItem(item.id) : updateQuantity(item.id, item.quantity - 1)
+                      item.quantity === 1 ? removeItem(item.cartKey) : updateQuantity(item.cartKey, item.quantity - 1)
                     }
                     className="w-9 h-9 rounded-full bg-muted flex items-center justify-center min-w-touch min-h-touch"
                     aria-label="Quitar uno"
@@ -172,7 +177,7 @@ const Cart = () => {
                     {item.quantity}
                   </span>
                   <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}
                     className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center min-w-touch min-h-touch"
                     aria-label="Agregar uno más"
                   >

@@ -7,6 +7,27 @@
  */
 
 // ---------------------------------------------------------------------------
+// Modifier types — used for item customization (e.g. meat temp, tortilla type)
+// ---------------------------------------------------------------------------
+
+export interface ModifierOption {
+  id: string;
+  label: string;
+  /** Extra cost on top of the base price (0 if free) */
+  extraPrice?: number;
+}
+
+export interface ModifierGroup {
+  id: string;
+  label: string;
+  /** If true, the guest must pick exactly one option before adding to cart */
+  required: boolean;
+  /** Allow selecting more than one option (e.g. "extras") */
+  multiSelect?: boolean;
+  options: ModifierOption[];
+}
+
+// ---------------------------------------------------------------------------
 // Menu items
 // ---------------------------------------------------------------------------
 
@@ -21,6 +42,8 @@ export interface MenuItem {
   tags?: string[];
   /** Estimated preparation time in minutes */
   prepTime?: number;
+  /** Customisation groups available for this item */
+  modifiers?: ModifierGroup[];
 }
 
 export const mockMenuItems: MenuItem[] = [
@@ -33,6 +56,18 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1556855810-ac404aa91e85?w=600&h=600&fit=crop',
     tags: ['popular'],
     prepTime: 3,
+    modifiers: [
+      {
+        id: 'sal',
+        label: 'Borde del vaso',
+        required: true,
+        options: [
+          { id: 'sal-gusano', label: 'Sal de gusano' },
+          { id: 'sal-normal', label: 'Sal normal' },
+          { id: 'sin-sal', label: 'Sin sal' },
+        ],
+      },
+    ],
   },
   {
     id: 'agua-jamaica',
@@ -43,6 +78,18 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&h=600&fit=crop',
     tags: ['sin alcohol'],
     prepTime: 2,
+    modifiers: [
+      {
+        id: 'dulzura',
+        label: 'Nivel de dulzor',
+        required: false,
+        options: [
+          { id: 'sin-azucar', label: 'Sin azúcar' },
+          { id: 'poco-azucar', label: 'Poca azúcar' },
+          { id: 'normal-azucar', label: 'Normal' },
+        ],
+      },
+    ],
   },
   {
     id: 'mezcal',
@@ -63,6 +110,18 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1600335895229-6e75511892c8?w=600&h=600&fit=crop',
     tags: ['vegetariano'],
     prepTime: 7,
+    modifiers: [
+      {
+        id: 'picor',
+        label: 'Nivel de picante',
+        required: false,
+        options: [
+          { id: 'sin-picante', label: 'Sin picante' },
+          { id: 'medio', label: 'Medio' },
+          { id: 'picoso', label: 'Bien picoso' },
+        ],
+      },
+    ],
   },
   {
     id: 'ensalada',
@@ -73,6 +132,28 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=600&fit=crop',
     tags: ['vegetariano', 'ligero'],
     prepTime: 8,
+    modifiers: [
+      {
+        id: 'aderezo',
+        label: 'Aderezo',
+        required: false,
+        options: [
+          { id: 'vinagreta', label: 'Vinagreta cítrica' },
+          { id: 'ranch', label: 'Ranch' },
+          { id: 'sin-aderezo', label: 'Sin aderezo' },
+        ],
+      },
+      {
+        id: 'extras-ensalada',
+        label: 'Extras',
+        required: false,
+        multiSelect: true,
+        options: [
+          { id: 'pollo', label: 'Pollo grillé', extraPrice: 35 },
+          { id: 'queso', label: 'Queso panela', extraPrice: 20 },
+        ],
+      },
+    ],
   },
   {
     id: 'tacos-asada',
@@ -83,6 +164,29 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&h=600&fit=crop',
     tags: ['popular'],
     prepTime: 15,
+    modifiers: [
+      {
+        id: 'tortilla',
+        label: 'Tipo de tortilla',
+        required: true,
+        options: [
+          { id: 'maiz', label: 'Maíz' },
+          { id: 'harina', label: 'Harina' },
+          { id: 'nopal', label: 'Nopal', extraPrice: 10 },
+        ],
+      },
+      {
+        id: 'sin-ingredientes',
+        label: 'Sin ingredientes',
+        required: false,
+        multiSelect: true,
+        options: [
+          { id: 'sin-cebolla', label: 'Sin cebolla' },
+          { id: 'sin-cilantro', label: 'Sin cilantro' },
+          { id: 'sin-salsa', label: 'Sin salsa' },
+        ],
+      },
+    ],
   },
   {
     id: 'entrecot',
@@ -93,6 +197,20 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?w=600&h=600&fit=crop',
     tags: ['premium'],
     prepTime: 22,
+    modifiers: [
+      {
+        id: 'termino',
+        label: 'Término de la carne',
+        required: true,
+        options: [
+          { id: 'rojo', label: 'Rojo' },
+          { id: 'medio-rojo', label: 'Medio rojo' },
+          { id: 'medio', label: 'Medio' },
+          { id: 'tres-cuartos', label: 'Tres cuartos' },
+          { id: 'bien-cocido', label: 'Bien cocido' },
+        ],
+      },
+    ],
   },
   {
     id: 'pasta-trufa',
@@ -103,6 +221,18 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&h=600&fit=crop',
     tags: ['vegetariano'],
     prepTime: 18,
+    modifiers: [
+      {
+        id: 'extras-pasta',
+        label: 'Extras',
+        required: false,
+        multiSelect: true,
+        options: [
+          { id: 'extra-trufa', label: 'Extra trufa', extraPrice: 45 },
+          { id: 'extra-parmesano', label: 'Extra parmesano', extraPrice: 15 },
+        ],
+      },
+    ],
   },
 ];
 
