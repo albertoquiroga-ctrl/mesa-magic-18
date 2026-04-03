@@ -23,6 +23,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
   const addItem = useCartStore((s) => s.addItem);
+  const { t } = useTranslation();
 
   const handleReorder = (itemName: string) => {
     const menuItem = mockMenuItems.find((m) => m.name === itemName);
