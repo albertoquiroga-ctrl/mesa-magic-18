@@ -91,9 +91,7 @@ const Login = () => {
                     className="flex-1"
                   />
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-1.5">
-                  Te enviaremos un código por SMS para verificar tu número
-                </p>
+                <p className="text-[11px] text-muted-foreground mt-1.5">{t('login.smsNote')}</p>
               </div>
             </div>
 
