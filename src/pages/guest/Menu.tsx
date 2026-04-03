@@ -163,7 +163,7 @@ const Menu = () => {
 
         {/* Filter pills (tags + allergen exclusions) */}
         {(allTags.length > 0 || allergenFilters.length > 0) && (
-          <div className="flex gap-2 px-4 pb-2.5 overflow-x-auto scrollbar-none">
+          <div className="flex gap-2 px-4 pb-2.5 overflow-x-auto scrollbar-none mask-fade-right">
             {allTags.map((tag) => {
               const isActive = activeFilters.includes(tag);
               return (
