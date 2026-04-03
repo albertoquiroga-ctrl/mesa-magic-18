@@ -146,7 +146,7 @@ const Login = () => {
               onClick={() => setStep('phone')}
               className="w-full text-center text-xs text-muted-foreground py-2"
             >
-              ¿No recibiste el código? Reenviar
+              {t('login.resend')}
             </button>
           </>
         )}
