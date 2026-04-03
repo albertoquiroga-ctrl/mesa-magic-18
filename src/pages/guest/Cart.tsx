@@ -147,7 +147,12 @@ const Cart = () => {
                 {/* Info */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-foreground truncate">{item.name}</p>
-                  <PriceDisplay amount={item.price} size="sm" className="text-muted-foreground" />
+                  {item.modifiers && item.modifiers.length > 0 && (
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                      {item.modifiers.map((m) => m.optionLabel).join(', ')}
+                    </p>
+                  )}
+                  <PriceDisplay amount={item.price + (item.modifiers ?? []).reduce((s, m) => s + m.extraPrice, 0)} size="sm" className="text-muted-foreground" />
                   {item.notes && (
                     <p className="text-xs text-muted-foreground mt-0.5 truncate">📝 {item.notes}</p>
                   )}
