@@ -22,7 +22,7 @@ const MyConsumption = () => {
     const menuItem = mockMenuItems.find((m) => m.name === itemName);
     if (!menuItem) return;
     addItem({ id: menuItem.id, name: menuItem.name, price: menuItem.price });
-    toast.success(`${menuItem.name} agregado al carrito`);
+    toast.success(t('reorder.added', { name: menuItem.name }));
   };
 
   // Seed round 0 (table orders captured by waiter) if no rounds exist yet.
