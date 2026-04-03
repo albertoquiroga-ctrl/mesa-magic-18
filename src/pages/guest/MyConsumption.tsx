@@ -191,7 +191,7 @@ const MyConsumption = () => {
           className="w-full h-12 rounded-button text-base font-bold"
           onClick={() => navigate('/guest/split-tip')}
         >
-          Pedir la cuenta
+          {t('consumption.requestBill')}
         </Button>
       </div>
     </div>
