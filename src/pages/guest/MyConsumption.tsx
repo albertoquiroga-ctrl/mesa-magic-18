@@ -167,7 +167,7 @@ const MyConsumption = () => {
         {/* Shared / al centro items */}
         {renderItemList(
           sharedConsolidated,
-          'Típicamente al centro',
+          t('consumption.shared'),
           <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />,
           sharedTotal
         )}
