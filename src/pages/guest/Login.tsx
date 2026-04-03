@@ -78,7 +78,7 @@ const Login = () => {
                 <Input type="text" placeholder={t('login.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Número de teléfono</label>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('login.phone')}</label>
                 <div className="flex gap-2">
                   <div className="flex items-center px-3 h-10 rounded-md border border-input bg-muted text-sm text-muted-foreground shrink-0">
                     🇲🇽 +52
