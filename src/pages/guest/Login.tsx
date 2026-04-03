@@ -4,6 +4,7 @@ import { ArrowLeft, Gift, Star, Phone } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const Login = () => {
   const navigate = useNavigate();
