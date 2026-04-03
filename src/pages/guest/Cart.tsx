@@ -177,7 +177,7 @@ const Cart = () => {
                     {item.quantity}
                   </span>
                   <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                    onClick={() => updateQuantity(item.cartKey, item.quantity + 1)}
                     className="w-9 h-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center min-w-touch min-h-touch"
                     aria-label="Agregar uno más"
                   >
