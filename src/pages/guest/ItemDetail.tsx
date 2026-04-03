@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import { Plus, Minus, ArrowLeft, Clock, Check, AlertTriangle, Info } from 'lucide-react';
 import { useCartStore, type SelectedModifier } from '@/stores/cartStore';
 import { mockMenuItems, ALLERGEN_META, type ModifierGroup } from '@/data/mockData';
+import { useTranslation } from '@/i18n/useTranslation';
 
 // ---------------------------------------------------------------------------
 // Modifier Group UI
