@@ -16,6 +16,7 @@ const levelColors = {
 const Profile = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+  const { t } = useTranslation();
 
   if (!user) {
     navigate('/guest/login');
