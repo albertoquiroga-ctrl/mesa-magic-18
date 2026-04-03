@@ -117,6 +117,8 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    allergens: ['sulfitos'],
+    nutrition: { calories: 180, carbs: 12, fat: 0, protein: 0 },
   },
   {
     id: 'agua-jamaica',
