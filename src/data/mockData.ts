@@ -293,6 +293,8 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    allergens: ['gluten', 'lacteos', 'huevo'],
+    nutrition: { calories: 520, carbs: 48, fat: 28, protein: 16 },
   },
 ];
 
