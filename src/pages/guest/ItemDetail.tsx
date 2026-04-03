@@ -77,6 +77,7 @@ const ItemDetail = () => {
   const { itemId } = useParams();
   const navigate = useNavigate();
   const addItem = useCartStore((s) => s.addItem);
+  const { t } = useTranslation();
 
   const item = mockMenuItems.find((i) => i.id === itemId);
 
