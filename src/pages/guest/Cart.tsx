@@ -162,7 +162,7 @@ const Cart = () => {
                 <div className="flex items-center gap-1.5 shrink-0">
                   <button
                     onClick={() =>
-                      item.quantity === 1 ? removeItem(item.id) : updateQuantity(item.id, item.quantity - 1)
+                      item.quantity === 1 ? removeItem(item.cartKey) : updateQuantity(item.cartKey, item.quantity - 1)
                     }
                     className="w-9 h-9 rounded-full bg-muted flex items-center justify-center min-w-touch min-h-touch"
                     aria-label="Quitar uno"
