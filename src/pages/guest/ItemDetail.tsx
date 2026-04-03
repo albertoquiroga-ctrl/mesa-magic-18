@@ -222,7 +222,7 @@ const ItemDetail = () => {
           <div className="mt-5 p-3.5 rounded-card bg-destructive/5 border border-destructive/15">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-destructive" />
-              <span className="text-xs font-semibold text-destructive uppercase tracking-wide">Alérgenos</span>
+              <span className="text-xs font-semibold text-destructive uppercase tracking-wide">{t('item.allergens')}</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {item.allergens.map((a) => {
