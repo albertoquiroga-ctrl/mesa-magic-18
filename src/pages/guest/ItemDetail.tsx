@@ -181,7 +181,7 @@ const ItemDetail = () => {
         {item.soldOut && (
           <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
             <span className="text-sm font-semibold text-muted-foreground bg-muted px-4 py-2 rounded-chip">
-              Agotado
+              {t('item.soldOut')}
             </span>
           </div>
         )}
