@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Gift } from 'lucide-react';
 import OrderTracking from './OrderTracking';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const Cart = () => {
   const navigate = useNavigate();
