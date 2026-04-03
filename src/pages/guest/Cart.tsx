@@ -113,7 +113,7 @@ const Cart = () => {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-base font-semibold text-foreground">Tu pedido</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('cart.title')}</h1>
           {!isEmpty && (
             <span className="ml-auto text-xs text-muted-foreground font-mono tabular-nums">
               {items.length} producto{items.length > 1 ? 's' : ''}
