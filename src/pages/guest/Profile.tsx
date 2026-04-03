@@ -93,7 +93,7 @@ const Profile = () => {
         {/* History */}
         <div className="bg-card border border-border rounded-card overflow-hidden">
           <div className="px-5 py-3 border-b border-border">
-            <h3 className="text-sm font-semibold text-foreground">Historial de visitas</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t('profile.visitHistory')}</h3>
           </div>
           {user.history.map((visit) => (
             <div key={visit.id} className="px-5 py-3 border-b border-border last:border-0">
