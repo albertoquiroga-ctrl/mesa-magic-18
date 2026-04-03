@@ -108,12 +108,8 @@ const Login = () => {
           <>
             <div className="text-center mb-6">
               <Phone className="w-10 h-10 text-primary mx-auto mb-3" />
-              <p className="text-sm text-foreground font-medium mb-1">
-                Ingresa el código de 4 dígitos
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Enviado a +52 {phone}
-              </p>
+              <p className="text-sm text-foreground font-medium mb-1">{t('login.enterCode')}</p>
+              <p className="text-xs text-muted-foreground">{t('login.sentTo', { phone })}</p>
             </div>
 
             <div className="flex justify-center gap-3 mb-6">
