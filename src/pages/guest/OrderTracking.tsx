@@ -21,7 +21,14 @@ interface ItemLap {
 const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
+  const addItem = useCartStore((s) => s.addItem);
 
+  const handleReorder = (itemName: string) => {
+    const menuItem = mockMenuItems.find((m) => m.name === itemName);
+    if (!menuItem) return;
+    addItem({ id: menuItem.id, name: menuItem.name, price: menuItem.price });
+    toast.success(`${menuItem.name} agregado al carrito`);
+  };
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
