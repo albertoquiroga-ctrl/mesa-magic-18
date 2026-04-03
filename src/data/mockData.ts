@@ -176,6 +176,7 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    nutrition: { calories: 220, carbs: 8, fat: 18, protein: 3 },
   },
   {
     id: 'ensalada',
