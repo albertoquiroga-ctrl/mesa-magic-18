@@ -84,7 +84,7 @@ const Profile = () => {
             <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
               <Gift className="w-4 h-4 text-primary shrink-0" />
               <span className="text-xs text-foreground">
-                Tienes <strong>${user.loyalty.savingsAvailable}</strong> de descuento disponible
+                {t('profile.discountAvailable', { amount: user.loyalty.savingsAvailable })}
               </span>
             </div>
           )}
