@@ -74,13 +74,8 @@ const Login = () => {
           <>
             <div className="space-y-4 mb-6">
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Tu nombre</label>
-                <Input
-                  type="text"
-                  placeholder="Ej: María García"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('login.yourName')}</label>
+                <Input type="text" placeholder={t('login.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div>
                 <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Número de teléfono</label>
