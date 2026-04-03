@@ -2,8 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, LogOut, Gift, Trophy, Phone } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
+import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const levelColors = {
   Bronce: 'text-orange-600',
