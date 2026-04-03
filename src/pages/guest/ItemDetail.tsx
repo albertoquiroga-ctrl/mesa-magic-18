@@ -322,7 +322,7 @@ const ItemDetail = () => {
           {/* Missing required modifiers warning */}
           {!allRequiredSelected && modifiers.some((g) => g.required) && (
             <p className="text-xs text-destructive text-center mb-2">
-              Selecciona las opciones requeridas para continuar
+              {t('item.selectRequired')}
             </p>
           )}
           <motion.button
