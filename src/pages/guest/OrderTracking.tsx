@@ -172,7 +172,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                 {/* Round separator */}
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                    Ronda {round.round}
+                    {t('tracking.round', { n: round.round })}
                   </span>
                   <div className="flex-1 h-px bg-border" />
                 </div>
