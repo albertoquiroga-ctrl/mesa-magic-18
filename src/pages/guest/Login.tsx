@@ -13,6 +13,7 @@ const Login = () => {
   const returnTo = state?.returnTo || '/guest/profile';
   const nudgeOrigin = state?.nudgeOrigin || 'general';
   const login = useAuthStore((s) => s.login);
+  const { t } = useTranslation();
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
