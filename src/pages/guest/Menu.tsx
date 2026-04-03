@@ -109,7 +109,7 @@ const Menu = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* ── Sticky header ── */}
-      <header className="sticky top-0 z-30 bg-card border-b border-border">
+      <header className="sticky top-0 z-30 bg-card border-b border-border overflow-hidden">
         <div className="flex items-center justify-between px-4 h-14 gap-2">
           {searchOpen ? (
             /* Search bar */
