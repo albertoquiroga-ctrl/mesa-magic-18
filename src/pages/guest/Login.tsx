@@ -43,7 +43,7 @@ const Login = () => {
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
         <h1 className="text-base font-semibold text-foreground">
-          {step === 'phone' ? 'Crear cuenta' : 'Verificar código'}
+          {step === 'phone' ? t('login.createAccount') : t('login.verifyCode')}
         </h1>
       </header>
 
