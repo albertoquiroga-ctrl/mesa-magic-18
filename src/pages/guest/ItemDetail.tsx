@@ -8,9 +8,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Plus, Minus, ArrowLeft, Clock, Check } from 'lucide-react';
+import { Plus, Minus, ArrowLeft, Clock, Check, AlertTriangle, Info } from 'lucide-react';
 import { useCartStore, type SelectedModifier } from '@/stores/cartStore';
-import { mockMenuItems, type ModifierGroup } from '@/data/mockData';
+import { mockMenuItems, ALLERGEN_META, type ModifierGroup } from '@/data/mockData';
 
 // ---------------------------------------------------------------------------
 // Modifier Group UI
