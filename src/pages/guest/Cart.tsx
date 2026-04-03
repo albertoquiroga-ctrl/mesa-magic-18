@@ -129,9 +129,9 @@ const Cart = () => {
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
               <ShoppingBag className="w-8 h-8 text-muted-foreground" />
             </div>
-            <p className="text-sm text-muted-foreground">Tu carrito está vacío</p>
+            <p className="text-sm text-muted-foreground">{t('cart.empty')}</p>
             <Button variant="outline" size="sm" onClick={() => navigate('/guest/menu')}>
-              Explorar menú
+              {t('cart.explore')}
             </Button>
           </div>
         ) : (
