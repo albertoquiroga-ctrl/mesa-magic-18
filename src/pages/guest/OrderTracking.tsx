@@ -96,9 +96,9 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   if (rounds.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 px-6">
-        <p className="text-sm text-muted-foreground">No hay órdenes activas</p>
+        <p className="text-sm text-muted-foreground">{t('tracking.noOrders')}</p>
         <Button variant="outline" size="sm" onClick={() => navigate('/guest/menu')}>
-          Ir al menú
+          {t('tracking.goToMenu')}
         </Button>
       </div>
     );
