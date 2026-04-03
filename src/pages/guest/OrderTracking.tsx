@@ -237,9 +237,18 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                                     )}
                                     {lap.name}
                                   </span>
-                                  <span className={`text-[11px] font-mono shrink-0 ml-2 ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
-                                    {isDone ? '✓ Listo' : remStr}
-                                  </span>
+                                  <div className="flex items-center gap-2 shrink-0 ml-2">
+                                    <button
+                                      onClick={() => handleReorder(lap.name)}
+                                      className="min-w-touch min-h-touch flex items-center justify-center"
+                                      aria-label={`Pedir ${lap.name} otra vez`}
+                                    >
+                                      <RotateCcw className="w-3.5 h-3.5 text-primary" />
+                                    </button>
+                                    <span className={`text-[11px] font-mono ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
+                                      {isDone ? '✓ Listo' : remStr}
+                                    </span>
+                                  </div>
                                 </div>
                                 {(isActive || isDone) && (
                                   <div className="mt-1.5">
