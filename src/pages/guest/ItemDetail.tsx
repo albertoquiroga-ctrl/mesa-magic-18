@@ -336,10 +336,10 @@ const ItemDetail = () => {
             }`}
           >
             {added ? (
-              '✓ Agregado'
+              t('item.added')
             ) : (
               <>
-                Agregar {quantity} — <span className="font-mono">${total} MXN</span>
+                {t('item.add', { qty: String(quantity), total: String(total) })}
               </>
             )}
           </motion.button>
