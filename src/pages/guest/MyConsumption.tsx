@@ -8,6 +8,7 @@ import { mockMenuItems } from '@/data/mockData';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const MyConsumption = () => {
   const navigate = useNavigate();
