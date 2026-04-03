@@ -244,6 +244,8 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    allergens: ['gluten'],
+    nutrition: { calories: 420, carbs: 32, fat: 18, protein: 28 },
   },
   {
     id: 'entrecot',
