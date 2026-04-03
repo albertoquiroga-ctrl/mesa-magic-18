@@ -135,7 +135,7 @@ const MyConsumption = () => {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-base font-semibold text-foreground">Mi consumo</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('consumption.title')}</h1>
         </div>
       </header>
 
