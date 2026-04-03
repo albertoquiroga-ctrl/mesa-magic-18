@@ -8,6 +8,7 @@ import { mockMenuItems } from '@/data/mockData';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const MyConsumption = () => {
   const navigate = useNavigate();
@@ -15,12 +16,13 @@ const MyConsumption = () => {
   const addRound = useOrderStore((s) => s.addRound);
   const guests = useTableStore((s) => s.guests);
   const addItem = useCartStore((s) => s.addItem);
+  const { t } = useTranslation();
 
   const handleReorder = (itemName: string) => {
     const menuItem = mockMenuItems.find((m) => m.name === itemName);
     if (!menuItem) return;
     addItem({ id: menuItem.id, name: menuItem.name, price: menuItem.price });
-    toast.success(`${menuItem.name} agregado al carrito`);
+    toast.success(t('reorder.added', { name: menuItem.name }));
   };
 
   // Seed round 0 (table orders captured by waiter) if no rounds exist yet.
@@ -133,7 +135,7 @@ const MyConsumption = () => {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-base font-semibold text-foreground">Mi consumo</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('consumption.title')}</h1>
         </div>
       </header>
 
@@ -157,7 +159,7 @@ const MyConsumption = () => {
         {/* My device items */}
         {renderItemList(
           myConsolidated,
-          'Pedido desde tu dispositivo',
+          t('consumption.myDevice'),
           <Smartphone className="w-3.5 h-3.5 text-primary" />,
           myTotal
         )}
@@ -165,7 +167,7 @@ const MyConsumption = () => {
         {/* Shared / al centro items */}
         {renderItemList(
           sharedConsolidated,
-          'Típicamente al centro',
+          t('consumption.shared'),
           <UtensilsCrossed className="w-3.5 h-3.5 text-amber-600" />,
           sharedTotal
         )}
@@ -173,7 +175,7 @@ const MyConsumption = () => {
         {/* Others' items */}
         {renderItemList(
           othersConsolidated,
-          'Pedido por otros en la mesa',
+          t('consumption.others'),
           <Users className="w-3.5 h-3.5 text-muted-foreground" />,
           othersTotal
         )}
@@ -182,14 +184,14 @@ const MyConsumption = () => {
       {/* Sticky footer — always visible */}
       <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] bg-card border-t border-border px-4 py-4 z-30">
         <div className="flex items-center justify-between mb-3">
-          <span className="text-sm text-muted-foreground">Total consumo</span>
+          <span className="text-sm text-muted-foreground">{t('consumption.totalConsumption')}</span>
           <PriceDisplay amount={grandTotal} size="lg" className="font-bold text-foreground" />
         </div>
         <Button
           className="w-full h-12 rounded-button text-base font-bold"
           onClick={() => navigate('/guest/split-tip')}
         >
-          Pedir la cuenta
+          {t('consumption.requestBill')}
         </Button>
       </div>
     </div>

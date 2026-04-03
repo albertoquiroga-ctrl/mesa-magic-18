@@ -14,7 +14,9 @@ import { Search, Lock, Sparkles, X, Filter } from 'lucide-react';
 import { mockMenuItems, mockCategories, mockRestaurant, mockRecommendations, ALLERGEN_META } from '@/data/mockData';
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { CartBar } from '@/components/guest/CartBar';
+import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { useAuthStore } from '@/stores/authStore';
+import { useTranslation } from '@/i18n/useTranslation';
 
 // ---------------------------------------------------------------------------
 // Category emoji mapping for pills
@@ -33,6 +35,7 @@ const categoryEmojis: Record<string, string> = {
 const Menu = () => {
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -119,10 +122,10 @@ const Menu = () => {
                 ref={searchInputRef}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar en el menú…"
+                placeholder={t('menu.search.placeholder')}
                 className="flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none"
               />
-              <button onClick={handleCloseSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label="Cerrar búsqueda">
+              <button onClick={handleCloseSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label={t('common.close')}>
                 <X className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
@@ -131,9 +134,10 @@ const Menu = () => {
             <>
               <span className="text-base font-semibold truncate">{mockRestaurant.name}</span>
               <span className="font-mono text-xs bg-muted rounded-chip px-3 py-1">
-                Mesa {mockRestaurant.table}
+                {t('common.table')} {mockRestaurant.table}
               </span>
-              <button onClick={handleOpenSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label="Buscar">
+              <LanguageToggle />
+              <button onClick={handleOpenSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label={t('common.search')}>
                 <Search className="w-5 h-5 text-muted-foreground" />
               </button>
             </>
@@ -194,7 +198,7 @@ const Menu = () => {
                       : 'bg-card text-muted-foreground border-border'
                   }`}
                 >
-                  {meta.emoji} Sin {meta.label.toLowerCase()}
+                  {meta.emoji} {t('menu.allergenFilterPrefix')} {meta.label.toLowerCase()}
                 </button>
               );
             })}
@@ -209,7 +213,7 @@ const Menu = () => {
           filteredItems.length > 0 ? (
             <section>
               <p className="text-xs text-muted-foreground mb-3">
-                {filteredItems.length} resultado{filteredItems.length !== 1 ? 's' : ''} para "{searchQuery}"
+                {t('menu.search.results', { count: filteredItems.length, plural: filteredItems.length !== 1 ? 's' : '', query: searchQuery })}
               </p>
               <div className="grid grid-cols-2 gap-3">
                 {filteredItems.map((item) => (
@@ -224,8 +228,8 @@ const Menu = () => {
           ) : (
             <div className="flex flex-col items-center justify-center py-20 gap-2">
               <span className="text-3xl">🔍</span>
-              <p className="text-sm text-muted-foreground">No encontramos "{searchQuery}"</p>
-              <p className="text-xs text-muted-foreground">Intenta con otro término</p>
+              <p className="text-sm text-muted-foreground">{t('menu.search.empty', { query: searchQuery })}</p>
+              <p className="text-xs text-muted-foreground">{t('menu.search.emptyHint')}</p>
             </div>
           )
         ) : (
@@ -235,7 +239,7 @@ const Menu = () => {
             <section className="mb-6">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-4 h-4 text-primary" />
-                <h2 className="text-sm font-semibold text-foreground">Recomendado para ti</h2>
+                <h2 className="text-sm font-semibold text-foreground">{t('menu.recommendations')}</h2>
               </div>
 
               {isLoggedIn ? (
@@ -256,9 +260,9 @@ const Menu = () => {
                   <div className="absolute inset-0 backdrop-blur-sm bg-card/60 z-10 flex flex-col items-center justify-center gap-2">
                     <Lock className="w-5 h-5 text-primary" />
                     <span className="text-xs font-medium text-foreground text-center px-4">
-                      Inicia sesión para ver recomendaciones personalizadas
+                      {t('menu.loginForRecs')}
                     </span>
-                    <span className="text-[11px] text-primary font-semibold">Crear cuenta →</span>
+                    <span className="text-[11px] text-primary font-semibold">{t('menu.createAccount')}</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 opacity-30">
                     {mockRecommendations.slice(0, 3).map((item) => (

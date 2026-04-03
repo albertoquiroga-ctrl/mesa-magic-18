@@ -2,42 +2,30 @@
  * GuestFAB (Floating Action Button)
  * 
  * A persistent "call waiter" button that floats above the bottom nav.
- * Opens a popover with quick-request options (bill, water, cutlery, other).
- * 
- * Visibility rules:
- * - Hidden on checkout/payment flows (those have their own CTAs)
- * - Positioned higher on pages that have a pinned CTA bar above the nav
  */
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from '@/i18n/useTranslation';
 
-// ---------------------------------------------------------------------------
-// Waiter request options
-// ---------------------------------------------------------------------------
-
-const WAITER_OPTIONS = [
-  { icon: '📋', label: 'Pedir la cuenta', message: 'Se ha solicitado la cuenta' },
-  { icon: '💧', label: 'Más agua', message: 'Se ha pedido más agua' },
-  { icon: '🍽️', label: 'Cubiertos / servilletas', message: 'Se han solicitado cubiertos y servilletas' },
-  { icon: '❓', label: 'Otra cosa', message: 'Un mesero vendrá en un momento' },
-] as const;
-
-// Routes where the FAB is completely hidden (they have their own CTAs)
+// Routes where the FAB is completely hidden
 const HIDDEN_ROUTES = ['/guest/split-tip', '/guest/checkout', '/guest/quick-pay', '/guest/my-consumption'];
-
-// Routes with a fixed CTA bar above the bottom nav (FAB needs extra lift)
+// Routes with a fixed CTA bar above the bottom nav
 const PINNED_CTA_ROUTES = ['/guest/menu', '/guest/cart', '/guest/my-consumption'];
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
 
 export const GuestFAB = () => {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
+  const { t } = useTranslation();
+
+  const WAITER_OPTIONS = [
+    { icon: '📋', label: t('fab.requestBill'), message: t('fab.billRequested') },
+    { icon: '💧', label: t('fab.moreWater'), message: t('fab.waterRequested') },
+    { icon: '🍽️', label: t('fab.cutlery'), message: t('fab.cutleryRequested') },
+    { icon: '❓', label: t('fab.other'), message: t('fab.otherRequested') },
+  ];
 
   const hideFAB = HIDDEN_ROUTES.some((route) => pathname.startsWith(route));
   const hasPinnedCTA = PINNED_CTA_ROUTES.some((route) => pathname.startsWith(route));
@@ -46,7 +34,7 @@ export const GuestFAB = () => {
 
   const handleOption = (option: (typeof WAITER_OPTIONS)[number]) => {
     setOpen(false);
-    toast.success(option.message, { description: 'Tu mesero fue notificado' });
+    toast.success(option.message, { description: t('fab.waiterNotified') });
   };
 
   return (
@@ -77,7 +65,7 @@ export const GuestFAB = () => {
           >
             {/* Header */}
             <div className="p-3 border-b border-border flex items-center justify-between">
-              <span className="text-sm font-semibold text-foreground">¿En qué te ayudamos?</span>
+              <span className="text-sm font-semibold text-foreground">{t('fab.howCanWeHelp')}</span>
               <button onClick={() => setOpen(false)} className="text-muted-foreground">
                 <X size={16} />
               </button>
@@ -107,7 +95,7 @@ export const GuestFAB = () => {
         className={`fixed right-4 z-50 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center text-xl ${
           hasPinnedCTA ? 'bottom-44' : 'bottom-24'
         }`}
-        aria-label="Llamar mesero"
+        aria-label={t('fab.howCanWeHelp')}
       >
         {open ? <X size={24} /> : '🙋'}
       </motion.button>

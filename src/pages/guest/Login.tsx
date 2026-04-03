@@ -4,6 +4,7 @@ import { ArrowLeft, Gift, Star, Phone } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const Login = () => {
   const returnTo = state?.returnTo || '/guest/profile';
   const nudgeOrigin = state?.nudgeOrigin || 'general';
   const login = useAuthStore((s) => s.login);
+  const { t } = useTranslation();
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [step, setStep] = useState<'phone' | 'otp'>('phone');
@@ -41,7 +43,7 @@ const Login = () => {
           <ArrowLeft className="w-5 h-5 text-foreground" />
         </button>
         <h1 className="text-base font-semibold text-foreground">
-          {step === 'phone' ? 'Crear cuenta' : 'Verificar código'}
+          {step === 'phone' ? t('login.createAccount') : t('login.verifyCode')}
         </h1>
       </header>
 
@@ -50,20 +52,20 @@ const Login = () => {
         <div className="bg-primary/5 border border-primary/20 rounded-card p-5 mb-8">
           <div className="flex items-center gap-2 mb-3">
             <Gift className="w-5 h-5 text-primary" />
-            <span className="text-sm font-semibold text-foreground">Programa de lealtad</span>
+            <span className="text-sm font-semibold text-foreground">{t('login.loyaltyProgram')}</span>
           </div>
           <ul className="space-y-2">
             <li className="flex items-start gap-2 text-xs text-muted-foreground">
               <Star className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
-              <span><strong className="text-foreground">Ahorra $50</strong> en tu próxima visita al inscribirte</span>
+              <span><strong className="text-foreground">{t('cart.loyaltySave')}</strong> {t('login.save50').replace('Ahorra $50 ', '').replace('Save $50 ', '')}</span>
             </li>
             <li className="flex items-start gap-2 text-xs text-muted-foreground">
               <Star className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
-              <span>Acumula puntos con cada compra y canjéalos por recompensas</span>
+              <span>{t('login.earnPoints')}</span>
             </li>
             <li className="flex items-start gap-2 text-xs text-muted-foreground">
               <Star className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
-              <span>Recibe recomendaciones personalizadas basadas en tus gustos</span>
+              <span>{t('login.personalRecs')}</span>
             </li>
           </ul>
         </div>
@@ -72,31 +74,24 @@ const Login = () => {
           <>
             <div className="space-y-4 mb-6">
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Tu nombre</label>
-                <Input
-                  type="text"
-                  placeholder="Ej: María García"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('login.yourName')}</label>
+                <Input type="text" placeholder={t('login.namePlaceholder')} value={name} onChange={(e) => setName(e.target.value)} />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Número de teléfono</label>
+                <label className="text-xs font-medium text-muted-foreground mb-1.5 block">{t('login.phone')}</label>
                 <div className="flex gap-2">
                   <div className="flex items-center px-3 h-10 rounded-md border border-input bg-muted text-sm text-muted-foreground shrink-0">
                     🇲🇽 +52
                   </div>
                   <Input
                     type="tel"
-                    placeholder="55 1234 5678"
+                    placeholder={t('login.phonePlaceholder')}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/[^0-9\s]/g, ''))}
                     className="flex-1"
                   />
                 </div>
-                <p className="text-[11px] text-muted-foreground mt-1.5">
-                  Te enviaremos un código por SMS para verificar tu número
-                </p>
+                <p className="text-[11px] text-muted-foreground mt-1.5">{t('login.smsNote')}</p>
               </div>
             </div>
 
@@ -106,19 +101,15 @@ const Login = () => {
               disabled={phone.length < 10 || name.trim().length === 0}
             >
               <Phone className="w-4 h-4" />
-              Enviar código
+              {t('login.sendCode')}
             </Button>
           </>
         ) : (
           <>
             <div className="text-center mb-6">
               <Phone className="w-10 h-10 text-primary mx-auto mb-3" />
-              <p className="text-sm text-foreground font-medium mb-1">
-                Ingresa el código de 4 dígitos
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Enviado a +52 {phone}
-              </p>
+              <p className="text-sm text-foreground font-medium mb-1">{t('login.enterCode')}</p>
+              <p className="text-xs text-muted-foreground">{t('login.sentTo', { phone })}</p>
             </div>
 
             <div className="flex justify-center gap-3 mb-6">
@@ -148,14 +139,14 @@ const Login = () => {
               onClick={handleVerify}
               disabled={otp.length < 4}
             >
-              Verificar y crear cuenta
+              {t('login.verifyCreate')}
             </Button>
 
             <button
               onClick={() => setStep('phone')}
               className="w-full text-center text-xs text-muted-foreground py-2"
             >
-              ¿No recibiste el código? Reenviar
+              {t('login.resend')}
             </button>
           </>
         )}
@@ -164,7 +155,7 @@ const Login = () => {
           onClick={() => navigate('/guest/menu')}
           className="w-full text-center text-sm text-muted-foreground py-2 mt-4"
         >
-          Continuar sin cuenta →
+          {t('login.continueWithout')}
         </button>
       </div>
     </div>

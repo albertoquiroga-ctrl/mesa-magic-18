@@ -8,12 +8,14 @@
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCartStore } from '@/stores/cartStore';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export const CartBar = () => {
   const navigate = useNavigate();
   const itemCount = useCartStore((s) => s.getItemCount());
   const total = useCartStore((s) => s.getTotal());
   const hasItems = itemCount > 0;
+  const { t } = useTranslation();
 
   return (
     <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-[430px] px-4 pb-2 z-30">
@@ -35,11 +37,11 @@ export const CartBar = () => {
               exit={{ opacity: 0, y: -6 }}
               className="flex items-center gap-2"
             >
-              <span>{itemCount} producto{itemCount > 1 ? 's' : ''}</span>
+              <span>{t('cartBar.products', { count: itemCount, plural: itemCount > 1 ? 's' : '' })}</span>
               <span>·</span>
-              <span className="font-mono tabular-nums">${total} MXN</span>
+              <span className="font-mono tabular-nums">${total} {t('common.MXN')}</span>
               <span>·</span>
-              <span>Ver carrito →</span>
+              <span>{t('cartBar.viewCart')}</span>
             </motion.span>
           ) : (
             <motion.span
@@ -48,7 +50,7 @@ export const CartBar = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
             >
-              Agrega algo para empezar 🍴
+              {t('cartBar.empty')}
             </motion.span>
           )}
         </AnimatePresence>

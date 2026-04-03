@@ -10,9 +10,11 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { Gift } from 'lucide-react';
 import OrderTracking from './OrderTracking';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const Cart = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const items = useCartStore((s) => s.items);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
@@ -80,7 +82,7 @@ const Cart = () => {
           transition={{ delay: 0.2 }}
           className="text-xl font-bold text-foreground"
         >
-          ¡Orden enviada!
+          {t('cart.sent')}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
@@ -88,7 +90,7 @@ const Cart = () => {
           transition={{ delay: 0.4 }}
           className="text-sm text-muted-foreground text-center"
         >
-          Tu mesero la recibirá en un momento.
+          {t('cart.sentSub')}
         </motion.p>
       </div>
     );
@@ -111,7 +113,7 @@ const Cart = () => {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-base font-semibold text-foreground">Tu pedido</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('cart.title')}</h1>
           {!isEmpty && (
             <span className="ml-auto text-xs text-muted-foreground font-mono tabular-nums">
               {items.length} producto{items.length > 1 ? 's' : ''}
@@ -127,9 +129,9 @@ const Cart = () => {
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
               <ShoppingBag className="w-8 h-8 text-muted-foreground" />
             </div>
-            <p className="text-sm text-muted-foreground">Tu carrito está vacío</p>
+            <p className="text-sm text-muted-foreground">{t('cart.empty')}</p>
             <Button variant="outline" size="sm" onClick={() => navigate('/guest/menu')}>
-              Explorar menú
+              {t('cart.explore')}
             </Button>
           </div>
         ) : (
@@ -217,11 +219,11 @@ const Cart = () => {
             </div>
           ) : null}
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-muted-foreground">Total</span>
+            <span className="text-sm text-muted-foreground">{t('common.total')}</span>
             <PriceDisplay amount={total} size="lg" className="font-bold text-foreground" />
           </div>
           <Button className="w-full h-12 rounded-button text-base font-bold" onClick={handleSend}>
-            Enviar pedido al mesero
+            {t('cart.send')}
           </Button>
         </div>
       )}

@@ -2,8 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, LogOut, Gift, Trophy, Phone } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
+import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
+import { useTranslation } from '@/i18n/useTranslation';
 
 const levelColors = {
   Bronce: 'text-orange-600',
@@ -14,6 +16,7 @@ const levelColors = {
 const Profile = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
+  const { t } = useTranslation();
 
   if (!user) {
     navigate('/guest/login');
@@ -33,7 +36,8 @@ const Profile = () => {
           >
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
-          <h1 className="text-base font-semibold text-foreground">Mi perfil</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('profile.title')}</h1>
+          <LanguageToggle className="ml-auto" />
         </div>
       </header>
 
@@ -59,20 +63,20 @@ const Profile = () => {
         <div className="bg-card border border-border rounded-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <Trophy className={`w-5 h-5 ${levelColors[user.loyalty.level]}`} />
-            <h3 className="text-sm font-semibold text-foreground">Programa de lealtad</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t('profile.loyalty')}</h3>
             <span className={`ml-auto text-xs font-bold ${levelColors[user.loyalty.level]}`}>
-              Nivel {user.loyalty.level}
+              {t('profile.level', { level: user.loyalty.level })}
             </span>
           </div>
 
           <div className="mb-4">
             <div className="flex items-center justify-between text-xs text-muted-foreground mb-1.5">
-              <span>{user.loyalty.points} puntos</span>
-              <span>Próxima recompensa: {user.loyalty.nextRewardAt} pts</span>
+              <span>{t('profile.points', { pts: user.loyalty.points })}</span>
+              <span>{t('profile.nextReward', { pts: user.loyalty.nextRewardAt })}</span>
             </div>
             <Progress value={progressPercent} className="h-2.5" />
             <p className="text-[11px] text-muted-foreground mt-1.5">
-              Te faltan {user.loyalty.nextRewardAt - user.loyalty.points} puntos para tu próxima recompensa
+              {t('profile.remaining', { pts: user.loyalty.nextRewardAt - user.loyalty.points })}
             </p>
           </div>
 
@@ -80,7 +84,7 @@ const Profile = () => {
             <div className="flex items-center gap-2 p-3 rounded-lg bg-primary/5 border border-primary/20">
               <Gift className="w-4 h-4 text-primary shrink-0" />
               <span className="text-xs text-foreground">
-                Tienes <strong>${user.loyalty.savingsAvailable}</strong> de descuento disponible
+                {t('profile.discountAvailable', { amount: user.loyalty.savingsAvailable })}
               </span>
             </div>
           )}
@@ -89,7 +93,7 @@ const Profile = () => {
         {/* History */}
         <div className="bg-card border border-border rounded-card overflow-hidden">
           <div className="px-5 py-3 border-b border-border">
-            <h3 className="text-sm font-semibold text-foreground">Historial de visitas</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t('profile.visitHistory')}</h3>
           </div>
           {user.history.map((visit) => (
             <div key={visit.id} className="px-5 py-3 border-b border-border last:border-0">
@@ -118,7 +122,7 @@ const Profile = () => {
           }}
         >
           <LogOut className="w-4 h-4" />
-          Cerrar sesión
+          {t('profile.logout')}
         </Button>
       </div>
     </div>

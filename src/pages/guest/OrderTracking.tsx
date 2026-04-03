@@ -7,6 +7,7 @@ import { useCartStore } from '@/stores/cartStore';
 import { mockMenuItems } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useTranslation } from '@/i18n/useTranslation';
 
 
 interface ItemLap {
@@ -22,12 +23,13 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
   const addItem = useCartStore((s) => s.addItem);
+  const { t } = useTranslation();
 
   const handleReorder = (itemName: string) => {
     const menuItem = mockMenuItems.find((m) => m.name === itemName);
     if (!menuItem) return;
     addItem({ id: menuItem.id, name: menuItem.name, price: menuItem.price });
-    toast.success(`${menuItem.name} agregado al carrito`);
+    toast.success(t('reorder.added', { name: menuItem.name }));
   };
   const [now, setNow] = useState(Date.now());
 
@@ -94,9 +96,9 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   if (rounds.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-4 px-6">
-        <p className="text-sm text-muted-foreground">No hay órdenes activas</p>
+        <p className="text-sm text-muted-foreground">{t('tracking.noOrders')}</p>
         <Button variant="outline" size="sm" onClick={() => navigate('/guest/menu')}>
-          Ir al menú
+          {t('tracking.goToMenu')}
         </Button>
       </div>
     );
@@ -115,7 +117,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
             >
               <ArrowLeft className="w-5 h-5 text-foreground" />
             </button>
-            <h1 className="text-base font-semibold text-foreground">Seguimiento de orden</h1>
+            <h1 className="text-base font-semibold text-foreground">{t('tracking.title')}</h1>
           </div>
         </header>
       )}
@@ -145,22 +147,22 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
           </div>
           {!allDone && (
             <p className="text-[11px] text-muted-foreground mb-1">
-              {doneCount > 0 ? `${doneCount} de ${totalCount} listos` : `${totalCount} platillos en preparación`}
+              {doneCount > 0 ? `${doneCount} ${t('tracking.ready', { total: totalCount })}` : t('tracking.preparing', { count: totalCount })}
             </p>
           )}
           <p className="text-sm text-muted-foreground text-center">
             {allDone
-              ? '¡Todos tus platillos están listos!'
+              ? t('tracking.allDone')
               : nextItem
-              ? `Siguiente: ${nextItem.name} (~${nextRemainingMin} min)`
-              : 'Calculando...'}
+              ? t('tracking.next', { name: nextItem.name, min: nextRemainingMin })
+              : t('tracking.calculating')}
           </p>
         </motion.div>
 
         {/* Item timeline grouped by round */}
         <div className="mb-6">
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-4">
-            Timeline de tu orden
+            {t('tracking.timeline')}
           </h2>
           {myRounds.map((round) => {
             const roundLaps = laps.filter((l) => l.roundNum === round.round);
@@ -170,7 +172,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                 {/* Round separator */}
                 <div className="flex items-center gap-2 mb-3">
                   <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                    Ronda {round.round}
+                    {t('tracking.round', { n: round.round })}
                   </span>
                   <div className="flex-1 h-px bg-border" />
                 </div>
@@ -246,7 +248,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                                       <RotateCcw className="w-3.5 h-3.5 text-primary" />
                                     </button>
                                     <span className={`text-[11px] font-mono ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
-                                      {isDone ? '✓ Listo' : remStr}
+                                      {isDone ? t('tracking.done') : remStr}
                                     </span>
                                   </div>
                                 </div>
@@ -284,7 +286,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
             className="w-full h-12 rounded-button text-base font-medium"
             onClick={() => navigate('/guest/menu')}
           >
-            Volver al menú
+            {t('tracking.backToMenu')}
           </Button>
         </div>
       )}

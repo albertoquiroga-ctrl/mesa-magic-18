@@ -16,16 +16,8 @@ import { useOrderStore } from '@/stores/orderStore';
 import { usePaymentStore } from '@/stores/paymentStore';
 import { useAuthStore } from '@/stores/authStore';
 import { useTableStore } from '@/stores/tableStore';
-
-// ---------------------------------------------------------------------------
-// Slide content
-// ---------------------------------------------------------------------------
-
-const slides = [
-  { icon: '🍴', title: 'Ordena desde tu cel', subtitle: 'Sin filas. Sin esperas.' },
-  { icon: '👋', title: 'Tu mesero siempre cerca', subtitle: 'Un toque y viene.' },
-  { icon: '💳', title: 'Paga cuando quieras', subtitle: 'Sin drama. Sin esperas.' },
-];
+import { LanguageToggle } from '@/components/shared/LanguageToggle';
+import { useTranslation } from '@/i18n/useTranslation';
 
 // ---------------------------------------------------------------------------
 // Component
@@ -35,6 +27,13 @@ const Onboarding = () => {
   const [current, setCurrent] = useState(0);
   const navigate = useNavigate();
   const tableNumber = useSessionStore((s) => s.tableNumber);
+  const { t } = useTranslation();
+
+  const slides = [
+    { icon: '🍴', title: t('onboarding.slide1.title'), subtitle: t('onboarding.slide1.subtitle') },
+    { icon: '👋', title: t('onboarding.slide2.title'), subtitle: t('onboarding.slide2.subtitle') },
+    { icon: '💳', title: t('onboarding.slide3.title'), subtitle: t('onboarding.slide3.subtitle') },
+  ];
 
   // Reset all stores when onboarding loads (clean demo state)
   useEffect(() => {
@@ -61,17 +60,22 @@ const Onboarding = () => {
       className="h-[100dvh] bg-background flex flex-col relative select-none overflow-hidden"
       onClick={goNext}
     >
-      {/* Top bar: table badge + skip */}
+      {/* Top bar: table badge + language + skip */}
       <div className="flex items-center justify-between px-5 pt-5 relative z-10">
         <span className="font-mono text-xs bg-card border border-border rounded-chip px-3 py-1.5">
-          Mesa {tableNumber}
+          {t('common.table')} {tableNumber}
         </span>
-        <button
-          onClick={(e) => { e.stopPropagation(); skip(); }}
-          className="text-muted-foreground text-[13px] min-h-touch min-w-touch flex items-center justify-end"
-        >
-          Saltar →
-        </button>
+        <div className="flex items-center gap-2">
+          <div onClick={(e) => e.stopPropagation()}>
+            <LanguageToggle />
+          </div>
+          <button
+            onClick={(e) => { e.stopPropagation(); skip(); }}
+            className="text-muted-foreground text-[13px] min-h-touch min-w-touch flex items-center justify-end"
+          >
+            {t('onboarding.skip')}
+          </button>
+        </div>
       </div>
 
       {/* Slide content (animated) */}
@@ -123,7 +127,7 @@ const Onboarding = () => {
           onClick={(e) => { e.stopPropagation(); goNext(); }}
           className="w-full h-[52px] rounded-button bg-primary text-primary-foreground font-bold text-base"
         >
-          {current === slides.length - 1 ? 'Entrar al menú →' : 'Siguiente →'}
+          {current === slides.length - 1 ? t('onboarding.enter') : t('onboarding.next')}
         </button>
 
         {/* Login prompt on last slide */}
@@ -135,7 +139,7 @@ const Onboarding = () => {
             }}
             className="w-full text-center text-sm text-muted-foreground py-2"
           >
-            ¿Ya tienes cuenta? Inicia sesión
+            {t('onboarding.hasAccount')}
           </button>
         )}
       </div>

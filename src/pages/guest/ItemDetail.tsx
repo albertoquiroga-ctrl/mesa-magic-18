@@ -11,6 +11,7 @@ import { motion } from 'framer-motion';
 import { Plus, Minus, ArrowLeft, Clock, Check, AlertTriangle, Info } from 'lucide-react';
 import { useCartStore, type SelectedModifier } from '@/stores/cartStore';
 import { mockMenuItems, ALLERGEN_META, type ModifierGroup } from '@/data/mockData';
+import { useTranslation } from '@/i18n/useTranslation';
 
 // ---------------------------------------------------------------------------
 // Modifier Group UI
@@ -22,17 +23,19 @@ interface ModifierGroupSectionProps {
   onToggle: (optionId: string) => void;
 }
 
-const ModifierGroupSection = ({ group, selected, onToggle }: ModifierGroupSectionProps) => (
+const ModifierGroupSection = ({ group, selected, onToggle }: ModifierGroupSectionProps) => {
+  const { t } = useTranslation();
+  return (
   <div className="mt-5">
     <div className="flex items-baseline gap-2 mb-2.5">
       <label className="text-sm font-medium">{group.label}</label>
       {group.required && (
-        <span className="text-[10px] font-semibold text-destructive uppercase tracking-wide">
-          Requerido
+      <span className="text-[10px] font-semibold text-destructive uppercase tracking-wide">
+          {t('item.required')}
         </span>
       )}
       {!group.required && (
-        <span className="text-[10px] text-muted-foreground">Opcional</span>
+        <span className="text-[10px] text-muted-foreground">{t('item.optional')}</span>
       )}
     </div>
     <div className="flex flex-wrap gap-2">
@@ -64,6 +67,7 @@ const ModifierGroupSection = ({ group, selected, onToggle }: ModifierGroupSectio
     </div>
   </div>
 );
+};
 
 // ---------------------------------------------------------------------------
 // Main Component
@@ -73,6 +77,7 @@ const ItemDetail = () => {
   const { itemId } = useParams();
   const navigate = useNavigate();
   const addItem = useCartStore((s) => s.addItem);
+  const { t } = useTranslation();
 
   const item = mockMenuItems.find((i) => i.id === itemId);
 
@@ -101,7 +106,7 @@ const ItemDetail = () => {
   if (!item) {
     return (
       <div className="p-5 text-center text-muted-foreground">
-        Producto no encontrado
+        {t('item.notFound')}
       </div>
     );
   }
@@ -176,7 +181,7 @@ const ItemDetail = () => {
         {item.soldOut && (
           <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
             <span className="text-sm font-semibold text-muted-foreground bg-muted px-4 py-2 rounded-chip">
-              Agotado
+              {t('item.soldOut')}
             </span>
           </div>
         )}
@@ -217,7 +222,7 @@ const ItemDetail = () => {
           <div className="mt-5 p-3.5 rounded-card bg-destructive/5 border border-destructive/15">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-destructive" />
-              <span className="text-xs font-semibold text-destructive uppercase tracking-wide">Alérgenos</span>
+              <span className="text-xs font-semibold text-destructive uppercase tracking-wide">{t('item.allergens')}</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {item.allergens.map((a) => {
@@ -238,30 +243,30 @@ const ItemDetail = () => {
           <div className="mt-4 p-3.5 rounded-card bg-muted/50 border border-border">
             <div className="flex items-center gap-2 mb-2.5">
               <Info className="w-4 h-4 text-muted-foreground" />
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Info nutricional</span>
-              <span className="text-[10px] text-muted-foreground ml-auto">por porción</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('item.nutrition')}</span>
+              <span className="text-[10px] text-muted-foreground ml-auto">{t('item.nutrition.perServing')}</span>
             </div>
             <div className="grid grid-cols-4 gap-2 text-center">
               <div>
                 <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.calories}</p>
-                <p className="text-[10px] text-muted-foreground">kcal</p>
+                <p className="text-[10px] text-muted-foreground">{t('item.nutrition.kcal')}</p>
               </div>
               {item.nutrition.protein != null && (
                 <div>
                   <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.protein}g</p>
-                  <p className="text-[10px] text-muted-foreground">Proteína</p>
+                  <p className="text-[10px] text-muted-foreground">{t('item.nutrition.protein')}</p>
                 </div>
               )}
               {item.nutrition.carbs != null && (
                 <div>
                   <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.carbs}g</p>
-                  <p className="text-[10px] text-muted-foreground">Carbos</p>
+                  <p className="text-[10px] text-muted-foreground">{t('item.nutrition.carbs')}</p>
                 </div>
               )}
               {item.nutrition.fat != null && (
                 <div>
                   <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.fat}g</p>
-                  <p className="text-[10px] text-muted-foreground">Grasa</p>
+                  <p className="text-[10px] text-muted-foreground">{t('item.nutrition.fat')}</p>
                 </div>
               )}
             </div>
@@ -280,11 +285,11 @@ const ItemDetail = () => {
 
         {/* Special instructions */}
         <div className="mt-6">
-          <label className="text-sm font-medium mb-2 block">Instrucciones especiales</label>
+          <label className="text-sm font-medium mb-2 block">{t('item.specialInstructions')}</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="¿Sin sal? ¿Extra limón? Cuéntanos..."
+            placeholder={t('item.specialPlaceholder')}
             className="w-full h-24 rounded-input bg-card border border-border px-4 py-3 text-sm placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
@@ -317,7 +322,7 @@ const ItemDetail = () => {
           {/* Missing required modifiers warning */}
           {!allRequiredSelected && modifiers.some((g) => g.required) && (
             <p className="text-xs text-destructive text-center mb-2">
-              Selecciona las opciones requeridas para continuar
+              {t('item.selectRequired')}
             </p>
           )}
           <motion.button
@@ -331,10 +336,10 @@ const ItemDetail = () => {
             }`}
           >
             {added ? (
-              '✓ Agregado'
+              t('item.added')
             ) : (
               <>
-                Agregar {quantity} — <span className="font-mono">${total} MXN</span>
+                {t('item.add', { qty: String(quantity), total: String(total) })}
               </>
             )}
           </motion.button>
