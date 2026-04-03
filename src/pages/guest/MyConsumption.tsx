@@ -93,14 +93,23 @@ const MyConsumption = () => {
                 <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
                   {item.quantity}×
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <span className="text-sm text-foreground truncate block">{item.name}</span>
                   {item.category && (
                     <span className="text-[10px] text-muted-foreground">{item.category}</span>
                   )}
                 </div>
               </div>
-              <PriceDisplay amount={item.price * item.quantity} size="sm" />
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => handleReorder(item.name)}
+                  className="min-w-touch min-h-touch flex items-center justify-center"
+                  aria-label={`Pedir ${item.name} otra vez`}
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-primary" />
+                </button>
+                <PriceDisplay amount={item.price * item.quantity} size="sm" />
+              </div>
             </div>
           ))}
           <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">
