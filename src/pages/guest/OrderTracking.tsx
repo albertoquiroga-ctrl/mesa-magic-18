@@ -162,7 +162,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
         {/* Item timeline grouped by round */}
         <div className="mb-6">
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-4">
-            Timeline de tu orden
+            {t('tracking.timeline')}
           </h2>
           {myRounds.map((round) => {
             const roundLaps = laps.filter((l) => l.roundNum === round.round);
