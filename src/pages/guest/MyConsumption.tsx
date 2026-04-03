@@ -159,7 +159,7 @@ const MyConsumption = () => {
         {/* My device items */}
         {renderItemList(
           myConsolidated,
-          'Pedido desde tu dispositivo',
+          t('consumption.myDevice'),
           <Smartphone className="w-3.5 h-3.5 text-primary" />,
           myTotal
         )}
