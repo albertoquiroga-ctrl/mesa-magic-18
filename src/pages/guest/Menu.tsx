@@ -277,7 +277,7 @@ const Menu = () => {
                 <section
                   key={cat}
                   ref={(el) => { sectionRefs.current[cat] = el; }}
-                  className="mb-6 scroll-mt-28"
+                  className="mb-6 scroll-mt-44"
                 >
                   <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
                     {categoryEmojis[cat]} {cat}
