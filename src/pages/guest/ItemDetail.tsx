@@ -23,7 +23,9 @@ interface ModifierGroupSectionProps {
   onToggle: (optionId: string) => void;
 }
 
-const ModifierGroupSection = ({ group, selected, onToggle }: ModifierGroupSectionProps) => (
+const ModifierGroupSection = ({ group, selected, onToggle }: ModifierGroupSectionProps) => {
+  const { t } = useTranslation();
+  return (
   <div className="mt-5">
     <div className="flex items-baseline gap-2 mb-2.5">
       <label className="text-sm font-medium">{group.label}</label>
