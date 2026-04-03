@@ -249,7 +249,7 @@ const ItemDetail = () => {
             <div className="grid grid-cols-4 gap-2 text-center">
               <div>
                 <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.calories}</p>
-                <p className="text-[10px] text-muted-foreground">kcal</p>
+                <p className="text-[10px] text-muted-foreground">{t('item.nutrition.kcal')}</p>
               </div>
               {item.nutrition.protein != null && (
                 <div>
