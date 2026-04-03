@@ -141,6 +141,7 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    nutrition: { calories: 45, carbs: 11, fat: 0, protein: 0 },
   },
   {
     id: 'mezcal',
