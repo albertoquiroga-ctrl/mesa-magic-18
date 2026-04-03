@@ -13,7 +13,7 @@ import OrderTracking from './OrderTracking';
 import { useTranslation } from '@/i18n/useTranslation';
 
 const Cart = () => {
-  const navigate = useNavigate();
+  const { t } = useTranslation();
   const items = useCartStore((s) => s.items);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
   const removeItem = useCartStore((s) => s.removeItem);
