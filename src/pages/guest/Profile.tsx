@@ -63,9 +63,9 @@ const Profile = () => {
         <div className="bg-card border border-border rounded-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <Trophy className={`w-5 h-5 ${levelColors[user.loyalty.level]}`} />
-            <h3 className="text-sm font-semibold text-foreground">Programa de lealtad</h3>
+            <h3 className="text-sm font-semibold text-foreground">{t('profile.loyalty')}</h3>
             <span className={`ml-auto text-xs font-bold ${levelColors[user.loyalty.level]}`}>
-              Nivel {user.loyalty.level}
+              {t('profile.level', { level: user.loyalty.level })}
             </span>
           </div>
 
