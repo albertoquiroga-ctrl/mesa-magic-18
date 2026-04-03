@@ -101,7 +101,7 @@ const Login = () => {
               disabled={phone.length < 10 || name.trim().length === 0}
             >
               <Phone className="w-4 h-4" />
-              Enviar código
+              {t('login.sendCode')}
             </Button>
           </>
         ) : (
