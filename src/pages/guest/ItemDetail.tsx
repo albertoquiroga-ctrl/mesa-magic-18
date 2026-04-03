@@ -243,8 +243,8 @@ const ItemDetail = () => {
           <div className="mt-4 p-3.5 rounded-card bg-muted/50 border border-border">
             <div className="flex items-center gap-2 mb-2.5">
               <Info className="w-4 h-4 text-muted-foreground" />
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Info nutricional</span>
-              <span className="text-[10px] text-muted-foreground ml-auto">por porción</span>
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('item.nutrition')}</span>
+              <span className="text-[10px] text-muted-foreground ml-auto">{t('item.nutrition.perServing')}</span>
             </div>
             <div className="grid grid-cols-4 gap-2 text-center">
               <div>
