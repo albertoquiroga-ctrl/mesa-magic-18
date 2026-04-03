@@ -141,7 +141,7 @@ const Menu = () => {
         </div>
 
         {/* Category pills (horizontally scrollable) */}
-        <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-none">
+        <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-none mask-fade-right">
           {mockCategories.map((cat) => {
             const isActive = activeCategory === cat;
             return (
@@ -163,7 +163,7 @@ const Menu = () => {
 
         {/* Filter pills (tags + allergen exclusions) */}
         {(allTags.length > 0 || allergenFilters.length > 0) && (
-          <div className="flex gap-2 px-4 pb-2.5 overflow-x-auto scrollbar-none">
+          <div className="flex gap-2 px-4 pb-2.5 overflow-x-auto scrollbar-none mask-fade-right">
             {allTags.map((tag) => {
               const isActive = activeFilters.includes(tag);
               return (
@@ -277,7 +277,7 @@ const Menu = () => {
                 <section
                   key={cat}
                   ref={(el) => { sectionRefs.current[cat] = el; }}
-                  className="mb-6 scroll-mt-28"
+                  className="mb-6 scroll-mt-44"
                 >
                   <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
                     {categoryEmojis[cat]} {cat}

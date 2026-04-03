@@ -139,4 +139,17 @@
     font-family: var(--font-mono);
     font-variant-numeric: tabular-nums;
   }
+  .mask-fade-right {
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+  }
+}
+
+/* Scrollbar hide – outside @layer to support pseudo-selectors */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
