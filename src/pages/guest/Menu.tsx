@@ -213,7 +213,7 @@ const Menu = () => {
           filteredItems.length > 0 ? (
             <section>
               <p className="text-xs text-muted-foreground mb-3">
-                {filteredItems.length} resultado{filteredItems.length !== 1 ? 's' : ''} para "{searchQuery}"
+                {t('menu.search.results', { count: filteredItems.length, plural: filteredItems.length !== 1 ? 's' : '', query: searchQuery })}
               </p>
               <div className="grid grid-cols-2 gap-3">
                 {filteredItems.map((item) => (
