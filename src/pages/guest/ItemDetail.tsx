@@ -28,8 +28,8 @@ const ModifierGroupSection = ({ group, selected, onToggle }: ModifierGroupSectio
     <div className="flex items-baseline gap-2 mb-2.5">
       <label className="text-sm font-medium">{group.label}</label>
       {group.required && (
-        <span className="text-[10px] font-semibold text-destructive uppercase tracking-wide">
-          Requerido
+      <span className="text-[10px] font-semibold text-destructive uppercase tracking-wide">
+          {t('item.required')}
         </span>
       )}
       {!group.required && (
