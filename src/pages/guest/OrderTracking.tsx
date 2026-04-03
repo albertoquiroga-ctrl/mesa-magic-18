@@ -147,7 +147,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
           </div>
           {!allDone && (
             <p className="text-[11px] text-muted-foreground mb-1">
-              {doneCount > 0 ? `${doneCount} de ${totalCount} listos` : `${totalCount} platillos en preparación`}
+              {doneCount > 0 ? `${doneCount} ${t('tracking.ready', { total: totalCount })}` : t('tracking.preparing', { count: totalCount })}
             </p>
           )}
           <p className="text-sm text-muted-foreground text-center">
