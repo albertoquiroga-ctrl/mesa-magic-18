@@ -139,7 +139,7 @@ const Login = () => {
               onClick={handleVerify}
               disabled={otp.length < 4}
             >
-              Verificar y crear cuenta
+              {t('login.verifyCreate')}
             </Button>
 
             <button
