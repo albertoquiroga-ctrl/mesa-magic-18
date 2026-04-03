@@ -10,8 +10,8 @@
  */
 import { useState, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Lock, Sparkles, X } from 'lucide-react';
-import { mockMenuItems, mockCategories, mockRestaurant, mockRecommendations } from '@/data/mockData';
+import { Search, Lock, Sparkles, X, Filter } from 'lucide-react';
+import { mockMenuItems, mockCategories, mockRestaurant, mockRecommendations, ALLERGEN_META } from '@/data/mockData';
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { CartBar } from '@/components/guest/CartBar';
 import { useAuthStore } from '@/stores/authStore';
@@ -36,8 +36,29 @@ const Menu = () => {
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  /** All unique tags across menu items */
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    mockMenuItems.forEach((i) => (i.tags ?? []).forEach((t) => tagSet.add(t)));
+    return Array.from(tagSet);
+  }, []);
+
+  /** All unique allergens present in menu (for "sin X" filters) */
+  const allergenFilters = useMemo(() => {
+    const set = new Set<string>();
+    mockMenuItems.forEach((i) => (i.allergens ?? []).forEach((a) => set.add(a)));
+    return Array.from(set);
+  }, []);
+
+  const toggleFilter = (tag: string) => {
+    setActiveFilters((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+    );
+  };
 
   /** Scroll to a category section and update the active pill */
   const scrollToCategory = useCallback((cat: string) => {
@@ -58,17 +79,32 @@ const Menu = () => {
   /** Normalise text for accent-insensitive matching */
   const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
+  /** Apply tag + allergen filters to an item */
+  const passesFilters = useCallback((item: typeof mockMenuItems[0]) => {
+    if (activeFilters.length === 0) return true;
+    return activeFilters.every((f) => {
+      // Allergen filter → exclude items containing that allergen
+      if (f.startsWith('sin:')) {
+        const allergen = f.replace('sin:', '');
+        return !(item.allergens ?? []).includes(allergen as any);
+      }
+      // Tag filter → include items with that tag
+      return (item.tags ?? []).includes(f);
+    });
+  }, [activeFilters]);
+
   const filteredItems = useMemo(() => {
     if (!searchQuery.trim()) return null;
     const q = norm(searchQuery);
-    return mockMenuItems.filter(
-      (i) =>
+    return mockMenuItems
+      .filter((i) =>
         norm(i.name).includes(q) ||
         norm(i.category).includes(q) ||
         (i.description && norm(i.description).includes(q)) ||
         (i.tags ?? []).some((t) => norm(t).includes(q)),
-    );
-  }, [searchQuery]);
+      )
+      .filter(passesFilters);
+  }, [searchQuery, passesFilters]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
@@ -124,6 +160,46 @@ const Menu = () => {
             );
           })}
         </div>
+
+        {/* Filter pills (tags + allergen exclusions) */}
+        {(allTags.length > 0 || allergenFilters.length > 0) && (
+          <div className="flex gap-2 px-4 pb-2.5 overflow-x-auto scrollbar-none">
+            {allTags.map((tag) => {
+              const isActive = activeFilters.includes(tag);
+              return (
+                <button
+                  key={tag}
+                  onClick={() => toggleFilter(tag)}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-chip text-xs font-medium whitespace-nowrap transition-colors border ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-card text-muted-foreground border-border'
+                  }`}
+                >
+                  {tag}
+                </button>
+              );
+            })}
+            {allergenFilters.map((a) => {
+              const key = `sin:${a}`;
+              const isActive = activeFilters.includes(key);
+              const meta = ALLERGEN_META[a as keyof typeof ALLERGEN_META];
+              return (
+                <button
+                  key={key}
+                  onClick={() => toggleFilter(key)}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-chip text-xs font-medium whitespace-nowrap transition-colors border ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-card text-muted-foreground border-border'
+                  }`}
+                >
+                  {meta.emoji} Sin {meta.label.toLowerCase()}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </header>
 
       {/* ── Scrollable menu content ── */}
@@ -195,7 +271,8 @@ const Menu = () => {
 
             {/* Menu sections by category */}
             {mockCategories.map((cat) => {
-              const items = mockMenuItems.filter((i) => i.category === cat);
+              const items = mockMenuItems.filter((i) => i.category === cat).filter(passesFilters);
+              if (items.length === 0) return null;
               return (
                 <section
                   key={cat}
