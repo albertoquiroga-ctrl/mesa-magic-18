@@ -1,16 +1,27 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Smartphone, Users, UtensilsCrossed } from 'lucide-react';
+import { ArrowLeft, Smartphone, Users, UtensilsCrossed, RotateCcw } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
 import { useTableStore } from '@/stores/tableStore';
+import { useCartStore } from '@/stores/cartStore';
+import { mockMenuItems } from '@/data/mockData';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const MyConsumption = () => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
   const addRound = useOrderStore((s) => s.addRound);
   const guests = useTableStore((s) => s.guests);
+  const addItem = useCartStore((s) => s.addItem);
+
+  const handleReorder = (itemName: string) => {
+    const menuItem = mockMenuItems.find((m) => m.name === itemName);
+    if (!menuItem) return;
+    addItem({ id: menuItem.id, name: menuItem.name, price: menuItem.price });
+    toast.success(`${menuItem.name} agregado al carrito`);
+  };
 
   // Seed round 0 (table orders captured by waiter) if no rounds exist yet.
   // Covers the case where the user ordered offline and wants to pay here.
@@ -82,14 +93,23 @@ const MyConsumption = () => {
                 <span className="text-xs font-mono text-muted-foreground w-5 shrink-0">
                   {item.quantity}×
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <span className="text-sm text-foreground truncate block">{item.name}</span>
                   {item.category && (
                     <span className="text-[10px] text-muted-foreground">{item.category}</span>
                   )}
                 </div>
               </div>
-              <PriceDisplay amount={item.price * item.quantity} size="sm" />
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => handleReorder(item.name)}
+                  className="min-w-touch min-h-touch flex items-center justify-center"
+                  aria-label={`Pedir ${item.name} otra vez`}
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-primary" />
+                </button>
+                <PriceDisplay amount={item.price * item.quantity} size="sm" />
+              </div>
             </div>
           ))}
           <div className="flex items-center justify-between px-4 py-2.5 bg-muted/50">

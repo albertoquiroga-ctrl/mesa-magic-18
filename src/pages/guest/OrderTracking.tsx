@@ -1,10 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Clock, Check } from 'lucide-react';
+import { ArrowLeft, Clock, Check, RotateCcw } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
+import { useCartStore } from '@/stores/cartStore';
 import { mockMenuItems } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 
 interface ItemLap {
@@ -19,7 +21,14 @@ interface ItemLap {
 const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
   const navigate = useNavigate();
   const rounds = useOrderStore((s) => s.rounds);
+  const addItem = useCartStore((s) => s.addItem);
 
+  const handleReorder = (itemName: string) => {
+    const menuItem = mockMenuItems.find((m) => m.name === itemName);
+    if (!menuItem) return;
+    addItem({ id: menuItem.id, name: menuItem.name, price: menuItem.price });
+    toast.success(`${menuItem.name} agregado al carrito`);
+  };
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -228,9 +237,18 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                                     )}
                                     {lap.name}
                                   </span>
-                                  <span className={`text-[11px] font-mono shrink-0 ml-2 ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
-                                    {isDone ? '✓ Listo' : remStr}
-                                  </span>
+                                  <div className="flex items-center gap-2 shrink-0 ml-2">
+                                    <button
+                                      onClick={() => handleReorder(lap.name)}
+                                      className="min-w-touch min-h-touch flex items-center justify-center"
+                                      aria-label={`Pedir ${lap.name} otra vez`}
+                                    >
+                                      <RotateCcw className="w-3.5 h-3.5 text-primary" />
+                                    </button>
+                                    <span className={`text-[11px] font-mono ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
+                                      {isDone ? '✓ Listo' : remStr}
+                                    </span>
+                                  </div>
                                 </div>
                                 {(isActive || isDone) && (
                                   <div className="mt-1.5">
