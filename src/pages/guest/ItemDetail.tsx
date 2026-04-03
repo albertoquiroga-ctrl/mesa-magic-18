@@ -254,7 +254,7 @@ const ItemDetail = () => {
               {item.nutrition.protein != null && (
                 <div>
                   <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.protein}g</p>
-                  <p className="text-[10px] text-muted-foreground">Proteína</p>
+                  <p className="text-[10px] text-muted-foreground">{t('item.nutrition.protein')}</p>
                 </div>
               )}
               {item.nutrition.carbs != null && (
