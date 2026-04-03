@@ -36,8 +36,29 @@ const Menu = () => {
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [activeFilters, setActiveFilters] = useState<string[]>([]);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+
+  /** All unique tags across menu items */
+  const allTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    mockMenuItems.forEach((i) => (i.tags ?? []).forEach((t) => tagSet.add(t)));
+    return Array.from(tagSet);
+  }, []);
+
+  /** All unique allergens present in menu (for "sin X" filters) */
+  const allergenFilters = useMemo(() => {
+    const set = new Set<string>();
+    mockMenuItems.forEach((i) => (i.allergens ?? []).forEach((a) => set.add(a)));
+    return Array.from(set);
+  }, []);
+
+  const toggleFilter = (tag: string) => {
+    setActiveFilters((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
+    );
+  };
 
   /** Scroll to a category section and update the active pill */
   const scrollToCategory = useCallback((cat: string) => {
@@ -58,17 +79,32 @@ const Menu = () => {
   /** Normalise text for accent-insensitive matching */
   const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
+  /** Apply tag + allergen filters to an item */
+  const passesFilters = useCallback((item: typeof mockMenuItems[0]) => {
+    if (activeFilters.length === 0) return true;
+    return activeFilters.every((f) => {
+      // Allergen filter → exclude items containing that allergen
+      if (f.startsWith('sin:')) {
+        const allergen = f.replace('sin:', '');
+        return !(item.allergens ?? []).includes(allergen as any);
+      }
+      // Tag filter → include items with that tag
+      return (item.tags ?? []).includes(f);
+    });
+  }, [activeFilters]);
+
   const filteredItems = useMemo(() => {
     if (!searchQuery.trim()) return null;
     const q = norm(searchQuery);
-    return mockMenuItems.filter(
-      (i) =>
+    return mockMenuItems
+      .filter((i) =>
         norm(i.name).includes(q) ||
         norm(i.category).includes(q) ||
         (i.description && norm(i.description).includes(q)) ||
         (i.tags ?? []).some((t) => norm(t).includes(q)),
-    );
-  }, [searchQuery]);
+      )
+      .filter(passesFilters);
+  }, [searchQuery, passesFilters]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
