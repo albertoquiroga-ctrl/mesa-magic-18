@@ -271,7 +271,8 @@ const Menu = () => {
 
             {/* Menu sections by category */}
             {mockCategories.map((cat) => {
-              const items = mockMenuItems.filter((i) => i.category === cat);
+              const items = mockMenuItems.filter((i) => i.category === cat).filter(passesFilters);
+              if (items.length === 0) return null;
               return (
                 <section
                   key={cat}
