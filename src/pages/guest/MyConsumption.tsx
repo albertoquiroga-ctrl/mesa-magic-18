@@ -1,10 +1,13 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Smartphone, Users, UtensilsCrossed } from 'lucide-react';
+import { ArrowLeft, Smartphone, Users, UtensilsCrossed, RotateCcw } from 'lucide-react';
 import { useOrderStore } from '@/stores/orderStore';
 import { useTableStore } from '@/stores/tableStore';
+import { useCartStore } from '@/stores/cartStore';
+import { mockMenuItems } from '@/data/mockData';
 import { PriceDisplay } from '@/components/shared/PriceDisplay';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const MyConsumption = () => {
   const navigate = useNavigate();
