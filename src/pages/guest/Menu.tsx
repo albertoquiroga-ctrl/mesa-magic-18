@@ -228,8 +228,8 @@ const Menu = () => {
           ) : (
             <div className="flex flex-col items-center justify-center py-20 gap-2">
               <span className="text-3xl">🔍</span>
-              <p className="text-sm text-muted-foreground">No encontramos "{searchQuery}"</p>
-              <p className="text-xs text-muted-foreground">Intenta con otro término</p>
+              <p className="text-sm text-muted-foreground">{t('menu.search.empty', { query: searchQuery })}</p>
+              <p className="text-xs text-muted-foreground">{t('menu.search.emptyHint')}</p>
             </div>
           )
         ) : (
