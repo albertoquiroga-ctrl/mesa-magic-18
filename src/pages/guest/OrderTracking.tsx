@@ -286,7 +286,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
             className="w-full h-12 rounded-button text-base font-medium"
             onClick={() => navigate('/guest/menu')}
           >
-            Volver al menú
+            {t('tracking.backToMenu')}
           </Button>
         </div>
       )}
