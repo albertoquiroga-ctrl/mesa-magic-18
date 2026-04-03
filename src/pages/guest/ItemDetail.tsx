@@ -285,11 +285,11 @@ const ItemDetail = () => {
 
         {/* Special instructions */}
         <div className="mt-6">
-          <label className="text-sm font-medium mb-2 block">Instrucciones especiales</label>
+          <label className="text-sm font-medium mb-2 block">{t('item.specialInstructions')}</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            placeholder="¿Sin sal? ¿Extra limón? Cuéntanos..."
+            placeholder={t('item.specialPlaceholder')}
             className="w-full h-24 rounded-input bg-card border border-border px-4 py-3 text-sm placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
