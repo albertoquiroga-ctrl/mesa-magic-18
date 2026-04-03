@@ -152,10 +152,10 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
           )}
           <p className="text-sm text-muted-foreground text-center">
             {allDone
-              ? '¡Todos tus platillos están listos!'
+              ? t('tracking.allDone')
               : nextItem
-              ? `Siguiente: ${nextItem.name} (~${nextRemainingMin} min)`
-              : 'Calculando...'}
+              ? t('tracking.next', { name: nextItem.name, min: nextRemainingMin })
+              : t('tracking.calculating')}
           </p>
         </motion.div>
 
