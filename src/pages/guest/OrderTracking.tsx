@@ -29,7 +29,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
     const menuItem = mockMenuItems.find((m) => m.name === itemName);
     if (!menuItem) return;
     addItem({ id: menuItem.id, name: menuItem.name, price: menuItem.price });
-    toast.success(`${menuItem.name} agregado al carrito`);
+    toast.success(t('reorder.added', { name: menuItem.name }));
   };
   const [now, setNow] = useState(Date.now());
 
