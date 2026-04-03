@@ -117,7 +117,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
             >
               <ArrowLeft className="w-5 h-5 text-foreground" />
             </button>
-            <h1 className="text-base font-semibold text-foreground">Seguimiento de orden</h1>
+            <h1 className="text-base font-semibold text-foreground">{t('tracking.title')}</h1>
           </div>
         </header>
       )}
