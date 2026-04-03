@@ -209,6 +209,8 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    allergens: ['lacteos'],
+    nutrition: { calories: 190, carbs: 14, fat: 12, protein: 6 },
   },
   {
     id: 'tacos-asada',
