@@ -270,6 +270,7 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    nutrition: { calories: 580, carbs: 22, fat: 32, protein: 45 },
   },
   {
     id: 'pasta-trufa',
