@@ -67,6 +67,7 @@ const ModifierGroupSection = ({ group, selected, onToggle }: ModifierGroupSectio
     </div>
   </div>
 );
+};
 
 // ---------------------------------------------------------------------------
 // Main Component
