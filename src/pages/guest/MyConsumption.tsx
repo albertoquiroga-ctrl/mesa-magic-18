@@ -14,6 +14,14 @@ const MyConsumption = () => {
   const rounds = useOrderStore((s) => s.rounds);
   const addRound = useOrderStore((s) => s.addRound);
   const guests = useTableStore((s) => s.guests);
+  const addItem = useCartStore((s) => s.addItem);
+
+  const handleReorder = (itemName: string) => {
+    const menuItem = mockMenuItems.find((m) => m.name === itemName);
+    if (!menuItem) return;
+    addItem({ id: menuItem.id, name: menuItem.name, price: menuItem.price });
+    toast.success(`${menuItem.name} agregado al carrito`);
+  };
 
   // Seed round 0 (table orders captured by waiter) if no rounds exist yet.
   // Covers the case where the user ordered offline and wants to pay here.
