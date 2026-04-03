@@ -106,7 +106,7 @@ const ItemDetail = () => {
   if (!item) {
     return (
       <div className="p-5 text-center text-muted-foreground">
-        Producto no encontrado
+        {t('item.notFound')}
       </div>
     );
   }
