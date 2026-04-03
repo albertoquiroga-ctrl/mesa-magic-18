@@ -16,6 +16,7 @@ const MyConsumption = () => {
   const addRound = useOrderStore((s) => s.addRound);
   const guests = useTableStore((s) => s.guests);
   const addItem = useCartStore((s) => s.addItem);
+  const { t } = useTranslation();
 
   const handleReorder = (itemName: string) => {
     const menuItem = mockMenuItems.find((m) => m.name === itemName);
