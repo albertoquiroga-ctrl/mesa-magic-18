@@ -239,7 +239,7 @@ const Menu = () => {
             <section className="mb-6">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-4 h-4 text-primary" />
-                <h2 className="text-sm font-semibold text-foreground">Recomendado para ti</h2>
+                <h2 className="text-sm font-semibold text-foreground">{t('menu.recommendations')}</h2>
               </div>
 
               {isLoggedIn ? (
