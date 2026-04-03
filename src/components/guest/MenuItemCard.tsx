@@ -3,7 +3,10 @@
  * 
  * A compact card for a single menu item, used in the grid layout.
  * Shows photo, name, prep time, price, and an add-to-cart button.
- * When the item is already in the cart, shows ± quantity controls instead.
+ * 
+ * If the item has required modifiers the "+" button navigates to
+ * the detail page so the guest can configure them first.
+ * Otherwise items are added directly from the card.
  */
 import { motion } from 'framer-motion';
 import { Plus, Minus, Clock } from 'lucide-react';
@@ -31,21 +34,23 @@ interface MenuItemCardProps {
 }
 
 export const MenuItemCard = ({ item, onTap }: MenuItemCardProps) => {
-  const cartItem = useCartStore((s) => s.items.find((i) => i.id === item.id));
+  /** Total quantity of this menu item across all modifier variants */
+  const totalInCart = useCartStore((s) =>
+    s.items.filter((i) => i.id === item.id).reduce((sum, i) => sum + i.quantity, 0),
+  );
   const addItem = useCartStore((s) => s.addItem);
-  const updateQuantity = useCartStore((s) => s.updateQuantity);
 
-  /** Add one unit to cart (stop propagation so it doesn't trigger onTap) */
+  const hasRequiredModifiers = (item.modifiers ?? []).some((g) => g.required);
+
+  /** Add one unit (no modifiers) or navigate to detail if modifiers required */
   const handleAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (item.soldOut) return;
+    if (hasRequiredModifiers) {
+      onTap(); // Navigate to detail to pick modifiers
+      return;
+    }
     addItem({ id: item.id, name: item.name, price: item.price });
-  };
-
-  /** Remove one unit from cart */
-  const handleDecrement = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (cartItem) updateQuantity(item.id, cartItem.quantity - 1);
   };
 
   return (
@@ -86,28 +91,21 @@ export const MenuItemCard = ({ item, onTap }: MenuItemCardProps) => {
         <div className="flex items-center justify-between">
           <span className="font-mono text-sm text-primary tabular-nums">${item.price}</span>
 
-          {/* Add / quantity selector */}
           {!item.soldOut && (
             <>
-              {cartItem ? (
+              {totalInCart > 0 ? (
                 <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    onClick={handleDecrement}
-                    className="w-8 h-8 rounded-full bg-muted flex items-center justify-center min-w-touch min-h-touch"
-                    aria-label="Quitar uno"
-                  >
-                    <Minus className="w-3.5 h-3.5" />
-                  </button>
                   <span className="font-mono text-sm w-5 text-center tabular-nums">
-                    {cartItem.quantity}
+                    {totalInCart}
                   </span>
-                  <button
+                  <motion.button
+                    whileTap={{ scale: 0.85 }}
                     onClick={handleAdd}
                     className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center min-w-touch min-h-touch"
                     aria-label="Agregar uno"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                  </button>
+                  </motion.button>
                 </div>
               ) : (
                 <motion.button
