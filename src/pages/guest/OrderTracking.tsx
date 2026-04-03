@@ -7,6 +7,7 @@ import { useCartStore } from '@/stores/cartStore';
 import { mockMenuItems } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { useTranslation } from '@/i18n/useTranslation';
 
 
 interface ItemLap {
