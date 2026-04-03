@@ -152,6 +152,8 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=600&h=600&fit=crop',
     soldOut: true,
     prepTime: 3,
+    allergens: ['sulfitos'],
+    nutrition: { calories: 120, carbs: 2, fat: 0, protein: 0 },
   },
   {
     id: 'guacamole',
