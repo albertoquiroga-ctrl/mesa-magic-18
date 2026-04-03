@@ -136,7 +136,7 @@ const Cart = () => {
           <AnimatePresence initial={false}>
             {items.map((item) => (
               <motion.div
-                key={item.id}
+                key={item.cartKey}
                 layout
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
