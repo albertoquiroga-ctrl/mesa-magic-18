@@ -219,11 +219,11 @@ const Cart = () => {
             </div>
           ) : null}
           <div className="flex items-center justify-between mb-3">
-            <span className="text-sm text-muted-foreground">Total</span>
+            <span className="text-sm text-muted-foreground">{t('common.total')}</span>
             <PriceDisplay amount={total} size="lg" className="font-bold text-foreground" />
           </div>
           <Button className="w-full h-12 rounded-button text-base font-bold" onClick={handleSend}>
-            Enviar pedido al mesero
+            {t('cart.send')}
           </Button>
         </div>
       )}
