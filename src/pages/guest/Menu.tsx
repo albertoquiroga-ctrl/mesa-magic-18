@@ -35,6 +35,7 @@ const categoryEmojis: Record<string, string> = {
 const Menu = () => {
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
