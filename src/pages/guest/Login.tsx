@@ -155,7 +155,7 @@ const Login = () => {
           onClick={() => navigate('/guest/menu')}
           className="w-full text-center text-sm text-muted-foreground py-2 mt-4"
         >
-          Continuar sin cuenta →
+          {t('login.continueWithout')}
         </button>
       </div>
     </div>
