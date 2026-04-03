@@ -14,7 +14,9 @@ import { Search, Lock, Sparkles, X, Filter } from 'lucide-react';
 import { mockMenuItems, mockCategories, mockRestaurant, mockRecommendations, ALLERGEN_META } from '@/data/mockData';
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { CartBar } from '@/components/guest/CartBar';
+import { LanguageToggle } from '@/components/shared/LanguageToggle';
 import { useAuthStore } from '@/stores/authStore';
+import { useTranslation } from '@/i18n/useTranslation';
 
 // ---------------------------------------------------------------------------
 // Category emoji mapping for pills
