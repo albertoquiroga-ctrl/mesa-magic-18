@@ -8,9 +8,9 @@
  * 4. Menu items grouped by category in a 2-column grid
  * 5. Sticky cart bar at the bottom
  */
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Lock, Sparkles } from 'lucide-react';
+import { Search, Lock, Sparkles, X } from 'lucide-react';
 import { mockMenuItems, mockCategories, mockRestaurant, mockRecommendations } from '@/data/mockData';
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { CartBar } from '@/components/guest/CartBar';
@@ -34,6 +34,9 @@ const Menu = () => {
   const navigate = useNavigate();
   const isLoggedIn = useAuthStore((s) => s.isLoggedIn);
   const [activeCategory, setActiveCategory] = useState(mockCategories[0]);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   /** Scroll to a category section and update the active pill */
@@ -42,18 +45,63 @@ const Menu = () => {
     sectionRefs.current[cat]?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
 
+  const handleOpenSearch = () => {
+    setSearchOpen(true);
+    setTimeout(() => searchInputRef.current?.focus(), 50);
+  };
+
+  const handleCloseSearch = () => {
+    setSearchOpen(false);
+    setSearchQuery('');
+  };
+
+  /** Normalise text for accent-insensitive matching */
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  const filteredItems = useMemo(() => {
+    if (!searchQuery.trim()) return null;
+    const q = norm(searchQuery);
+    return mockMenuItems.filter(
+      (i) =>
+        norm(i.name).includes(q) ||
+        norm(i.category).includes(q) ||
+        (i.description && norm(i.description).includes(q)) ||
+        (i.tags ?? []).some((t) => norm(t).includes(q)),
+    );
+  }, [searchQuery]);
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* ── Sticky header ── */}
       <header className="sticky top-0 z-30 bg-card border-b border-border">
-        <div className="flex items-center justify-between px-4 h-14">
-          <span className="text-base font-semibold truncate">{mockRestaurant.name}</span>
-          <span className="font-mono text-xs bg-muted rounded-chip px-3 py-1">
-            Mesa {mockRestaurant.table}
-          </span>
-          <button className="min-w-touch min-h-touch flex items-center justify-center" aria-label="Buscar">
-            <Search className="w-5 h-5 text-muted-foreground" />
-          </button>
+        <div className="flex items-center justify-between px-4 h-14 gap-2">
+          {searchOpen ? (
+            /* Search bar */
+            <div className="flex items-center gap-2 flex-1 h-9 bg-muted rounded-chip px-3">
+              <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+              <input
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar en el menú…"
+                className="flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none"
+              />
+              <button onClick={handleCloseSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label="Cerrar búsqueda">
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+          ) : (
+            /* Normal header */
+            <>
+              <span className="text-base font-semibold truncate">{mockRestaurant.name}</span>
+              <span className="font-mono text-xs bg-muted rounded-chip px-3 py-1">
+                Mesa {mockRestaurant.table}
+              </span>
+              <button onClick={handleOpenSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label="Buscar">
+                <Search className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </>
+          )}
         </div>
 
         {/* Category pills (horizontally scrollable) */}
