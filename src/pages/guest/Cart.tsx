@@ -82,7 +82,7 @@ const Cart = () => {
           transition={{ delay: 0.2 }}
           className="text-xl font-bold text-foreground"
         >
-          ¡Orden enviada!
+          {t('cart.sent')}
         </motion.h1>
         <motion.p
           initial={{ opacity: 0 }}
@@ -90,7 +90,7 @@ const Cart = () => {
           transition={{ delay: 0.4 }}
           className="text-sm text-muted-foreground text-center"
         >
-          Tu mesero la recibirá en un momento.
+          {t('cart.sentSub')}
         </motion.p>
       </div>
     );
