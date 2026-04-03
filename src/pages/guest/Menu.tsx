@@ -160,6 +160,46 @@ const Menu = () => {
             );
           })}
         </div>
+
+        {/* Filter pills (tags + allergen exclusions) */}
+        {(allTags.length > 0 || allergenFilters.length > 0) && (
+          <div className="flex gap-2 px-4 pb-2.5 overflow-x-auto scrollbar-none">
+            {allTags.map((tag) => {
+              const isActive = activeFilters.includes(tag);
+              return (
+                <button
+                  key={tag}
+                  onClick={() => toggleFilter(tag)}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-chip text-xs font-medium whitespace-nowrap transition-colors border ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-card text-muted-foreground border-border'
+                  }`}
+                >
+                  {tag}
+                </button>
+              );
+            })}
+            {allergenFilters.map((a) => {
+              const key = `sin:${a}`;
+              const isActive = activeFilters.includes(key);
+              const meta = ALLERGEN_META[a as keyof typeof ALLERGEN_META];
+              return (
+                <button
+                  key={key}
+                  onClick={() => toggleFilter(key)}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-chip text-xs font-medium whitespace-nowrap transition-colors border ${
+                    isActive
+                      ? 'bg-primary text-primary-foreground border-primary'
+                      : 'bg-card text-muted-foreground border-border'
+                  }`}
+                >
+                  {meta.emoji} Sin {meta.label.toLowerCase()}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </header>
 
       {/* ── Scrollable menu content ── */}
