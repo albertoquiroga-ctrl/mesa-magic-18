@@ -33,7 +33,7 @@ const ModifierGroupSection = ({ group, selected, onToggle }: ModifierGroupSectio
         </span>
       )}
       {!group.required && (
-        <span className="text-[10px] text-muted-foreground">Opcional</span>
+        <span className="text-[10px] text-muted-foreground">{t('item.optional')}</span>
       )}
     </div>
     <div className="flex flex-wrap gap-2">
