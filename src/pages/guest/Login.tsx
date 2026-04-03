@@ -85,7 +85,7 @@ const Login = () => {
                   </div>
                   <Input
                     type="tel"
-                    placeholder="55 1234 5678"
+                    placeholder={t('login.phonePlaceholder')}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/[^0-9\s]/g, ''))}
                     className="flex-1"
