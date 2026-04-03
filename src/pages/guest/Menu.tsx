@@ -128,60 +128,15 @@ const Menu = () => {
 
       {/* ── Scrollable menu content ── */}
       <div className="flex-1 overflow-y-auto px-4 pt-4 pb-28">
-        {/* Personalized recommendations */}
-        <section className="mb-6">
-          <div className="flex items-center gap-2 mb-3">
-            <Sparkles className="w-4 h-4 text-primary" />
-            <h2 className="text-sm font-semibold text-foreground">Recomendado para ti</h2>
-          </div>
-
-          {isLoggedIn ? (
-            /* Logged in → show actual recommendations */
-            <div className="grid grid-cols-2 gap-3">
-              {mockRecommendations.map((item) => (
-                <MenuItemCard
-                  key={item.id}
-                  item={item}
-                  onTap={() => navigate(`/guest/menu/${item.id}`)}
-                />
-              ))}
-            </div>
-          ) : (
-            /* Not logged in → teaser with login CTA */
-            <button
-              onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/menu', nudgeOrigin: 'menu' } })}
-              className="w-full relative rounded-card border border-border bg-card p-5 overflow-hidden"
-            >
-              <div className="absolute inset-0 backdrop-blur-sm bg-card/60 z-10 flex flex-col items-center justify-center gap-2">
-                <Lock className="w-5 h-5 text-primary" />
-                <span className="text-xs font-medium text-foreground text-center px-4">
-                  Inicia sesión para ver recomendaciones personalizadas
-                </span>
-                <span className="text-[11px] text-primary font-semibold">Crear cuenta →</span>
-              </div>
-              <div className="grid grid-cols-3 gap-2 opacity-30">
-                {mockRecommendations.slice(0, 3).map((item) => (
-                  <div key={item.id} className="h-16 rounded-lg bg-muted" />
-                ))}
-              </div>
-            </button>
-          )}
-        </section>
-
-        {/* Menu sections by category */}
-        {mockCategories.map((cat) => {
-          const items = mockMenuItems.filter((i) => i.category === cat);
-          return (
-            <section
-              key={cat}
-              ref={(el) => { sectionRefs.current[cat] = el; }}
-              className="mb-6 scroll-mt-28"
-            >
-              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-                {categoryEmojis[cat]} {cat}
-              </h2>
+        {filteredItems !== null ? (
+          /* Search results */
+          filteredItems.length > 0 ? (
+            <section>
+              <p className="text-xs text-muted-foreground mb-3">
+                {filteredItems.length} resultado{filteredItems.length !== 1 ? 's' : ''} para "{searchQuery}"
+              </p>
               <div className="grid grid-cols-2 gap-3">
-                {items.map((item) => (
+                {filteredItems.map((item) => (
                   <MenuItemCard
                     key={item.id}
                     item={item}
@@ -190,8 +145,80 @@ const Menu = () => {
                 ))}
               </div>
             </section>
-          );
-        })}
+          ) : (
+            <div className="flex flex-col items-center justify-center py-20 gap-2">
+              <span className="text-3xl">🔍</span>
+              <p className="text-sm text-muted-foreground">No encontramos "{searchQuery}"</p>
+              <p className="text-xs text-muted-foreground">Intenta con otro término</p>
+            </div>
+          )
+        ) : (
+          /* Normal browsing */
+          <>
+            {/* Personalized recommendations */}
+            <section className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-4 h-4 text-primary" />
+                <h2 className="text-sm font-semibold text-foreground">Recomendado para ti</h2>
+              </div>
+
+              {isLoggedIn ? (
+                <div className="grid grid-cols-2 gap-3">
+                  {mockRecommendations.map((item) => (
+                    <MenuItemCard
+                      key={item.id}
+                      item={item}
+                      onTap={() => navigate(`/guest/menu/${item.id}`)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <button
+                  onClick={() => navigate('/guest/login', { state: { returnTo: '/guest/menu', nudgeOrigin: 'menu' } })}
+                  className="w-full relative rounded-card border border-border bg-card p-5 overflow-hidden"
+                >
+                  <div className="absolute inset-0 backdrop-blur-sm bg-card/60 z-10 flex flex-col items-center justify-center gap-2">
+                    <Lock className="w-5 h-5 text-primary" />
+                    <span className="text-xs font-medium text-foreground text-center px-4">
+                      Inicia sesión para ver recomendaciones personalizadas
+                    </span>
+                    <span className="text-[11px] text-primary font-semibold">Crear cuenta →</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 opacity-30">
+                    {mockRecommendations.slice(0, 3).map((item) => (
+                      <div key={item.id} className="h-16 rounded-lg bg-muted" />
+                    ))}
+                  </div>
+                </button>
+              )}
+            </section>
+
+            {/* Menu sections by category */}
+            {mockCategories.map((cat) => {
+              const items = mockMenuItems.filter((i) => i.category === cat);
+              return (
+                <section
+                  key={cat}
+                  ref={(el) => { sectionRefs.current[cat] = el; }}
+                  className="mb-6 scroll-mt-28"
+                >
+                  <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                    {categoryEmojis[cat]} {cat}
+                  </h2>
+                  <div className="grid grid-cols-2 gap-3">
+                    {items.map((item) => (
+                      <MenuItemCard
+                        key={item.id}
+                        item={item}
+                        onTap={() => navigate(`/guest/menu/${item.id}`)}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </>
+        )}
       </div>
 
       {/* Sticky cart bar */}
