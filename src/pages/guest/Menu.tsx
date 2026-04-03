@@ -141,7 +141,7 @@ const Menu = () => {
         </div>
 
         {/* Category pills (horizontally scrollable) */}
-        <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-none">
+        <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-none mask-fade-right">
           {mockCategories.map((cat) => {
             const isActive = activeCategory === cat;
             return (
