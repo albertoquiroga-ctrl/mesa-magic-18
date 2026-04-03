@@ -175,7 +175,7 @@ const MyConsumption = () => {
         {/* Others' items */}
         {renderItemList(
           othersConsolidated,
-          'Pedido por otros en la mesa',
+          t('consumption.others'),
           <Users className="w-3.5 h-3.5 text-muted-foreground" />,
           othersTotal
         )}
