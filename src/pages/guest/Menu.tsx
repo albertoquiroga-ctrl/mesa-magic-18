@@ -198,7 +198,7 @@ const Menu = () => {
                       : 'bg-card text-muted-foreground border-border'
                   }`}
                 >
-                  {meta.emoji} Sin {meta.label.toLowerCase()}
+                  {meta.emoji} {t('menu.allergenFilterPrefix')} {meta.label.toLowerCase()}
                 </button>
               );
             })}
