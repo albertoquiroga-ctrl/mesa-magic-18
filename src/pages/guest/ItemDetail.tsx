@@ -8,9 +8,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Plus, Minus, ArrowLeft, Clock, Check } from 'lucide-react';
+import { Plus, Minus, ArrowLeft, Clock, Check, AlertTriangle, Info } from 'lucide-react';
 import { useCartStore, type SelectedModifier } from '@/stores/cartStore';
-import { mockMenuItems, type ModifierGroup } from '@/data/mockData';
+import { mockMenuItems, ALLERGEN_META, type ModifierGroup } from '@/data/mockData';
 
 // ---------------------------------------------------------------------------
 // Modifier Group UI
@@ -209,6 +209,62 @@ const ItemDetail = () => {
                 {tag}
               </span>
             ))}
+          </div>
+        )}
+
+        {/* Allergens */}
+        {item.allergens && item.allergens.length > 0 && (
+          <div className="mt-5 p-3.5 rounded-card bg-destructive/5 border border-destructive/15">
+            <div className="flex items-center gap-2 mb-2">
+              <AlertTriangle className="w-4 h-4 text-destructive" />
+              <span className="text-xs font-semibold text-destructive uppercase tracking-wide">Alérgenos</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {item.allergens.map((a) => {
+                const meta = ALLERGEN_META[a];
+                return (
+                  <span key={a} className="inline-flex items-center gap-1 text-xs bg-background border border-border px-2.5 py-1 rounded-chip">
+                    <span>{meta.emoji}</span>
+                    <span>{meta.label}</span>
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Nutritional info */}
+        {item.nutrition && (
+          <div className="mt-4 p-3.5 rounded-card bg-muted/50 border border-border">
+            <div className="flex items-center gap-2 mb-2.5">
+              <Info className="w-4 h-4 text-muted-foreground" />
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Info nutricional</span>
+              <span className="text-[10px] text-muted-foreground ml-auto">por porción</span>
+            </div>
+            <div className="grid grid-cols-4 gap-2 text-center">
+              <div>
+                <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.calories}</p>
+                <p className="text-[10px] text-muted-foreground">kcal</p>
+              </div>
+              {item.nutrition.protein != null && (
+                <div>
+                  <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.protein}g</p>
+                  <p className="text-[10px] text-muted-foreground">Proteína</p>
+                </div>
+              )}
+              {item.nutrition.carbs != null && (
+                <div>
+                  <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.carbs}g</p>
+                  <p className="text-[10px] text-muted-foreground">Carbos</p>
+                </div>
+              )}
+              {item.nutrition.fat != null && (
+                <div>
+                  <p className="font-mono text-sm font-semibold tabular-nums">{item.nutrition.fat}g</p>
+                  <p className="text-[10px] text-muted-foreground">Grasa</p>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

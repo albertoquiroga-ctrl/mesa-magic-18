@@ -28,6 +28,51 @@ export interface ModifierGroup {
 }
 
 // ---------------------------------------------------------------------------
+// Allergens — standard set used across the industry
+// ---------------------------------------------------------------------------
+
+export type Allergen =
+  | 'gluten'
+  | 'lacteos'
+  | 'huevo'
+  | 'mariscos'
+  | 'pescado'
+  | 'cacahuate'
+  | 'soya'
+  | 'frutos-secos'
+  | 'apio'
+  | 'mostaza'
+  | 'sesamo'
+  | 'sulfitos';
+
+/** Emoji + Spanish label for each allergen */
+export const ALLERGEN_META: Record<Allergen, { emoji: string; label: string }> = {
+  gluten:         { emoji: '🌾', label: 'Gluten' },
+  lacteos:        { emoji: '🥛', label: 'Lácteos' },
+  huevo:          { emoji: '🥚', label: 'Huevo' },
+  mariscos:       { emoji: '🦐', label: 'Mariscos' },
+  pescado:        { emoji: '🐟', label: 'Pescado' },
+  cacahuate:      { emoji: '🥜', label: 'Cacahuate' },
+  soya:           { emoji: '🫘', label: 'Soya' },
+  'frutos-secos': { emoji: '🌰', label: 'Frutos secos' },
+  apio:           { emoji: '🥬', label: 'Apio' },
+  mostaza:        { emoji: '🟡', label: 'Mostaza' },
+  sesamo:         { emoji: '🫓', label: 'Sésamo' },
+  sulfitos:       { emoji: '🍷', label: 'Sulfitos' },
+};
+
+// ---------------------------------------------------------------------------
+// Nutritional info (per serving)
+// ---------------------------------------------------------------------------
+
+export interface NutritionalInfo {
+  calories: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+}
+
+// ---------------------------------------------------------------------------
 // Menu items
 // ---------------------------------------------------------------------------
 
@@ -44,6 +89,10 @@ export interface MenuItem {
   prepTime?: number;
   /** Customisation groups available for this item */
   modifiers?: ModifierGroup[];
+  /** Allergens present in this dish */
+  allergens?: Allergen[];
+  /** Nutritional info per serving */
+  nutrition?: NutritionalInfo;
 }
 
 export const mockMenuItems: MenuItem[] = [
@@ -68,6 +117,8 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    allergens: ['sulfitos'],
+    nutrition: { calories: 180, carbs: 12, fat: 0, protein: 0 },
   },
   {
     id: 'agua-jamaica',
@@ -90,6 +141,7 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    nutrition: { calories: 45, carbs: 11, fat: 0, protein: 0 },
   },
   {
     id: 'mezcal',
@@ -100,6 +152,8 @@ export const mockMenuItems: MenuItem[] = [
     image: 'https://images.unsplash.com/photo-1569529465841-dfecdab7503b?w=600&h=600&fit=crop',
     soldOut: true,
     prepTime: 3,
+    allergens: ['sulfitos'],
+    nutrition: { calories: 120, carbs: 2, fat: 0, protein: 0 },
   },
   {
     id: 'guacamole',
@@ -122,6 +176,7 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    nutrition: { calories: 220, carbs: 8, fat: 18, protein: 3 },
   },
   {
     id: 'ensalada',
@@ -154,6 +209,8 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    allergens: ['lacteos'],
+    nutrition: { calories: 190, carbs: 14, fat: 12, protein: 6 },
   },
   {
     id: 'tacos-asada',
@@ -187,6 +244,8 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    allergens: ['gluten'],
+    nutrition: { calories: 420, carbs: 32, fat: 18, protein: 28 },
   },
   {
     id: 'entrecot',
@@ -211,6 +270,7 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    nutrition: { calories: 580, carbs: 22, fat: 32, protein: 45 },
   },
   {
     id: 'pasta-trufa',
@@ -233,6 +293,8 @@ export const mockMenuItems: MenuItem[] = [
         ],
       },
     ],
+    allergens: ['gluten', 'lacteos', 'huevo'],
+    nutrition: { calories: 520, carbs: 48, fat: 28, protein: 16 },
   },
 ];
 
