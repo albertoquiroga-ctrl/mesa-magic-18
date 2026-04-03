@@ -10,8 +10,8 @@
  */
 import { useState, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Lock, Sparkles, X } from 'lucide-react';
-import { mockMenuItems, mockCategories, mockRestaurant, mockRecommendations } from '@/data/mockData';
+import { Search, Lock, Sparkles, X, Filter } from 'lucide-react';
+import { mockMenuItems, mockCategories, mockRestaurant, mockRecommendations, ALLERGEN_META } from '@/data/mockData';
 import { MenuItemCard } from '@/components/guest/MenuItemCard';
 import { CartBar } from '@/components/guest/CartBar';
 import { useAuthStore } from '@/stores/authStore';
