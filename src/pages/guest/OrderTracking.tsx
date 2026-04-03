@@ -248,7 +248,7 @@ const OrderTracking = ({ embedded = false }: { embedded?: boolean }) => {
                                       <RotateCcw className="w-3.5 h-3.5 text-primary" />
                                     </button>
                                     <span className={`text-[11px] font-mono ${isDone ? 'text-primary font-semibold' : 'text-muted-foreground'}`}>
-                                      {isDone ? '✓ Listo' : remStr}
+                                      {isDone ? t('tracking.done') : remStr}
                                     </span>
                                   </div>
                                 </div>
