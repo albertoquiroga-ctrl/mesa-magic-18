@@ -260,9 +260,9 @@ const Menu = () => {
                   <div className="absolute inset-0 backdrop-blur-sm bg-card/60 z-10 flex flex-col items-center justify-center gap-2">
                     <Lock className="w-5 h-5 text-primary" />
                     <span className="text-xs font-medium text-foreground text-center px-4">
-                      Inicia sesión para ver recomendaciones personalizadas
+                      {t('menu.loginForRecs')}
                     </span>
-                    <span className="text-[11px] text-primary font-semibold">Crear cuenta →</span>
+                    <span className="text-[11px] text-primary font-semibold">{t('menu.createAccount')}</span>
                   </div>
                   <div className="grid grid-cols-3 gap-2 opacity-30">
                     {mockRecommendations.slice(0, 3).map((item) => (
