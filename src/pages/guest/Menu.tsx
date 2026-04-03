@@ -122,10 +122,10 @@ const Menu = () => {
                 ref={searchInputRef}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar en el menú…"
+                placeholder={t('menu.search.placeholder')}
                 className="flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus:outline-none"
               />
-              <button onClick={handleCloseSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label="Cerrar búsqueda">
+              <button onClick={handleCloseSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label={t('common.close')}>
                 <X className="w-4 h-4 text-muted-foreground" />
               </button>
             </div>
@@ -134,9 +134,10 @@ const Menu = () => {
             <>
               <span className="text-base font-semibold truncate">{mockRestaurant.name}</span>
               <span className="font-mono text-xs bg-muted rounded-chip px-3 py-1">
-                Mesa {mockRestaurant.table}
+                {t('common.table')} {mockRestaurant.table}
               </span>
-              <button onClick={handleOpenSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label="Buscar">
+              <LanguageToggle />
+              <button onClick={handleOpenSearch} className="min-w-touch min-h-touch flex items-center justify-center" aria-label={t('common.search')}>
                 <Search className="w-5 h-5 text-muted-foreground" />
               </button>
             </>
