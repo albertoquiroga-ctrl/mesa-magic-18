@@ -122,7 +122,7 @@ const Profile = () => {
           }}
         >
           <LogOut className="w-4 h-4" />
-          Cerrar sesión
+          {t('profile.logout')}
         </Button>
       </div>
     </div>
