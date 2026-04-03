@@ -52,20 +52,20 @@ const Login = () => {
         <div className="bg-primary/5 border border-primary/20 rounded-card p-5 mb-8">
           <div className="flex items-center gap-2 mb-3">
             <Gift className="w-5 h-5 text-primary" />
-            <span className="text-sm font-semibold text-foreground">Programa de lealtad</span>
+            <span className="text-sm font-semibold text-foreground">{t('login.loyaltyProgram')}</span>
           </div>
           <ul className="space-y-2">
             <li className="flex items-start gap-2 text-xs text-muted-foreground">
               <Star className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
-              <span><strong className="text-foreground">Ahorra $50</strong> en tu próxima visita al inscribirte</span>
+              <span><strong className="text-foreground">{t('cart.loyaltySave')}</strong> {t('login.save50').replace('Ahorra $50 ', '').replace('Save $50 ', '')}</span>
             </li>
             <li className="flex items-start gap-2 text-xs text-muted-foreground">
               <Star className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
-              <span>Acumula puntos con cada compra y canjéalos por recompensas</span>
+              <span>{t('login.earnPoints')}</span>
             </li>
             <li className="flex items-start gap-2 text-xs text-muted-foreground">
               <Star className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
-              <span>Recibe recomendaciones personalizadas basadas en tus gustos</span>
+              <span>{t('login.personalRecs')}</span>
             </li>
           </ul>
         </div>
